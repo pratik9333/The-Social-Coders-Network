@@ -25,4 +25,7 @@ router.route("/user").get(isLoggedIn, getLoggedInUserDetails);
 //update user
 router.route("/user").put(isLoggedIn, updateUserDetails);
 
+//get users with coding profiles
+router.route("/users").get(getUserProfiles);
+
 module.exports = router;

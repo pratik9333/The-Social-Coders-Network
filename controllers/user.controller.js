@@ -145,6 +145,8 @@ exports.updateUserDetails = async (req, res) => {
       .status(200)
       .json({ success: true, message: "User profile is updated", updatedUser });
   } catch (error) {
-    res.status(500).json(error);
+    res
+      .status(500)
+      .json({ error: "Server has occured some problem, please try again" });
   }
 };

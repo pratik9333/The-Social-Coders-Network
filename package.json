@@ -1,0 +1,37 @@
+{
+  "name": "social-coding-experience",
+  "version": "1.0.0",
+  "description": "App for providing social coding experience",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pratik9333/INNOVATOR_1.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pratik9333/INNOVATOR_1/issues"
+  },
+  "homepage": "https://github.com/pratik9333/INNOVATOR_1#readme",
+  "dependencies": {
+    "cloudinary": "^1.29.0",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^14.2.0",
+    "ejs": "^3.1.6",
+    "express": "^4.17.2",
+    "express-fileupload": "^1.2.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.1.7",
+    "morgan": "^1.10.0",
+    "bcryptjs": "^2.4.3",
+    "nanoid": "^3.2.0",
+    "nodemailer": "^6.7.2",
+    "nodemon": "^2.0.15",
+    "redis": "^3.0.0",
+    "validator": "^13.7.0"
+  }
+}

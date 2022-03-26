@@ -23,7 +23,9 @@ app.use(
 app.use(morgan("tiny"));
 
 //import all routes here
+const user = require("./api/user.api.js");
 
 //router middleware
+app.use("/api/v1", user);
 
 module.exports = app;

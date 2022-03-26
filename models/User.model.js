@@ -39,14 +39,12 @@ const userSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.ObjectId,
       ref: "User",
-      required: true,
     },
   ],
   friendRequests: [
     {
       type: mongoose.Schema.ObjectId,
       ref: "User",
-      required: true,
     },
   ],
   createdAt: {

@@ -294,3 +294,40 @@ exports.addFriend = async (req, res) => {
       .json({ error: "Server has occured some problem, please try again" });
   }
 };
+
+exports.rateUser = async (req, res) => {
+  try {
+    const { up, down } = req.body;
+
+    const { userId } = req.params;
+
+    if (!userId) {
+      return res.status(400).json({ error: "Please provide user id" });
+    }
+
+    if (!up && !down) {
+      return res
+        .status(400)
+        .json({ error: "Please provide upvote or downvote" });
+    }
+
+    const user = await User.findById(userId);
+
+    if (up) {
+      user.upvotes += 1;
+    } else {
+      user.downvotes += 1;
+    }
+    user.rating = (user.upvotes / (user.upvotes + user.downvotes || 1)) * 100;
+
+    await user.save();
+
+    res
+      .status(200)
+      .json({ success: true, message: `${user.name} was rated successfully` });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Server has occured some problem, please try again" });
+  }
+};

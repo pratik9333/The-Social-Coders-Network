@@ -10,6 +10,7 @@ const {
   getUsers,
   sendFriendRequest,
   addFriend,
+  rateUser,
 } = require("../controllers/user.controller");
 
 const isLoggedIn = require("../middlewares/authenticate.middleware");
@@ -37,6 +38,9 @@ router.route("/user/request/friend/:userId").put(isLoggedIn, sendFriendRequest);
 
 //add friend
 router.route("/user/add/friend/:userId").put(isLoggedIn, addFriend);
+
+//rate friend
+router.route("/user/rate/:userId").put(isLoggedIn, rateUser);
 
 //get users
 router.route("/users").get(getUsers);

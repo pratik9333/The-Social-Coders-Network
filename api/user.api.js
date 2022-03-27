@@ -11,7 +11,9 @@ const {
   sendFriendRequest,
   addFriend,
   rateUser,
+  getLeaderBoardData
 } = require("../controllers/user.controller");
+
 
 const isLoggedIn = require("../middlewares/authenticate.middleware");
 
@@ -44,5 +46,8 @@ router.route("/user/rate/:userId").put(isLoggedIn, rateUser);
 
 //get users
 router.route("/users").get(getUsers);
+
+// get leaderboard data
+router.route("/users/leaderboard").get(isLoggedIn, getLeaderBoardData);
 
 module.exports = router;

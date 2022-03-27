@@ -333,3 +333,24 @@ exports.rateUser = async (req, res) => {
       .json({ error: "Server has occured some problem, please try again" });
   }
 };
+
+exports.getLeaderBoardData = (req, res, next) => {
+  try {
+    const { page, limit } = req.query;
+
+    const users = await User.find()
+      .sort({ total_votes: -1, ratings: -1 })
+      .skip(page)
+      .limit(limit);
+
+    return res.status(200).json({
+      success: true,
+      data: users,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      error: true,
+      data: error.message,
+    });
+  }
+};

@@ -18,6 +18,11 @@ class Query {
     return this;
   }
 
+  sort() {
+    this.base = this.base.find().sort({ rating: -1, votes: -1 });
+    return this;
+  }
+
   pager(limitPerPage) {
     let initialPage = 1;
 

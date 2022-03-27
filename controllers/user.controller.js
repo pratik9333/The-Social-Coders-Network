@@ -179,10 +179,8 @@ exports.getUsers = async (req, res) => {
 
     userObj.search();
 
-    //limit the products based on search by calling pager function
     userObj.pager(resultPerPage);
 
-    //requesting the base value that contains products
     let Users = await userObj.base;
 
     let filteredUsers = Users.length;
@@ -334,18 +332,34 @@ exports.rateUser = async (req, res) => {
   }
 };
 
-exports.getLeaderBoardData = (req, res, next) => {
-  try {
-    const { page, limit } = req.query;
+// const userObj = new Query(User.find(), req.query);
 
-    const users = await User.find()
-      .sort({ total_votes: -1, ratings: -1 })
-      .skip(page)
-      .limit(limit);
+// userObj.search();
+
+// userObj.pager(resultPerPage);
+
+// let Users = await userObj.base;
+
+// let filteredUsers = Users.length;
+
+exports.getLeaderBoardData = async (req, res, next) => {
+  try {
+    const usersCount = await User.countDocuments();
+    const resultPerPage = 5;
+
+    const userObj = new Query(User.find(), req.query);
+
+    userObj.sort();
+
+    userObj.pager(resultPerPage);
+
+    let Users = await userObj.base;
+    let filteredUsers = Users.length;
 
     return res.status(200).json({
       success: true,
-      data: users,
+      data: Users,
+      filteredUsers,
     });
   } catch (error) {
     return res.status(400).json({

@@ -19,8 +19,6 @@ const platformSchema = new mongoose.Schema({
   contest: {
     attended: { type: Number },
     rating: { type: Number },
-    totalParticipants: { type: Number },
-    topPercentage: { type: Number },
   },
   noOfSubmission: {
     type: Number,

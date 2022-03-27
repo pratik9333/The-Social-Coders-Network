@@ -278,10 +278,7 @@ exports.addFriend = async (req, res) => {
       return res.status(400).json({ error: "Invalid Id" });
     }
 
-    currrentUser.friendRequests.push.apply(
-      currrentUser.friendRequests,
-      filteredFriendRequest
-    );
+    currrentUser.friendRequests = filteredFriendRequest.slice(0);
 
     currrentUser.friends.push(usersFriend._id);
     usersFriend.friends.push(currrentUser._id);

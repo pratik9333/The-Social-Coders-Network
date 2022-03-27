@@ -1,0 +1,43 @@
+.nav-userdeatils{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .nav-username{
+        font-size: 16px;
+        display: inline;
+        margin-right: 10px;
+        font-weight: 500;
+    }
+    .nav-userimage{
+        width: 40px;
+        height: 40px;
+        border-radius: 100%;
+        border: solid grey thin;
+    }
+
+    button{
+        margin-left: 10px;
+        background-color: transparent;
+        border: solid rgb(255, 81, 81) 2px;
+        color: rgb(255, 81, 81);
+        font-size: 18px;
+        border-radius: 4px;
+        padding: 5px 15px;
+    }
+
+    button:hover{
+        background-color: rgb(255, 81, 81);
+        color: white;
+    }
+}
+
+@media screen and (max-width:720px) {
+    .nav-userdeatils{
+        flex-direction: column;
+
+        button{
+            margin-top: 10px;
+            margin-left: 0;
+        }
+    }
+}

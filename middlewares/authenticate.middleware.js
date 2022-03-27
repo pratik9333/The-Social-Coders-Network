@@ -4,6 +4,7 @@ const User = require("../models/User.model");
 const isLoggedIn = async (req, res, next) => {
   try {
     const token = req.cookies.token;
+    console.log(token);
 
     if (!token && req.header("Authorization")) {
       token = req.header("Authorization").replace("Bearer ", "");

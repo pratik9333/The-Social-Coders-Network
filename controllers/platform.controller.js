@@ -1,6 +1,7 @@
 const Platform = require("../models/Platform.model");
 const fetch = require("node-fetch");
 const leetcodeURL = "https://leetcode.com/graphql";
+const codechefURL = "https://codeforces.com/api";
 
 const getLeetCodeUserDetails = async (username) => {
   const query = `query getLeetCodeUserDetails($username: String!) {
@@ -83,8 +84,6 @@ exports.addLeetcodeProfile = (req, res) => {
     contest: {
       attended: 0,
       rating: 0,
-      totalParticipants: 0,
-      topPercentage: 0,
     },
     noOfSubmission: 0,
     languageUsed: [],
@@ -92,7 +91,7 @@ exports.addLeetcodeProfile = (req, res) => {
     user: req.user._id,
   };
 
-  Platform.find({ user: req.user._id })
+  Platform.find({ user: req.user._id, name: "Leetcode" })
     .then((data) => {
       if (data.length > 0) {
         Platform.deleteOne({ user: req.user._id })
@@ -131,12 +130,6 @@ exports.addLeetcodeProfile = (req, res) => {
 
         leetcodeProfileDetails.contest.rating =
           d.data.userContestRanking.rating;
-
-        leetcodeProfileDetails.contest.totalParticipants =
-          d.data.userContestRanking.totalParticipants;
-
-        leetcodeProfileDetails.contest.topPercentage =
-          d.data.userContestRanking.topPercentage;
       }
 
       Platform.create(leetcodeProfileDetails)
@@ -144,7 +137,7 @@ exports.addLeetcodeProfile = (req, res) => {
           console.log(data);
           return res
             .status(200)
-            .json({ success: true, message: "Platform added" });
+            .json({ success: true, message: "Leetcode platform added" });
         })
         .catch((err) => {
           console.log(err);
@@ -159,4 +152,81 @@ exports.addLeetcodeProfile = (req, res) => {
         .status(500)
         .json({ success: false, error: "Server Occured some problem" });
     });
+};
+
+exports.addCodeForcesProfile = async (req, res) => {
+  try {
+    const { codeforcesId } = req.body;
+    if (!codeforcesId) {
+      return res
+        .status(400)
+        .json({ error: "Please provide codeforces user id" });
+    }
+
+    const fetchedProfile = await Platform.find({
+      user: req.user._id,
+      name: "Codeforces",
+    });
+
+    if (fetchedProfile.length > 0) {
+      await fetchedProfile[0].remove();
+    }
+
+    let codeforcesProfile = {
+      name: "Codeforces",
+      rating: "",
+      contest: {
+        attended: 0,
+        rating: 0,
+      },
+      noOfSubmission: 0,
+      languageUsed: [],
+      noSolvedQuestions: 0,
+      user: req.user._id,
+    };
+
+    let userProfile = await fetch(
+      `${codechefURL}/user.info?handles=${codeforcesId}`
+    );
+
+    let attendedContest = await fetch(
+      `${codechefURL}/user.rating?handle=${codeforcesId}`
+    );
+
+    let noOfSubmission = await fetch(
+      `${codechefURL}/user.status?handle=${codeforcesId}`
+    );
+
+    attendedContest = await attendedContest.json();
+    userProfile = await userProfile.json();
+    noOfSubmission = await noOfSubmission.json();
+
+    codeforcesProfile.rating = userProfile.result[0].rating || 0;
+
+    codeforcesProfile.contest.rating = codeforcesProfile.rating;
+
+    codeforcesProfile.contest.attended = attendedContest.result.length;
+    codeforcesProfile.noOfSubmission = noOfSubmission.result.length;
+
+    for (let submission of noOfSubmission.result) {
+      if (submission.verdict === "OK") {
+        codeforcesProfile.noSolvedQuestions += 1;
+      }
+      codeforcesProfile.languageUsed.push(submission.programmingLanguage);
+    }
+
+    codeforcesProfile.languageUsed = [
+      ...new Set(codeforcesProfile.languageUsed),
+    ];
+
+    await Platform.create(codeforcesProfile);
+    return res
+      .status(200)
+      .json({ success: true, message: "Codechef platform added" });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, error: "Server Occured some problem" });
+  }
 };

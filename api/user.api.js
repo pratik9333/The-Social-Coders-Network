@@ -8,6 +8,8 @@ const {
   updateUserDetails,
   addGithubId,
   getUsers,
+  sendFriendRequest,
+  addFriend,
 } = require("../controllers/user.controller");
 
 const isLoggedIn = require("../middlewares/authenticate.middleware");
@@ -29,6 +31,12 @@ router.route("/user").put(isLoggedIn, updateUserDetails);
 
 //add github id
 router.route("/user/githubId").put(isLoggedIn, addGithubId);
+
+//send friend request
+router.route("/user/request/friend/:userId").put(isLoggedIn, sendFriendRequest);
+
+//add friend
+router.route("/user/add/friend/:userId").put(isLoggedIn, addFriend);
 
 //get users
 router.route("/users").get(getUsers);

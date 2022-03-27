@@ -1,14 +1,16 @@
 import "./Login.scss"
-import React, { useState, useRef } from 'react'
-import { Link } from "react-router-dom";
+import React, { useState, useRef, useEffect } from 'react'
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { authenticate, isAuthenticated } from "../../API/auth";
 
-function Login({setUser}) {
+function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
     const [error, setError] = useState("");
+    let navigate = useNavigate();
 
     const emailHandler = (e) => {
         setEmail(e.target.value);
@@ -20,45 +22,30 @@ function Login({setUser}) {
 
     const submitHandler = (e) => {
         e.preventDefault();
-        if (email === "") {
-            emailRef.current.focus();
-            setError("Email Field is Required!");
-            return
-        }
-        if(password === ""){
-            passwordRef.current.focus();
-            setError("Password Field is Required!");
-            return
-        }
-        if(email!=="" || password!==""){
-            if(!email.includes("@") && !email.includes(".")){
-                setError("Enter Valid Email ID!");
-                emailRef.current.focus();
-                return;
-            }
-            if(password.length<6){
-                setError("Password must be 6 Digit Long!");
-                passwordRef.current.focus();
-                return;
-            }
-        }
-
-        const credentials = {
-            email,
-            password
-        }
-        
-        axios.post("http://localhost:4000/api/v1/signin",credentials)
-            .then((res)=>{
-                console.log(res)
-                setUser(res.data.user)
-                localStorage.setItem("token",res.data.token);
-            })
-            .catch(async (err)=>{
-                const data = await err.json();
-                console.log(data);
+        axios.post(`http://localhost:4000/api/v1/signin`,{email,password})
+            .then((res => {
+                console.log(res.data.user);
+                setError("")
+                authenticate(res.data.user,res.data.token, () => {
+                    setEmail("");
+                    setPassword("");
+                });
+                window.location.reload(true);
+                navigate('/');
+                setLoading(false);
+            }))
+            .catch((error) => {
+                console.log(error.response.data.error);
+                setError(error.response.data.error)
+                setLoding(false);
             })
     }
+
+    useEffect(() => {
+        if (isAuthenticated()) {
+             navigate('/');
+        }
+    }, []);
 
     return (
         <section id="login-form-section">
@@ -78,8 +65,8 @@ function Login({setUser}) {
                     </ul>
                 </fieldset>
                 {error && <p id="error-msg">{error}</p>}
-                <button type='submit' onClick={submitHandler}>Login</button>
-                <Link to="/signup"><button type="button">Don't have an Account?</button></Link>
+                <button type='submit' style={{cursor: "pointer"}} onClick={submitHandler}>Login</button>
+                <Link to="/signup"><button style={{cursor: "pointer"}} type="button">Don't have an Account?</button></Link>
             </form>
         </section>
     )

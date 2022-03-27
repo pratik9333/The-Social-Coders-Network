@@ -9,7 +9,6 @@ const fileUpload = require("express-fileupload");
 //regular middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({credentials:true,origin:'http://localhost:3000'}));
 //cookies and file middleware
 app.use(cookieParser());
 app.use(
@@ -18,6 +17,7 @@ app.use(
     tempFileDir: "/tmp/",
   })
 );
+app.use(cors());
 
 //morgan middleware
 app.use(morgan("tiny"));

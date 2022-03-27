@@ -17,8 +17,6 @@ exports.signup = async (req, res) => {
 
     const findExistingEmail = await User.findOne({ email });
 
-    console.log(findExistingEmail);
-
     if (findExistingEmail) {
       return res.status(400).json({
         error:
@@ -77,8 +75,9 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: "password is incorrect" });
     }
 
-    getCookieToken(user, res);
+    getCookieToken(user, res, req);
   } catch (error) {
+    console.log(error);
     res
       .status(500)
       .json({ error: "Server has occured some problem, please try again" });
@@ -318,6 +317,9 @@ exports.rateUser = async (req, res) => {
     } else {
       user.downvotes += 1;
     }
+
+    user.votes += 1;
+
     user.rating = (user.upvotes / (user.upvotes + user.downvotes || 1)) * 100;
 
     await user.save();

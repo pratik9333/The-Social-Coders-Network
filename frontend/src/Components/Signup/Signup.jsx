@@ -1,52 +1,57 @@
 import "./Signup.scss"
-import React, { useState } from 'react'
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from 'react'
+import { Link, useNavigate } from "react-router-dom";
+
+
 import {
     nameHandler,
     profilePhotoHandler,
-    leetcodeHandler,
-    codeforcesHandler,
-    githubHandler, emailHandler, passwordHandler, formvalidate
+     emailHandler, passwordHandler
 }
     from "./helpers"
 import axios from "axios";
+import { authenticate, isAuthenticated } from "../../API/auth";
 
 function Signup() {
+   
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const [loading, setLoding] = useState(false);
-    const [message, setMessage] = useState("");
-    const [signupData, setSignUpData] = useState({ name: "", profileImg: {}, leetCode: "", codeforces: "", github: "" });
+    const [loading, setLoading] = useState(false);
+    const [signupData, setSignUpData] = useState({ name: "", profileImg: {} });
+    let navigate = useNavigate();
 
     const submitHandler = async (e) => {
         e.preventDefault();
-        if(!formvalidate( email, password, signupData, setError )){
-            return;
-        }
-        setLoding(true);
-        let temp = JSON.stringify({
+        setLoading(true);
+        let temp = {
             name: signupData.name,
             email,
             password,
-        })
+        }
 
         let data = new FormData();
         data.append("photo", signupData.profileImg);
-        data.append("userDetails", temp)
+        data.append("name", temp.name);
+        data.append("email", temp.email);
+        data.append("password", temp.password);
 
-        axios.post("http://localhost:4000/api/v1/signup", data)
+        axios.post(`http://localhost:4000/api/v1/signup`,data)
             .then((res => {
-                console.log(res.data);
+                console.log(res.data.user);
                 setError("")
-                setMessage("Sucessfull, Now Login");
-                setLoding(false);
+                authenticate(res.data.user,res.data.token, () => {
+                    setEmail("");
+                    setPassword("");
+                });
+                setLoading(false);
+                navigate('/');
+                window.location.reload(true);
             }))
-            .catch((err) => {
-                console.log(err);
-                setMessage("");
-                setError("Something Went Wrong!")
-                setLoding(false);
+            .catch((error) => {
+                setLoading(false);
+                console.log(error.response.data.error);
+                setError(error.response.data.error)
             })
     }
 
@@ -58,6 +63,11 @@ function Signup() {
             </div>
         )
     }
+    useEffect(() => {
+        if (isAuthenticated()) {
+            navigate('/');
+        }
+    }, []);
 
     return (
         <section id="signup-form-section">
@@ -83,24 +93,11 @@ function Signup() {
                                 <label>ProfilePhoto:</label>
                                 <input type="file" id="profile-photo" required accept=".png,.jpeg,.jpg" onChange={(e) => { profilePhotoHandler(e, setSignUpData, signupData) }} />
                             </li>
-                            <li>
-                                <label>LeetCode:</label>
-                                <input type="text" id="leetcodeprofile" required placeholder="LeetCode URL" onChange={(e) => { leetcodeHandler(e, setSignUpData, signupData) }} />
-                            </li>
-                            <li>
-                                <label>CodeForces:</label>
-                                <input type="text" id="codeforcesprofile" required placeholder="Codeforces URL" onChange={(e) => { codeforcesHandler(e, setSignUpData, signupData) }} />
-                            </li>
-                            <li>
-                                <label>Github:</label>
-                                <input type="text" id="github" required placeholder="Github URL" onChange={(e) => { githubHandler(e, setSignUpData, signupData) }} />
-                            </li>
                         </ul>
                     </fieldset>
                     {error && <p id="error-msg">{error}</p>}
-                    {message && <p id="sucess-msg">{message}</p>}
-                    <button type='submit' onClick={submitHandler}>Create Account!</button>
-                    <Link to="/login"><button type="button">Already have an Account?</button></Link>
+                    <button type='submit' style={{cursor: "pointer"}} onClick={submitHandler}>Create Account!</button>
+                    <Link to="/login"><button style={{cursor: "pointer"}} type="button">Already have an Account?</button></Link>
                 </form>
             }
         </section>

@@ -1,7 +1,7 @@
 require("dotenv").config();
+const cors = require("cors");
 const express = require("express");
 const app = express();
-
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const fileUpload = require("express-fileupload");
@@ -9,7 +9,7 @@ const fileUpload = require("express-fileupload");
 //regular middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(cors({credentials:true,origin:'http://localhost:3000'}));
 //cookies and file middleware
 app.use(cookieParser());
 app.use(

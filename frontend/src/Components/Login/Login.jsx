@@ -36,8 +36,8 @@ function Login({setUser}) {
                 emailRef.current.focus();
                 return;
             }
-            if(password.length<8){
-                setError("Password must be 8 Digit Long!");
+            if(password.length<6){
+                setError("Password must be 6 Digit Long!");
                 passwordRef.current.focus();
                 return;
             }
@@ -52,8 +52,12 @@ function Login({setUser}) {
             .then((res)=>{
                 console.log(res)
                 setUser(res.data.user)
+                localStorage.setItem("token",res.data.token);
             })
-            .catch((err)=>{console.log(err);})
+            .catch(async (err)=>{
+                const data = await err.json();
+                console.log(data);
+            })
     }
 
     return (

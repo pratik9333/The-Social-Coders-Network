@@ -6,6 +6,8 @@ const {
   logout,
   getLoggedInUserDetails,
   updateUserDetails,
+  addGithubId,
+  getUsers,
 } = require("../controllers/user.controller");
 
 const isLoggedIn = require("../middlewares/authenticate.middleware");
@@ -25,7 +27,10 @@ router.route("/user").get(isLoggedIn, getLoggedInUserDetails);
 //update user
 router.route("/user").put(isLoggedIn, updateUserDetails);
 
-//get users with coding profiles
-router.route("/users").get(getUserProfiles);
+//add github id
+router.route("/user/githubId").put(isLoggedIn, addGithubId);
+
+//get users
+router.route("/users").get(getUsers);
 
 module.exports = router;

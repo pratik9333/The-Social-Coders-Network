@@ -1,6 +1,7 @@
 const User = require("../models/User.model");
 const getCookieToken = require("../utils/cookieToken");
 const cloudinary = require("cloudinary");
+const Query = require("../utils/query");
 
 exports.signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -149,4 +150,47 @@ exports.updateUserDetails = async (req, res) => {
       .status(500)
       .json({ error: "Server has occured some problem, please try again" });
   }
+};
+
+exports.addGithubId = async (req, res) => {
+  try {
+    if (!req.body.githubId) {
+      return res.status(401).json({ error: "Please provide github id" });
+    }
+    const user = User.findById(req.user._id);
+
+    user.githubId = req.body.githubId;
+
+    await user.save();
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Server has occured some problem, please try again" });
+  }
+};
+
+exports.getUsers = async (req, res) => {
+  const usersCount = await User.countDocuments();
+  const resultPerPage = 5;
+
+  //creating object from our custom class and passing base = User.find(), bigQ = req.query
+  const userObj = new Query(User.find(), req.query);
+
+  userObj.search();
+
+  //limit the products based on search and filter by calling pager function
+  userObj.pager(resultPerPage);
+
+  //requesting the base value that contains products
+  let Users = await userObj.base;
+
+  let filteredUsers = Users.length;
+
+  res.status(200).json({
+    success: true,
+    Users,
+    totalUsersCount: usersCount,
+    filteredUsers: filteredUsers,
+  });
 };

@@ -11,6 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/pratik9333/INNOVATOR_1.git"
   },
+  
   "author": "",
   "license": "ISC",
   "bugs": {
@@ -29,7 +30,7 @@
     "mongoose": "^6.1.7",
     "morgan": "^1.10.0",
     "nanoid": "^3.2.0",
-    "node-fetch": "^3.2.3",
+    "node-fetch": "2.6.1",
     "nodemailer": "^6.7.2",
     "nodemon": "^2.0.15",
     "pupeteer": "^0.0.1",

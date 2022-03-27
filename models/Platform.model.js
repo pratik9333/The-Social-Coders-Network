@@ -12,42 +12,22 @@ const platformSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  technologiesUsed: [
-    {
-      type: String,
-      required: true,
-    },
-  ],
-  noOfCommits: {
-    type: Number,
-    required: true,
-  },
-  noOfRepositories: {
-    type: Number,
-    required: true,
-  },
   rating: {
     type: Number,
     required: true,
   },
-  contestParticipated: {
-    type: Number,
-    required: true,
+  contest: {
+    attended: { type: Number },
+    rating: { type: Number },
+    totalParticipants: { type: Number },
+    topPercentage: { type: Number },
   },
   noOfSubmission: {
     type: Number,
     required: true,
   },
-  accuracy: {
-    type: Number,
-    required: true,
-  },
-  languageUsed: [
-    {
-      type: String,
-      required: true,
-    },
-  ],
+
+  languageUsed: [],
   noSolvedQuestions: {
     type: Number,
     required: true,

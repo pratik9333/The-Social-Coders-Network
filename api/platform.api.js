@@ -1,16 +1,13 @@
 const router = require("express").Router();
 
-const {} = require("../controllers/platform.controller");
+const { addLeetcodeProfile } = require("../controllers/platform.controller");
 
 const isLoggedIn = require("../middlewares/authenticate.middleware");
 
-//add github platform
-router.route("/github").post(isLoggedIn, addGithubPlatform);
-
 //add leetcode platform
-router.route("/leetcode").post(isLoggedIn, addLeetcodePlatform);
+router.route("/platform/leetcode").post(isLoggedIn, addLeetcodeProfile);
 
 //add hackerrank platform
-router.route("/hackerrank").get(isLoggedIn, addHackerrankPlatform);
+//router.route("platform/hackerrank").get(isLoggedIn, addHackerrankPlatform);
 
 module.exports = router;

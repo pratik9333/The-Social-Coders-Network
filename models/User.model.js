@@ -27,11 +27,10 @@ const userSchema = new mongoose.Schema({
       type: String,
     },
   },
-  rating: {
-    type: Number,
-    default: 0,
+  githubId: {
+    type: String,
   },
-  numberCodingProfiles: {
+  rating: {
     type: Number,
     default: 0,
   },

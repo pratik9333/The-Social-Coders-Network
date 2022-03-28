@@ -3,8 +3,7 @@ const User = require("../models/User.model");
 
 const isLoggedIn = async (req, res, next) => {
   try {
-    const token = req.cookies.token;
-    console.log(token);
+    let token = req.cookies.token;
 
     if (!token && req.header("Authorization")) {
       token = req.header("Authorization").replace("Bearer ", "");
@@ -25,6 +24,7 @@ const isLoggedIn = async (req, res, next) => {
     req.user.createdAt = undefined;
     next();
   } catch (error) {
+    console.log(error);
     return res.status(500).send(error);
   }
 };

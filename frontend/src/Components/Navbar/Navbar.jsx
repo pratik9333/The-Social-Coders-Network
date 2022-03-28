@@ -11,13 +11,19 @@ function Navbar() {
             <input type="checkbox" id="menu-bar" />
             <label className="fas fa-bars"></label>
             <nav className="navbar">
-                {!user && <><Link to="/">Home</Link>
+                
+                {!user && <>
+                    <Link to="/">Home</Link>
                     <Link to="/signup">Signup</Link>
                     <Link to="/login">Login</Link></>}
                 {user && <div className="nav-userdeatils">
-                <p className="nav-username">{user.name}</p>
-                <img className="nav-userimage" src={user.photo.url} alt="" />
-                <button onClick={signout}>Logout</button>
+                    <Link to="/">Home</Link>
+                    <Link to="/profile">Profile</Link>
+                    <Link to="/feeds">Feed</Link>
+                    <Link to="/leaderboard">Leaderboard</Link>
+                    <p style={{ marginLeft:"45px"}} className="nav-username">{user.name}</p>
+                    <img style={{ marginRight:"5px"}} className="nav-userimage" src={user.photo.url} alt="" />
+                    <button onClick={signout}>Logout</button>
             </div>}
             </nav>
         </header>

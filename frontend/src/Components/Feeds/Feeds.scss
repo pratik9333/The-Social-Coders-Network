@@ -1,5 +1,15 @@
-.feed-container{
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 80px;
+.feed-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 80px;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 20px;
+}
+.pagination button {
+  padding: 10px 20px;
+  cursor: pointer;
 }

@@ -172,7 +172,7 @@ exports.addGithubId = async (req, res) => {
 exports.getUsers = async (req, res) => {
   try {
     const usersCount = await User.countDocuments();
-    const resultPerPage = 5;
+    const resultPerPage = 7;
 
     //creating object from our custom class and passing base = User.find(), bigQ = req.query
     const userObj = new Query(User.find(), req.query);
@@ -332,20 +332,10 @@ exports.rateUser = async (req, res) => {
   }
 };
 
-// const userObj = new Query(User.find(), req.query);
-
-// userObj.search();
-
-// userObj.pager(resultPerPage);
-
-// let Users = await userObj.base;
-
-// let filteredUsers = Users.length;
-
 exports.getLeaderBoardData = async (req, res, next) => {
   try {
     const usersCount = await User.countDocuments();
-    const resultPerPage = 5;
+    const resultPerPage = 10;
 
     const userObj = new Query(User.find(), req.query);
 
@@ -360,10 +350,12 @@ exports.getLeaderBoardData = async (req, res, next) => {
       success: true,
       data: Users,
       filteredUsers,
+      usersCount,
     });
   } catch (error) {
+    console.log(error);
     return res.status(400).json({
-      error: true,
+      success: false,
       data: error.message,
     });
   }

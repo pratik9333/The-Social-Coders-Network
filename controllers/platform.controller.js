@@ -78,6 +78,9 @@ const getLeetCodeUserDetails = async (username) => {
 
 exports.addLeetcodeProfile = (req, res) => {
   const { leetcodeId } = req.body;
+  if (!leetcodeId) {
+    return res.status(401).json({ error: "Please provide leetcode userid" });
+  }
   const leetcodeProfileDetails = {
     name: "Leetcode",
     rating: "",
@@ -93,6 +96,7 @@ exports.addLeetcodeProfile = (req, res) => {
 
   Platform.find({ user: req.user._id, name: "Leetcode" })
     .then((data) => {
+      user = data;
       if (data.length > 0) {
         Platform.deleteOne({ user: req.user._id })
           .then((data) => {})
@@ -105,11 +109,9 @@ exports.addLeetcodeProfile = (req, res) => {
     })
     .catch((err) => {
       console.log(err);
+      console.log(err);
     });
 
-  if (!leetcodeId) {
-    return res.status(401).json({ error: "Please provide leetcode userid" });
-  }
   getLeetCodeUserDetails(leetcodeId)
     .then((d) => {
       leetcodeProfileDetails.rating = d.data.matchedUser.profile.ranking;
@@ -135,9 +137,11 @@ exports.addLeetcodeProfile = (req, res) => {
       Platform.create(leetcodeProfileDetails)
         .then((data) => {
           console.log(data);
-          return res
-            .status(200)
-            .json({ success: true, message: "Leetcode platform added" });
+          return res.status(200).json({
+            success: true,
+            platform: data,
+            message: "Leetcode platform added",
+          });
         })
         .catch((err) => {
           console.log(err);
@@ -219,10 +223,10 @@ exports.addCodeForcesProfile = async (req, res) => {
       ...new Set(codeforcesProfile.languageUsed),
     ];
 
-    await Platform.create(codeforcesProfile);
+    let platform = await Platform.create(codeforcesProfile);
     return res
       .status(200)
-      .json({ success: true, message: "Codechef platform added" });
+      .json({ success: true, message: "Codechef platform added", platform });
   } catch (error) {
     console.log(error);
     return res

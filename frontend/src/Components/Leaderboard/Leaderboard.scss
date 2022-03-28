@@ -1,0 +1,16 @@
+#leaderboard{
+    margin-top: 15vh;
+    .container{
+        .leaderboard-details{
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+            border-radius: 5px;
+
+            h1{
+                font-size: 32px;
+                font-family: 'Poppins', sans-serif;
+                text-align: center;
+                border-bottom: solid rgb(207, 207, 207) 1px;
+            }
+        }
+    }
+}

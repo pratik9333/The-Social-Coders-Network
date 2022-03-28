@@ -1,22 +1,10 @@
 import React from "react";
-import { Route, useNavigate } from "react-router";
+import { Outlet, Route, Navigate } from "react-router";
 import { isAuthenticated } from "../API/auth";
 
-const PrivateRoute = ({ component: Component, ...rest }) => {
-  let navigate = useNavigate();
-  console.log(isAuthenticated());
-  return (
-    <Route
-      {...rest}
-      render={(props) =>
-        isAuthenticated() ? (
-          <Component {...props} />
-        ) : (
-          navigate("/login", { state: { from: props.location } })
-        )
-      }
-    />
-  );
+const PrivateRoutes = () => {
+  const user = isAuthenticated();
+  return user ? <Outlet /> : <Navigate to="/login" />;
 };
 
-export default PrivateRoute;
+export default PrivateRoutes;

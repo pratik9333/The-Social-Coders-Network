@@ -3,10 +3,12 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { authenticate, isAuthenticated } from "../../API/auth";
+import backend from "../../backend"
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
     const [error, setError] = useState("");
@@ -21,8 +23,9 @@ function Login() {
     }
 
     const submitHandler = (e) => {
+        setLoading(true);
         e.preventDefault();
-        axios.post(`http://localhost:4000/api/v1/signin`,{email,password})
+        axios.post(`${backend}/signin`,{email,password})
             .then((res => {
                 console.log(res.data.user);
                 setError("")
@@ -37,8 +40,16 @@ function Login() {
             .catch((error) => {
                 console.log(error.response.data.error);
                 setError(error.response.data.error)
-                setLoding(false);
+                setLoading(false);
             })
+    }
+    const LoadingComponent = () => {
+        return (
+            <div id="loading-wrapper">
+                <div id="loading-text">LOADING</div>
+                <div id="loading-content"></div>
+            </div>
+        )
     }
 
     useEffect(() => {
@@ -49,7 +60,7 @@ function Login() {
 
     return (
         <section id="login-form-section">
-            <form>
+            {loading ? <LoadingComponent /> : <form>
                 <h2>Login!</h2>
                 <fieldset>
                     <legend>Login</legend>
@@ -65,9 +76,10 @@ function Login() {
                     </ul>
                 </fieldset>
                 {error && <p id="error-msg">{error}</p>}
-                <button type='submit' style={{cursor: "pointer"}} onClick={submitHandler}>Login</button>
-                <Link to="/signup"><button style={{cursor: "pointer"}} type="button">Don't have an Account?</button></Link>
+                <button type='submit' style={{ cursor: "pointer" }} onClick={submitHandler}>Login</button>
+                <Link to="/signup"><button style={{ cursor: "pointer" }} type="button">Don't have an Account?</button></Link>
             </form>
+            }
         </section>
     )
 }

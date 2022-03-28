@@ -6,16 +6,29 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { useState } from 'react';
 import { isAuthenticated } from "../../API/auth";
+import backend from "../../backend"
+
 
 function Feeds() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [feedsData, setFeedsData] = useState([])
+  const [loading, setLoading] = useState(false);
+  const [error, seterror] = useState();
 
   let user = isAuthenticated();
+  const LoadingComponent = () => {
+        return (
+          <div id="loading-wrapper">
+                <div id="loading-text" style={{color: "black"}}>LOADING</div>
+                <div id="loading-content"></div>
+          </div>
+        )
+  }
 
   const fetchUsers = () => {
-    axios.get(`http://localhost:4000/api/v1/users?page=${page}`)
+    setLoading(true);
+    axios.get(`${backend}/users?page=${page}`)
       .then((res) => {
         console.log("feeds data : ", res.data);
         let data = res.data.Users.filter((usr)=>{
@@ -23,8 +36,11 @@ function Feeds() {
             return usr
           }
         })
-        console.log(data);
+        setLoading(false);
         setFeedsData(data);
+      }).catch((error) => {
+        setLoading(false);
+        seterror(error.response.data.error)
       })
   }
 
@@ -51,7 +67,7 @@ function Feeds() {
 
   return (
     <div className="container feed-container">
-      {
+      {loading ? <LoadingComponent /> : <>{
         feedsData.map((user) => {
           return <FeedCard key={user._id} user={user} />
         })
@@ -59,7 +75,7 @@ function Feeds() {
       <div className="pagination">
         <button style={{marginRight: "20px"}} onClick={prevPage}>Prev</button>
          <button onClick={nextPage} >Next</button>
-      </div>
+      </div></>}
     </div>
   )
 }

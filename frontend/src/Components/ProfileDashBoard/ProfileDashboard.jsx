@@ -3,12 +3,16 @@ import React, { useEffect } from 'react'
 import { useState } from "react"
 import { getJWTToken, isAuthenticated } from "../../API/auth";
 import axios from "axios";
+import backend from "../../backend"
+
+
 
 
 
 function ProfileDashboard() {
 
     let user = isAuthenticated();
+    console.log(backend);
    
 
     const fetchPlatformDetails = (platform,platform2) => {
@@ -17,7 +21,7 @@ function ProfileDashboard() {
     headers: { Authorization: `Bearer ${token}` }
   };
         if (platform === "leetcode") {
-            axios.post(`http://localhost:4000/api/v1/platform/${platform}`, { leetcodeId: UserPlatformDetails.leetcodeId },config)
+            axios.post(`${backend}/platform/${platform}`, { leetcodeId: UserPlatformDetails.leetcodeId },config)
                 .then((res) => {
                     console.log("userdata", res.data);
                 })
@@ -26,7 +30,7 @@ function ProfileDashboard() {
                 })
         }
         else {
-            axios.post(`http://localhost:4000/api/v1/platform/${platform}/${UserPlatformDetails.codeforcesId}`, { codeforcesId: UserPlatformDetails.codeforcesId },config)
+            axios.post(`${backend}/platform/${platform}/${UserPlatformDetails.codeforcesId}`, { codeforcesId: UserPlatformDetails.codeforcesId },config)
                 .then((res) => {
                     console.log("userdata", res.data);
                 })

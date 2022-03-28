@@ -17,7 +17,7 @@ function Homepage() {
                     <h3>Social Coding</h3>
                     <p className="lead">The largest and most advanced development platform in the world.</p>
                     <p>It lets you and others to calculate your acutal rating incuding  projects, competitive programming and other professional growth.</p>
-                    {!user ? <Link to="/signup" className="btn">Sign Up</Link> : <Link to="/feed" className="btn">Feeds</Link> }
+                    {!user ? <Link to="/signup" className="btn">Sign Up</Link> : <Link to="/feeds" className="btn">Feeds</Link> }
                 </div>
                 <div className="image">
                     <img src={coding} alt=""/>

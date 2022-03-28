@@ -8,26 +8,7 @@
     transform: translateY(-3.5rem);
   }
 }
-/* media queries  */
-// &:root {
-// 	--secondary: #814096;
-// 	--primary: #0e76a8;
-// 	--blend: linear-gradient(90deg, var(--secondary), var(--primary));
-// }
-// * {
-// 	font-family: 'Poppins', sans-serif;
-// 	margin: 0;
-// 	padding: 0;
-// 	box-sizing: border-box;
-// 	text-decoration: none;
-// 	outline: none;
-// 	border: none;
-// 	text-transform: capitalize;
-// 	&::selection {
-// 		background: var(--primary);
-// 		color: #fff;
-// 	}
-// }
+
 html {
   font-size: 62.5%;
   overflow-x: hidden;

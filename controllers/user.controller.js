@@ -172,7 +172,7 @@ exports.addGithubId = async (req, res) => {
 exports.getUsers = async (req, res) => {
   try {
     const usersCount = await User.countDocuments();
-    const resultPerPage = 7;
+    const resultPerPage = 6;
 
     //creating object from our custom class and passing base = User.find(), bigQ = req.query
     const userObj = new Query(User.find(), req.query);

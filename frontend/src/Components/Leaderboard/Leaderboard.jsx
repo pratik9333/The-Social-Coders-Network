@@ -2,20 +2,35 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { getJWTToken, isAuthenticated } from '../../API/auth';
 import "./Leaderboard.scss"
-import LeaderboardCard from './LeaderboardCard'
+import LeaderboardCard from './LeaderboardCard';
+import backend from "../../backend";
 
 
 function Leaderboard() {
-  const token = getJWTToken()
+  const token = getJWTToken();
+  const [loading, setLoading] = useState(false);
+  const [error, seterror] = useState();
+
+  const LoadingComponent = () => {
+        return (
+          <div id="loading-wrapper">
+                <div id="loading-text" style={{color: "black"}}>LOADING</div>
+                <div id="loading-content"></div>
+          </div>
+        )
+  }
+  
+
   let user = isAuthenticated();
   const [page, setPage] = useState(1);
   const [usersData, setusersData] = useState([])
 const fetchUsers = () => {
   console.log(page);
+  setLoading(true);
   const config = {
     headers: { Authorization: `Bearer ${token}` }
   };
-    axios.get(`http://localhost:4000/api/v1/users/leaderboard?page=${page}`,config)
+    axios.get(`${backend}/users/leaderboard?page=${page}`,config)
       .then((res) => {
         console.log("leaderboard data : ", res.data);
         let data = res.data.data.filter((usr)=>{
@@ -23,7 +38,11 @@ const fetchUsers = () => {
             return usr
           }
         })
+        setLoading(false);
         setusersData(data);
+      }).catch((error) => {
+        setLoading(false);
+        seterror(error.response.data.error)
       })
   }
   useEffect(() => {
@@ -31,7 +50,7 @@ const fetchUsers = () => {
   },[])
   return (
     <div id="leaderboard">
-        <div className="container">
+        {loading ? <LoadingComponent /> : <div className="container">
             <div className="leaderboard-details">
                 <h1>Leaderboard</h1>
                 
@@ -39,7 +58,7 @@ const fetchUsers = () => {
           return <LeaderboardCard key={user._id} name={user.name} votes={user.votes} ranking={user.rating} />
         })}
             </div>
-        </div>
+        </div>}
     </div>
   )
 }

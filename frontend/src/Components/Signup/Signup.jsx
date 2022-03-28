@@ -1,6 +1,7 @@
 import "./Signup.scss"
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from "react-router-dom";
+import backend from "../../backend"
 
 
 import {
@@ -36,7 +37,7 @@ function Signup() {
         data.append("email", temp.email);
         data.append("password", temp.password);
 
-        axios.post(`http://localhost:4000/api/v1/signup`,data)
+        axios.post(`${backend}/signup`,data)
             .then((res => {
                 console.log(res.data.user);
                 setError("")

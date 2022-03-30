@@ -6,6 +6,7 @@ const getCookieToken = (user, res) => {
       Date.now() + process.env.COOKIE_EXPIRES * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
+    SameSite: "None",
   };
 
   //restricting data to pass on frontend
@@ -13,6 +14,7 @@ const getCookieToken = (user, res) => {
   user.__v = undefined;
   user.createdAt = undefined;
 
+  //res.setHeader((SameSite = None));
   res.status(200).cookie("token", token, options).json({
     success: true,
     token: token,

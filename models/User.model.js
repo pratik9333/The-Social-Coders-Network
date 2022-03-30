@@ -58,6 +58,12 @@ const userSchema = new mongoose.Schema({
       ref: "User",
     },
   ],
+  ratedBy: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+    },
+  ],
   createdAt: {
     type: Date,
     default: Date.now,

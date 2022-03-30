@@ -44,9 +44,9 @@ router.route("/user/add/friend/:userId").put(isLoggedIn, addFriend);
 router.route("/user/rate/:userId").put(isLoggedIn, rateUser);
 
 //get users
-router.route("/users").get(getUsers);
+router.route("/users").get(isLoggedIn, getUsers);
 
 // get leaderboard data
-router.route("/users/leaderboard").get(getLeaderBoardData);
+router.route("/users/leaderboard").get(isLoggedIn, getLeaderBoardData);
 
 module.exports = router;

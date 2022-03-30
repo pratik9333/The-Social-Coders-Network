@@ -173,9 +173,8 @@ exports.getUsers = async (req, res) => {
   try {
     const usersCount = await User.countDocuments();
     const resultPerPage = 6;
-
     //creating object from our custom class and passing base = User.find(), bigQ = req.query
-    const userObj = new Query(User.find(), req.query);
+    const userObj = new Query(User.find(), req.query, req.user._id.toString());
 
     userObj.search();
 
@@ -188,10 +187,11 @@ exports.getUsers = async (req, res) => {
     res.status(200).json({
       success: true,
       Users,
-      totalUsersCount: usersCount,
+      totalUsersCount: usersCount - 1,
       filteredUsers: filteredUsers,
     });
   } catch (error) {
+    console.log(error);
     res
       .status(500)
       .json({ error: "Server has occured some problem, please try again" });
@@ -298,17 +298,25 @@ exports.rateUser = async (req, res) => {
 
     const { userId } = req.params;
 
-    if (!userId) {
-      return res.status(400).json({ error: "Please provide user id" });
-    }
-
     if (!up && !down) {
       return res
         .status(400)
         .json({ error: "Please provide upvote or downvote" });
     }
 
+    if (!userId) {
+      return res.status(400).json({ error: "Please provide user id" });
+    }
+
     const user = await User.findById(userId);
+
+    for (let user of user.ratedBy) {
+      if (user._id.toString() === req.user._id.toString()) {
+        return res
+          .status(400)
+          .json({ error: `You already rated ${user.name}` });
+      }
+    }
 
     if (up) {
       user.upvotes += 1;
@@ -317,8 +325,8 @@ exports.rateUser = async (req, res) => {
     }
 
     user.votes += 1;
-
     user.rating = (user.upvotes / (user.upvotes + user.downvotes || 1)) * 100;
+    user.ratedBy.push(req.user._id);
 
     await user.save();
 

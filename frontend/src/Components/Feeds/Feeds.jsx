@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react';
 import axios from 'axios';
 import { useState } from 'react';
-import { isAuthenticated } from "../../API/auth";
+import { getJWTToken, isAuthenticated } from "../../API/auth";
 import backend from "../../backend"
 import Navbar from "../Navbar/Navbar";
 
@@ -16,6 +16,7 @@ function Feeds() {
   const [feedsData, setFeedsData] = useState([])
   const [loading, setLoading] = useState(false);
   const [error, seterror] = useState();
+  let token = getJWTToken();
 
   let user = isAuthenticated();
   const LoadingComponent = () => {
@@ -29,17 +30,13 @@ function Feeds() {
 
   const fetchUsers = () => {
     setLoading(true);
-    axios.get(`${backend}/users?page=${page}`)
+    axios.get(`${backend}/users?page=${page}`, { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => {
         console.log("feeds data : ", res.data);
-        let data = res.data.Users.filter((usr)=>{
-          if(usr._id!==user._id){
-            return usr
-          }
-        })
         setLoading(false);
-        setFeedsData(data);
+        setFeedsData(res.data.Users);
       }).catch((error) => {
+        console.log(error.response.data);
         setLoading(false);
         seterror(error.response.data.error)
       })

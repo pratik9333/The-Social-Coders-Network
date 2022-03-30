@@ -308,10 +308,10 @@ exports.rateUser = async (req, res) => {
       return res.status(400).json({ error: "Please provide user id" });
     }
 
-    const user = await User.findById(userId);
+    let user = await User.findById(userId);
 
-    for (let user of user.ratedBy) {
-      if (user._id.toString() === req.user._id.toString()) {
+    for (let ratingUser of user.ratedBy) {
+      if (ratingUser._id.toString() === req.user._id.toString()) {
         return res
           .status(400)
           .json({ error: `You already rated ${user.name}` });
@@ -334,6 +334,7 @@ exports.rateUser = async (req, res) => {
       .status(200)
       .json({ success: true, message: `${user.name} was rated successfully` });
   } catch (error) {
+    console.log(error);
     res
       .status(500)
       .json({ error: "Server has occured some problem, please try again" });

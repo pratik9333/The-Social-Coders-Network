@@ -17,7 +17,7 @@ app.use(
     tempFileDir: "/tmp/",
   })
 );
-app.use(cors());
+app.use(cors({ credentials: true }));
 
 //morgan middleware
 app.use(morgan("tiny"));

@@ -4,6 +4,7 @@ import { useState } from "react"
 import { getJWTToken, isAuthenticated } from "../../API/auth";
 import axios from "axios";
 import backend from "../../backend"
+import Navbar from "../Navbar/Navbar";
 
 
 
@@ -71,11 +72,11 @@ function ProfileDashboard() {
         fetchPlatformDetails(platform);
     }
 
-    useEffect(() => {
-        
-    })
+   
 
     return (
+        <>
+        <Navbar />
         <section id="profile-dashboard">
             <div className="container">
                 <div className="profile-details">
@@ -121,6 +122,7 @@ function ProfileDashboard() {
                 </div>
             </div>
         </section>
+            </>
     )
 }
 

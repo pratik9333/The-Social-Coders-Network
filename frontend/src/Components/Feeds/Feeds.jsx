@@ -7,6 +7,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import { isAuthenticated } from "../../API/auth";
 import backend from "../../backend"
+import Navbar from "../Navbar/Navbar";
 
 
 function Feeds() {
@@ -66,7 +67,9 @@ function Feeds() {
   }, []);
 
   return (
-    <div className="container feed-container">
+    <>
+      <Navbar />
+      <div className="container feed-container">
       {loading ? <LoadingComponent /> : <>{
         feedsData.map((user) => {
           return <FeedCard key={user._id} user={user} />
@@ -77,6 +80,7 @@ function Feeds() {
          <button onClick={nextPage} >Next</button>
       </div></>}
     </div>
+      </>
   )
 }
 

@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { authenticate, isAuthenticated } from "../../API/auth";
 import backend from "../../backend"
+import Navbar from "../Navbar/Navbar";
+
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -27,20 +29,19 @@ function Login() {
         e.preventDefault();
         axios.post(`${backend}/signin`,{email,password})
             .then((res => {
-                console.log(res.data.user);
+                setLoading(false);
                 setError("")
                 authenticate(res.data.user,res.data.token, () => {
                     setEmail("");
                     setPassword("");
                 });
-                window.location.reload(true);
                 navigate('/');
-                setLoading(false);
+                
             }))
             .catch((error) => {
+                setLoading(false);
                 console.log(error.response.data.error);
                 setError(error.response.data.error)
-                setLoading(false);
             })
     }
     const LoadingComponent = () => {
@@ -59,7 +60,9 @@ function Login() {
     }, []);
 
     return (
-        <section id="login-form-section">
+        <>
+        <Navbar />
+        <section id="login-form-section"> 
             {loading ? <LoadingComponent /> : <form>
                 <h2>Login!</h2>
                 <fieldset>
@@ -81,6 +84,7 @@ function Login() {
             </form>
             }
         </section>
+    </>
     )
 }
 

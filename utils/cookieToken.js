@@ -6,6 +6,7 @@ const getCookieToken = (user, res) => {
       Date.now() + process.env.COOKIE_EXPIRES * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
+    SameSite: "none",
   };
 
   //restricting data to pass on frontend

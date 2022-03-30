@@ -7,11 +7,13 @@ import ficon3 from "./Assets/f-icon3.png";
 import coding from "./Assets/coding.jpg";
 import leaderboard from "./Assets/leaderboard.png";
 import { isAuthenticated } from "../../API/auth";
+import Navbar from "../Navbar/Navbar";
 
 function Homepage() {
     let user = isAuthenticated()
     return (
         <>
+            <Navbar />
             <section className="home" id="home">
                 <div className="content">
                     <h3>Social Coding</h3>

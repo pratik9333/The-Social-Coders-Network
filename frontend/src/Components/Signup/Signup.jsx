@@ -12,6 +12,7 @@ import {
     from "./helpers"
 import axios from "axios";
 import { authenticate, isAuthenticated } from "../../API/auth";
+import Navbar from "../Navbar/Navbar";
 
 function Signup() {
    
@@ -47,7 +48,6 @@ function Signup() {
                 });
                 setLoading(false);
                 navigate('/');
-                window.location.reload(true);
             }))
             .catch((error) => {
                 setLoading(false);
@@ -71,6 +71,8 @@ function Signup() {
     }, []);
 
     return (
+        <>
+            <Navbar />
         <section id="signup-form-section">
             {loading ? <LoadingComponent /> :
                 <form>
@@ -101,7 +103,9 @@ function Signup() {
                     <Link to="/login"><button style={{cursor: "pointer"}} type="button">Already have an Account?</button></Link>
                 </form>
             }
-        </section>
+            </section>
+            
+            </>
     )
 }
 

@@ -4,6 +4,7 @@ import { getJWTToken, isAuthenticated } from '../../API/auth';
 import "./Leaderboard.scss"
 import LeaderboardCard from './LeaderboardCard';
 import backend from "../../backend";
+import Navbar from '../Navbar/Navbar';
 
 
 function Leaderboard() {
@@ -49,7 +50,9 @@ const fetchUsers = () => {
     fetchUsers();
   },[])
   return (
-    <div id="leaderboard">
+    <>
+      <Navbar />
+      <div id="leaderboard">
         {loading ? <LoadingComponent /> : <div className="container">
             <div className="leaderboard-details">
                 <h1>Leaderboard</h1>
@@ -60,6 +63,7 @@ const fetchUsers = () => {
             </div>
         </div>}
     </div>
+      </>
   )
 }
 

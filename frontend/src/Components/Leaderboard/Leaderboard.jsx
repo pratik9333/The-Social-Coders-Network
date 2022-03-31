@@ -10,7 +10,6 @@ import Navbar from '../Navbar/Navbar';
 function Leaderboard() {
   const token = getJWTToken();
   const [loading, setLoading] = useState(false);
-  const [error, seterror] = useState();
 
   const LoadingComponent = () => {
         return (
@@ -43,7 +42,7 @@ const fetchUsers = () => {
         setusersData(data);
       }).catch((error) => {
         setLoading(false);
-        seterror(error.response.data.error)
+        alert("Cannot able to fetch data");
       })
   }
   useEffect(() => {

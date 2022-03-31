@@ -11,14 +11,10 @@ import Navbar from "../Navbar/Navbar";
 
 
 function Feeds() {
-  const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [feedsData, setFeedsData] = useState([])
   const [loading, setLoading] = useState(false);
-  const [error, seterror] = useState();
   let token = getJWTToken();
-
-  let user = isAuthenticated();
   const LoadingComponent = () => {
         return (
           <div id="loading-wrapper">
@@ -32,11 +28,10 @@ function Feeds() {
     setLoading(true);
     axios.get(`${backend}/users?page=${page}`, { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => {
-        console.log("feeds data : ", res.data);
         setLoading(false);
         setFeedsData(res.data.Users);
       }).catch((error) => {
-        console.log(error.response.data);
+        alert("Cannot able to fetch data");
         setLoading(false);
         seterror(error.response.data.error)
       })

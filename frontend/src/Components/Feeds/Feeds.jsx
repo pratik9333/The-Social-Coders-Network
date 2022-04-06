@@ -11,7 +11,7 @@ function Feeds() {
   const [searchtext, setSearchText] = useState('');
   const [PageNumber, setPageNumber] = useState(1);
   const observer = useRef(null);
-  
+ 
   const LoadingComponent = () => {
         return (
           <div id="loading-wrapper">
@@ -22,6 +22,7 @@ function Feeds() {
   }
   const { error, loading, hasMore, feedsData, moreFeedsLoading } = getFeeds(searchtext, PageNumber);
   
+
 
   const lastFeedElementRef = useCallback(node => {
     if (loading) return

@@ -1,14 +1,14 @@
 import "./FeedCard.scss"
-import React from 'react'
+import React, {forwardRef, useRef} from 'react'
 
-function FeedCard({ user }) {
+const FeedCard = forwardRef((props, ref) => {
     return (
-        <section id="feedCard-section">
+        <section id="feedCard-section" ref={ref}>
             <div class="card">
-                <img src={user.photo.url} alt="Img" />
+                <img src={props.user.photo.url} alt="Img" />
                 <div class="details">
-                    <h2>{user.name}</h2>
-                    <p>Rating: {Math.round(user.rating)}</p>
+                    <h2>{props.user.name}</h2>
+                    <p>Rating: {Math.round(props.user.rating)}</p>
                 </div>
                 <div className="rating-controls">
                     <button className="thumbs-up"><i class="fa-solid fa-thumbs-up"></i></button>
@@ -18,6 +18,6 @@ function FeedCard({ user }) {
             </div>
         </section>
     )
-}
+});
 
 export default FeedCard

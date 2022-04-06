@@ -1,20 +1,17 @@
 import "./Feeds.scss"
 import React from 'react'
 import FeedCard from './FeedCard'
-import { useNavigate } from 'react-router-dom'
-import { useEffect } from 'react';
-import axios from 'axios';
-import { useState } from 'react';
-import { getJWTToken, isAuthenticated } from "../../API/auth";
-import backend from "../../backend"
+import { useState, useRef, useCallback } from 'react';
 import Navbar from "../Navbar/Navbar";
+import getFeeds from "./getFeeds";
+
 
 
 function Feeds() {
-  const [page, setPage] = useState(1);
-  const [feedsData, setFeedsData] = useState([])
-  const [loading, setLoading] = useState(false);
-  let token = getJWTToken();
+  const [searchtext, setSearchText] = useState('');
+  const [PageNumber, setPageNumber] = useState(1);
+  const observer = useRef(null);
+ 
   const LoadingComponent = () => {
         return (
           <div id="loading-wrapper">
@@ -23,54 +20,47 @@ function Feeds() {
           </div>
         )
   }
+  const { error, loading, hasMore, feedsData, moreFeedsLoading } = getFeeds(searchtext, PageNumber);
+  
 
-  const fetchUsers = () => {
-    setLoading(true);
-    axios.get(`${backend}/users?page=${page}`, { headers: { Authorization: `Bearer ${token}` } })
-      .then((res) => {
-        setLoading(false);
-        setFeedsData(res.data.Users);
-      }).catch((error) => {
-        alert("Cannot able to fetch data");
-        setLoading(false);
-        seterror(error.response.data.error)
-      })
+
+  const lastFeedElementRef = useCallback(node => {
+    if (loading) return
+    if (observer.current) observer.current.disconnect()
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        setPageNumber(page => page + 1)
+      }
+    })
+    if (node) observer.current.observe(node)
+  }, [loading, hasMore])
+
+  const handleQuery = (e) => {
+    setSearchText(e.target.value)
+    setPageNumber(1);
   }
-
-  const prevPage = () => {
-    if (page > 1) {
-      setPage(page-1);
-    }
-     fetchUsers();
-    
-  }
-
-  const nextPage = () => {
-    setPage(page+1);
-    setTimeout(() => {
-      fetchUsers();
-    }, 1500);
-  }
-
-  useEffect(() => {
-    
-    setPage(1);
-    fetchUsers();
-  }, []);
-
   return (
     <>
       <Navbar />
       <div className="container feed-container">
-      {loading ? <LoadingComponent /> : <>{
-        feedsData.map((user) => {
-          return <FeedCard key={user._id} user={user} />
+        {loading && <LoadingComponent />}
+        <div style={{display: "flex", justifyContent: "space-between", width : "100%", marginTop: "25px"}}>
+          <h1 style={{ fontSize: "50px", borderBottom: "1px solid #f2f2f2" }}>Feeds</h1>
+          <input  className="custom-style-input" type="text" onChange={handleQuery } placeholder="Search Users..." />
+        </div>
+        <div className="cards-row">
+          { feedsData.map((user,index) => {
+            if (feedsData.length === index + 1) {
+              return <FeedCard ref={lastFeedElementRef} key={user} user={user}  />
+            }
+            else {
+              return <FeedCard key={user._id} user={user} />
+            }
         })
-      }
-      <div className="pagination">
-        <button style={{marginRight: "20px"}} onClick={prevPage}>Prev</button>
-         <button onClick={nextPage} >Next</button>
-      </div></>}
+          }
+        </div>
+        {moreFeedsLoading && !loading ? <h2 style={{textAlign: "center", fontSize: "18px"}}>Loading ....</h2> : ""}
+        {error ? <h2>{ error}</h2> : ""}
     </div>
       </>
   )

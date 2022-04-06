@@ -81,7 +81,7 @@ function ProfileDashboard() {
             <div className="container">
                 <div className="profile-details">
                     <div class="profilecont">
-                        <div class="ava">
+                        <div className="ava">
                             <img src={user.photo.url} alt="ava" />
                             <h4>{ user.name}</h4>
                         </div>
@@ -102,7 +102,7 @@ function ProfileDashboard() {
                             }} placeholder="Enter your LeetCode ID" />
                             <button onClick={() => {
                                 submitDetails("leetcode");
-                            }}><i class="fa-solid fa-check"></i></button>
+                            }}><i className="fa-solid fa-check"></i></button>
                         </div>
                         }
                         {!hascodeforces && <div>
@@ -110,7 +110,7 @@ function ProfileDashboard() {
                             <input type="text" onChange={(e) => {
                                 setUserPlatformDetails({...UserPlatformDetails, codeforcesId: e.target.value})
                             }} placeholder="Enter your Codeforces ID" />
-                            <button><i class="fa-solid fa-check"></i></button>
+                            <button><i className="fa-solid fa-check"></i></button>
                         </div>
                         }
 

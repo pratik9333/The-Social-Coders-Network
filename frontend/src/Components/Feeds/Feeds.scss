@@ -3,6 +3,27 @@
   flex-wrap: wrap;
   margin-top: 80px;
 }
+.cards-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 33px;
+  width: 100%;
+  margin-top: 20px;
+}
+.custom-style-input {
+  margin: 15px 15px;
+  padding: 12px 19px;
+  border: none;
+  outline: none;
+  border-radius: 11px;
+  width: 23%;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  font-size: medium;
+}
+::placeholder {
+  color: #7c6e6e;
+  font-size: medium;
+}
 .pagination {
   display: flex;
   justify-content: center;

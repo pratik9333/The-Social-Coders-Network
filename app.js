@@ -20,7 +20,7 @@ app.use(
 app.use(cors({ credentials: true }));
 
 //morgan middleware
-app.use(morgan("tiny"));
+//app.use(morgan("tiny"));
 
 //import all routes here
 const user = require("./api/user.api");
@@ -29,6 +29,8 @@ const platform = require("./api/platform.api");
 app.get("/", (req, res) => {
   res.json({ success: true, message: "Greetings from our api" });
 });
+
+// calling setInterval for deleting old ratedByUsers
 
 //router middleware
 app.use("/api/v1", user);

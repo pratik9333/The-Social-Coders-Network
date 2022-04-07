@@ -4,6 +4,7 @@ export const signout = () => {
   if (typeof window !== "undefined") {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    window.location.reload(true);
     return fetch(`http://localhost:4000/api/v1/signout`, {
       method: "GET",
     })

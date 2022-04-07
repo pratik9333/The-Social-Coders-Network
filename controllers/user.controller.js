@@ -3,6 +3,8 @@ const getCookieToken = require("../utils/cookieToken");
 const cloudinary = require("cloudinary");
 const Query = require("../utils/query");
 
+let myInterval;
+
 exports.signup = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -326,9 +328,17 @@ exports.rateUser = async (req, res) => {
 
     user.votes += 1;
     user.rating = (user.upvotes / (user.upvotes + user.downvotes || 1)) * 100;
+    if (user.ratedBy.length == 0) {
+      console.log("yes null", user.name);
+      myInterval = null;
+    }
     user.ratedBy.push(req.user._id);
 
     await user.save();
+
+    if (myInterval == null) {
+      setTheInterval(user._id);
+    }
 
     res
       .status(200)
@@ -368,4 +378,21 @@ exports.getLeaderBoardData = async (req, res, next) => {
       data: error.message,
     });
   }
+};
+
+const setTheInterval = (id) => {
+  console.log("line 381 - settingInterval");
+  myInterval = setInterval(async () => {
+    const user = await User.findById(id);
+    if (user.ratedBy.length === 0) {
+      clearInterval(myInterval);
+      console.log(
+        `Interval cleared for ${user.name} and interval is${myInterval}`
+      );
+    } else {
+      console.log("line   11 - removingRatedUsers");
+      user.ratedBy.pop();
+      await user.save();
+    }
+  }, 40000);
 };

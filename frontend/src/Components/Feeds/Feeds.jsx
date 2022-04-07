@@ -21,8 +21,6 @@ function Feeds() {
         )
   }
   const { error, loading, hasMore, feedsData, moreFeedsLoading } = getFeeds(searchtext, PageNumber);
-  
-
 
   const lastFeedElementRef = useCallback(node => {
     if (loading) return

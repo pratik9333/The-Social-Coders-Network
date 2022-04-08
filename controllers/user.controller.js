@@ -2,8 +2,13 @@ const User = require("../models/User.model");
 const getCookieToken = require("../utils/cookieToken");
 const cloudinary = require("cloudinary");
 const Query = require("../utils/query");
+const {
+  ToadScheduler,
+  SimpleIntervalJob,
+  AsyncTask,
+} = require("toad-scheduler");
 
-let myInterval;
+const scheduler = new ToadScheduler();
 
 exports.signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -330,15 +335,11 @@ exports.rateUser = async (req, res) => {
     user.rating = (user.upvotes / (user.upvotes + user.downvotes || 1)) * 100;
     if (user.ratedBy.length == 0) {
       console.log("yes null", user.name);
-      myInterval = null;
+      setTheInterval(user._id);
     }
     user.ratedBy.push(req.user._id);
 
     await user.save();
-
-    if (myInterval == null) {
-      setTheInterval(user._id);
-    }
 
     res
       .status(200)
@@ -351,7 +352,7 @@ exports.rateUser = async (req, res) => {
   }
 };
 
-exports.getLeaderBoardData = async (req, res, next) => {
+exports.getLeaderBoardData = async (req, res) => {
   try {
     const usersCount = await User.countDocuments();
     const resultPerPage = 10;
@@ -381,18 +382,24 @@ exports.getLeaderBoardData = async (req, res, next) => {
 };
 
 const setTheInterval = (id) => {
-  console.log("line 381 - settingInterval");
-  myInterval = setInterval(async () => {
-    const user = await User.findById(id);
-    if (user.ratedBy.length === 0) {
-      clearInterval(myInterval);
-      console.log(
-        `Interval cleared for ${user.name} and interval is${myInterval}`
-      );
-    } else {
-      console.log("line   11 - removingRatedUsers");
-      user.ratedBy.pop();
-      await user.save();
+  const task = new AsyncTask(`remove user task`, async () => {
+    try {
+      const user = await User.findById(id);
+      if (user.ratedBy.length === 0) {
+        scheduler.stopById(`task ${id}`);
+        scheduler.removeById(`task ${id}`);
+        console.log(`${user.name} job was removed`);
+      } else {
+        console.log("line   11 - removingRatedUsers from = ", user.name);
+        user.ratedBy.pop();
+        await user.save();
+      }
+    } catch (error) {
+      console.log(error);
     }
-  }, 40000);
+  });
+
+  const job = new SimpleIntervalJob({ minutes: 1 }, task, `task ${id}`);
+  scheduler.addSimpleIntervalJob(job);
+  console.log(scheduler);
 };

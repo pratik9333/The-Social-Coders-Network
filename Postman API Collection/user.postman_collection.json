@@ -1,0 +1,299 @@
+{
+	"info": {
+		"_postman_id": "3f32840a-0d88-486d-9330-b68ae55b6501",
+		"name": "user",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "omesh",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "omesh@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "text"
+						},
+						{
+							"key": "photo",
+							"type": "file",
+							"src": "/Users/pratikaswani/Downloads/man2.jpeg"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{DOMAIN}}/signup",
+					"host": [
+						"{{DOMAIN}}"
+					],
+					"path": [
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "signin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Pratik Aswani",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "email",
+							"value": "kiran@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "text"
+						},
+						{
+							"key": "photo",
+							"type": "file",
+							"src": [],
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "{{DOMAIN}}/signin",
+					"host": [
+						"{{DOMAIN}}"
+					],
+					"path": [
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "rate user",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"up\": 1\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{DOMAIN}}/user/rate/624e9f0f49b376b5b81b9b73",
+					"host": [
+						"{{DOMAIN}}"
+					],
+					"path": [
+						"user",
+						"rate",
+						"624e9f0f49b376b5b81b9b73"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "signout",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{DOMAIN}}/signout",
+					"host": [
+						"{{DOMAIN}}"
+					],
+					"path": [
+						"signout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getLoggedInUserDetails",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{DOMAIN}}/user",
+					"host": [
+						"{{DOMAIN}}"
+					],
+					"path": [
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateUserDetails",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Pratik Aswani",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "pratik@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "text"
+						},
+						{
+							"key": "photo",
+							"type": "file",
+							"src": "/Users/pratikaswani/Downloads/211862101868889.Y3JvcCwxMzc3LDEwNzcsNDUzLDIyNQ.jpg",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "{{DOMAIN}}/user",
+					"host": [
+						"{{DOMAIN}}"
+					],
+					"path": [
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getUsers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{DOMAIN}}/users?page=1",
+					"host": [
+						"{{DOMAIN}}"
+					],
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "sendFriendRequest",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{DOMAIN}}/user/request/friend/62445852fd1504b3656e79ea",
+					"host": [
+						"{{DOMAIN}}"
+					],
+					"path": [
+						"user",
+						"request",
+						"friend",
+						"62445852fd1504b3656e79ea"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addFriend",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{DOMAIN}}/user/add/friend/6240e917ab1496791729d1bd",
+					"host": [
+						"{{DOMAIN}}"
+					],
+					"path": [
+						"user",
+						"add",
+						"friend",
+						"6240e917ab1496791729d1bd"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Leaderboard",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"up\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{DOMAIN}}/users/leaderboard?page=2",
+					"host": [
+						"{{DOMAIN}}"
+					],
+					"path": [
+						"users",
+						"leaderboard"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

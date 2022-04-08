@@ -1,0 +1,64 @@
+{
+	"info": {
+		"_postman_id": "6dbb6748-135b-49a3-8b9e-dd41e228f576",
+		"name": "Platform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "addGithubPlatform",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"codeforcesId\": \"tet\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{DOMAIN}}/platform/codeforces",
+					"host": [
+						"{{DOMAIN}}"
+					],
+					"path": [
+						"platform",
+						"codeforces"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addLeetcodePlatform",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"codeforcesId\": \"tourist\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{DOMAIN}}/platform/codeforces/pratik9333",
+					"host": [
+						"{{DOMAIN}}"
+					],
+					"path": [
+						"platform",
+						"codeforces",
+						"pratik9333"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

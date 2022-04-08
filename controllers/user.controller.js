@@ -301,15 +301,7 @@ exports.addFriend = async (req, res) => {
 
 exports.rateUser = async (req, res) => {
   try {
-    const { up, down } = req.body;
-
-    const { userId } = req.params;
-
-    if (!up && !down) {
-      return res
-        .status(400)
-        .json({ error: "Please provide upvote or downvote" });
-    }
+    const { userId, action } = req.params;
 
     if (!userId) {
       return res.status(400).json({ error: "Please provide user id" });
@@ -325,7 +317,7 @@ exports.rateUser = async (req, res) => {
       }
     }
 
-    if (up) {
+    if (action === "upvote") {
       user.upvotes += 1;
     } else {
       user.downvotes += 1;
@@ -399,7 +391,7 @@ const setTheInterval = (id) => {
     }
   });
 
-  const job = new SimpleIntervalJob({ minutes: 1 }, task, `task ${id}`);
+  const job = new SimpleIntervalJob({ days: 3 }, task, `task ${id}`);
   scheduler.addSimpleIntervalJob(job);
   console.log(scheduler);
 };

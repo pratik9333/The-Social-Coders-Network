@@ -8,7 +8,7 @@ import backend from "../../backend";
 const FeedCard = forwardRef((props, ref) => {
 
     const token = getJWTToken();
-    const loggedUser = isAuthenticated()
+    const loggedUser = isAuthenticated();
 
     const rateUser = (action,userId) => {
         axios({
@@ -33,6 +33,36 @@ const FeedCard = forwardRef((props, ref) => {
             alert(error.response.data.error);
         })
     }
+
+
+    const renderSwitch = (param,user) => {
+        switch (param) {
+            case "friendRequest":
+                if (user.friendRequests.length > 0) {
+                    for (let userId of user.friendRequests) {
+                        if (userId.toString() == loggedUser._id.toString())
+                            return true;
+                    }
+                    return false;
+                }
+                else {
+                    return false;
+                }
+            case "alreadyFriends":
+                if (user.friends.length > 0) {
+                    for (let userId of user.friends) {
+                        if (userId.toString() == loggedUser._id.toString())
+                            return true;
+                    }
+                    return false;
+                }
+                else {
+                    return false;
+                }
+        }
+    }
+
+
     return (
         <section id="feedCard-section" ref={ref}>
             <div class="card">
@@ -43,15 +73,13 @@ const FeedCard = forwardRef((props, ref) => {
                 </div>
                 <div className="rating-controls">
                     <button className="thumbs-up" onClick={() => rateUser("upvote", props.user._id)}><i class="fa-solid fa-thumbs-up"></i></button>
-                    <button className="thumbs-down" onClick={() => rateUser("downvote",props.user._id)}><i class="fa-solid fa-thumbs-down"></i></button>
-                    {props.user.friendRequests.length > 0 ? props.user.friendRequests.map((userIds) => {
-                        if (userIds.toString() === loggedUser._id.toString()) {
-                            return <button key={userIds} disabled={true} className="sent-friend-req-btn"><i class="fa-solid fa-user-clock"></i></button>
-                        }
-                        else {
-                            return <button className="add-friend-btn" onClick={() => sendFriendRequest(props.user._id)}><i class="fa-solid fa-user-plus"></i></button>
-                        }
-                    }) : <button className="add-friend-btn" onClick={() => sendFriendRequest(props.user._id)}><i class="fa-solid fa-user-plus"></i></button>}
+                    <button className="thumbs-down" onClick={() => rateUser("downvote", props.user._id)}><i class="fa-solid fa-thumbs-down"></i></button>
+                    {renderSwitch("friendRequest", props.user) == true ?
+                        <button className="sent-friend-req-btn"><i class="fa-solid fa-user-clock"></i></button> :
+                        renderSwitch("alreadyFriends", props.user) == true ?
+                        <button className="friends-btn"><i class="fa-solid fa-user-check"></i></button> :
+                        <button className="add-friend-btn" onClick={() => sendFriendRequest(props.user._id)}><i class="fa-solid fa-user-plus"></i></button>
+                    }
                 </div>
             </div>
         </section>

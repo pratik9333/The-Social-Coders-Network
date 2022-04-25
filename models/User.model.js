@@ -27,8 +27,17 @@ const userSchema = new mongoose.Schema({
       type: String,
     },
   },
-  githubId: {
+  githubProfile: {
     type: String,
+    required: true,
+  },
+  leetcodeProfile: {
+    type: String,
+    required: true,
+  },
+  codechefProfile: {
+    type: String,
+    required: true,
   },
   rating: {
     type: Number,
@@ -60,8 +69,13 @@ const userSchema = new mongoose.Schema({
   ],
   ratedBy: [
     {
-      type: mongoose.Schema.ObjectId,
-      ref: "User",
+      user: {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+      expiryTime: {
+        type: Number,
+      },
     },
   ],
   createdAt: {

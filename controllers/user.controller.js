@@ -2,13 +2,10 @@ const User = require("../models/User.model");
 const getCookieToken = require("../utils/cookieToken");
 const cloudinary = require("cloudinary");
 const Query = require("../utils/query");
-const {
-  ToadScheduler,
-  SimpleIntervalJob,
-  AsyncTask,
-} = require("toad-scheduler");
 
-const scheduler = new ToadScheduler();
+// 1 min = 60,000 milliseconds
+const oneMinToMilli = 60_000;
+const updateCycle = 30 * oneMinToMilli;
 
 exports.signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -180,6 +177,7 @@ exports.getUsers = async (req, res) => {
   try {
     const usersCount = await User.countDocuments();
     const resultPerPage = 6;
+
     //creating object from our custom class and passing base = User.find(), bigQ = req.query
     const userObj = new Query(User.find(), req.query, req.user._id.toString());
 
@@ -325,10 +323,6 @@ exports.rateUser = async (req, res) => {
 
     user.votes += 1;
     user.rating = (user.upvotes / (user.upvotes + user.downvotes || 1)) * 100;
-    if (user.ratedBy.length == 0) {
-      console.log("yes null", user.name);
-      setTheInterval(user._id);
-    }
     user.ratedBy.push(req.user._id);
 
     await user.save();
@@ -371,27 +365,4 @@ exports.getLeaderBoardData = async (req, res) => {
       data: error.message,
     });
   }
-};
-
-const setTheInterval = (id) => {
-  const task = new AsyncTask(`remove user task`, async () => {
-    try {
-      const user = await User.findById(id);
-      if (user.ratedBy.length === 0) {
-        scheduler.stopById(`task ${id}`);
-        scheduler.removeById(`task ${id}`);
-        console.log(`${user.name} job was removed`);
-      } else {
-        console.log("line   11 - removingRatedUsers from = ", user.name);
-        user.ratedBy.pop();
-        await user.save();
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  });
-
-  const job = new SimpleIntervalJob({ days: 3 }, task, `task ${id}`);
-  scheduler.addSimpleIntervalJob(job);
-  console.log(scheduler);
 };

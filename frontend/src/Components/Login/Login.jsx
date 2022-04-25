@@ -27,17 +27,22 @@ function Login() {
     const submitHandler = (e) => {
         setLoading(true);
         e.preventDefault();
-        axios.post(`${backend}/signin`,{email,password})
-            .then((res => {
+        fetch(`${backend}/signin`,{
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({email,password})
+        }).then((res) => res.json())
+            .then(data => {
+                console.log(data);
                 setLoading(false);
                 setError("")
-                authenticate(res.data.user,res.data.token, () => {
-                    setEmail("");
-                    setPassword("");
-                });
+                // authenticate(data.user,data.token, () => {
+                //     setEmail("");
+                //     setPassword("");
+                // });
                 navigate('/');
                 
-            }))
+            })
             .catch((error) => {
                 setLoading(false);
                 console.log(error.response.data.error);

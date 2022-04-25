@@ -85,6 +85,19 @@
         }
       }
 
+      .friends-btn {
+        background-color: transparent;
+        border: solid rgb(32, 71, 24);
+        color: rgb(32, 71, 24);
+        border-radius: 4px;
+        transition: background-color 0.5s;
+
+        &:hover {
+          background-color: rgb(32, 71, 24);
+          color: white;
+        }
+      }
+
       .add-friend-btn {
         background-color: transparent;
         border: solid rgb(14, 133, 212) 2px;

@@ -5,20 +5,15 @@ import "./Leaderboard.scss"
 import LeaderboardCard from './LeaderboardCard';
 import backend from "../../backend";
 import Navbar from '../Navbar/Navbar';
+import { LoadingComponent } from '../Loading/Loading';
+
 
 
 function Leaderboard() {
   const token = getJWTToken();
   const [loading, setLoading] = useState(false);
 
-  const LoadingComponent = () => {
-        return (
-          <div id="loading-wrapper">
-                <div id="loading-text" style={{color: "black"}}>LOADING</div>
-                <div id="loading-content"></div>
-          </div>
-        )
-  }
+  
   
 
   let user = isAuthenticated();

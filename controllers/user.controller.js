@@ -3,22 +3,42 @@ const getCookieToken = require("../utils/cookieToken");
 const cloudinary = require("cloudinary");
 const Query = require("../utils/query");
 const {
-  ToadScheduler,
-  SimpleIntervalJob,
-  AsyncTask,
-} = require("toad-scheduler");
+  addCodeForcesProfile,
+  addLeetcodeProfile,
+  addGithubProfile,
+} = require("./platform.controller");
 
-const scheduler = new ToadScheduler();
+const Platform = require("../models/Platform.model");
+
+// 1 min = 60,000 milliseconds
+const oneMinToMilli = 60_000;
+const updateCycle = 30 * oneMinToMilli;
 
 exports.signup = async (req, res) => {
-  const { name, email, password } = req.body;
+  const {
+    name,
+    email,
+    password,
+    leetcodeId,
+    codeforcesId,
+    codechefId,
+    githubId,
+  } = req.body;
 
   try {
     if (!req.files) {
       return res.status(400).json({ error: "Photo is required to signup" });
     }
 
-    if (!name || !email || !password) {
+    if (
+      !name ||
+      !email ||
+      !password ||
+      !leetcodeId ||
+      !githubId ||
+      !codeforcesId ||
+      !codechefId
+    ) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
@@ -45,10 +65,15 @@ exports.signup = async (req, res) => {
       name,
       email,
       password,
+      githubProfile: githubId,
+      leetcodeProfile: leetcodeId,
+      codechefProfile: codechefId,
+      codeforcesProfile: codeforcesId,
       photo: {
         id: result.public_id,
         url: result.secure_url,
       },
+      nextUpdateCycle: new Date().getTime(),
     });
 
     //this will create token, store in cookie and will send response to frontend
@@ -103,10 +128,46 @@ exports.logout = async (req, res) => {
   });
 };
 
-exports.getLoggedInUserDetails = (req, res) => {
-  const user = req.user;
-  //sending user details back if logged in
-  res.status(200).json({ success: true, user });
+exports.getUserDashboard = async (req, res) => {
+  const loggedUser = await User.findById(req.user._id);
+
+  let userProfile = {
+    user: loggedUser,
+    codingProfiles: {
+      leetcode: null,
+      codeforces: null,
+      github: null,
+    },
+  };
+
+  const currDate = new Date().getTime();
+  const nextUpdateCycle = loggedUser.nextUpdateCycle;
+
+  if (currDate >= nextUpdateCycle) {
+    // getting promises and updating coding profile details
+    userProfile.codingProfiles.codeforces = await addCodeForcesProfile(req);
+    userProfile.codingProfiles.leetcode = await addLeetcodeProfile(req);
+    userProfile.codingProfiles.github = await addGithubProfile(req);
+
+    //updating next update cycle
+    loggedUser.nextUpdateCycle = new Date().getTime() + updateCycle;
+
+    await loggedUser.save();
+  } else {
+    const userCodingPlatforms = await Platform.find({ user: req.user._id });
+
+    for (let platform of userCodingPlatforms) {
+      if (platform.name === "Leetcode") {
+        userProfile.codingProfiles.leetcode = platform;
+      } else if (platform.name === "Github") {
+        userProfile.codingProfiles.github = platform;
+      } else {
+        userProfile.codingProfiles.codeforces = platform;
+      }
+    }
+  }
+
+  return res.status(200).json({ success: true, userProfile });
 };
 
 exports.updateUserDetails = async (req, res) => {
@@ -158,28 +219,11 @@ exports.updateUserDetails = async (req, res) => {
   }
 };
 
-exports.addGithubId = async (req, res) => {
-  try {
-    if (!req.body.githubId) {
-      return res.status(401).json({ error: "Please provide github id" });
-    }
-    const user = User.findById(req.user._id);
-
-    user.githubId = req.body.githubId;
-
-    await user.save();
-    res.status(200).json({ success: true });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Server has occured some problem, please try again" });
-  }
-};
-
 exports.getUsers = async (req, res) => {
   try {
     const usersCount = await User.countDocuments();
     const resultPerPage = 6;
+
     //creating object from our custom class and passing base = User.find(), bigQ = req.query
     const userObj = new Query(User.find(), req.query, req.user._id.toString());
 
@@ -325,10 +369,6 @@ exports.rateUser = async (req, res) => {
 
     user.votes += 1;
     user.rating = (user.upvotes / (user.upvotes + user.downvotes || 1)) * 100;
-    if (user.ratedBy.length == 0) {
-      console.log("yes null", user.name);
-      setTheInterval(user._id);
-    }
     user.ratedBy.push(req.user._id);
 
     await user.save();
@@ -371,27 +411,4 @@ exports.getLeaderBoardData = async (req, res) => {
       data: error.message,
     });
   }
-};
-
-const setTheInterval = (id) => {
-  const task = new AsyncTask(`remove user task`, async () => {
-    try {
-      const user = await User.findById(id);
-      if (user.ratedBy.length === 0) {
-        scheduler.stopById(`task ${id}`);
-        scheduler.removeById(`task ${id}`);
-        console.log(`${user.name} job was removed`);
-      } else {
-        console.log("line   11 - removingRatedUsers from = ", user.name);
-        user.ratedBy.pop();
-        await user.save();
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  });
-
-  const job = new SimpleIntervalJob({ days: 3 }, task, `task ${id}`);
-  scheduler.addSimpleIntervalJob(job);
-  console.log(scheduler);
 };

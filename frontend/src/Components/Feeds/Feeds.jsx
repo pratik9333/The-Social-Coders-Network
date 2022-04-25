@@ -4,6 +4,7 @@ import FeedCard from './FeedCard'
 import { useState, useRef, useCallback } from 'react';
 import Navbar from "../Navbar/Navbar";
 import getFeeds from "./getFeeds";
+import { LoadingComponent } from "../Loading/Loading";
 
 
 
@@ -12,14 +13,6 @@ function Feeds() {
   const [PageNumber, setPageNumber] = useState(1);
   const observer = useRef(null);
  
-  const LoadingComponent = () => {
-        return (
-          <div id="loading-wrapper">
-                <div id="loading-text" style={{color: "black"}}>LOADING</div>
-                <div id="loading-content"></div>
-          </div>
-        )
-  }
   const { error, loading, hasMore, feedsData, moreFeedsLoading } = getFeeds(searchtext, PageNumber);
 
   const lastFeedElementRef = useCallback(node => {

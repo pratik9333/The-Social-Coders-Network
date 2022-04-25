@@ -4,9 +4,8 @@ const {
   signup,
   login,
   logout,
-  getLoggedInUserDetails,
+  getUserDashboard,
   updateUserDetails,
-  addGithubId,
   getUsers,
   sendFriendRequest,
   addFriend,
@@ -25,14 +24,11 @@ router.route("/signin").post(login);
 //logout route
 router.route("/signout").get(isLoggedIn, logout);
 
-//logged in user details
-router.route("/user").get(isLoggedIn, getLoggedInUserDetails);
+//get user dashboard
+router.route("/user/dashboard").get(isLoggedIn, getUserDashboard);
 
 //update user
 router.route("/user").put(isLoggedIn, updateUserDetails);
-
-//add github id
-router.route("/user/githubId").put(isLoggedIn, addGithubId);
 
 //send friend request
 router.route("/user/request/friend/:userId").put(isLoggedIn, sendFriendRequest);

@@ -27,8 +27,21 @@ const userSchema = new mongoose.Schema({
       type: String,
     },
   },
-  githubId: {
+  githubProfile: {
     type: String,
+    required: true,
+  },
+  leetcodeProfile: {
+    type: String,
+    required: true,
+  },
+  codechefProfile: {
+    type: String,
+    required: true,
+  },
+  codeforcesProfile: {
+    type: String,
+    required: true,
   },
   rating: {
     type: Number,
@@ -60,14 +73,20 @@ const userSchema = new mongoose.Schema({
   ],
   ratedBy: [
     {
-      type: mongoose.Schema.ObjectId,
-      ref: "User",
+      user: {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+      expiryTime: {
+        type: Number,
+      },
     },
   ],
   createdAt: {
     type: Date,
     default: Date.now,
   },
+  nextUpdateCycle: { type: Number, required: true },
 });
 
 //encrypt password before save - hooks

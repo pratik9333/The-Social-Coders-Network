@@ -5,8 +5,6 @@ const getCookieToken = (user, res) => {
     expires: new Date(
       Date.now() + process.env.COOKIE_EXPIRES * 24 * 60 * 60 * 1000
     ),
-    httpOnly: true,
-    SameSite: "none",
   };
 
   //restricting data to pass on frontend
@@ -14,8 +12,19 @@ const getCookieToken = (user, res) => {
   user.__v = undefined;
   user.createdAt = undefined;
 
+  res.setHeader("Access-Control-Allow-Credentials", true);
+  res.cookie("token", token);
+
   //res.setHeader((SameSite = None));
-  res.status(200).cookie("token", token, options).json({
+
+  res.setHeader("Access-Control-Allow-Credentials", true);
+  res.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:3000");
+  res.setHeader("Access-Control-Allow-Headers", "*");
+  res.setHeader("Access-Control-Allow-Methods", "*");
+
+  console.log(res.headers);
+
+  res.status(200).json({
     success: true,
     token: token,
     user,

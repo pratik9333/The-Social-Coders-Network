@@ -2,22 +2,22 @@ require("dotenv").config();
 const cors = require("cors");
 const express = require("express");
 const app = express();
-const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const fileUpload = require("express-fileupload");
 
 //regular middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 //cookies and file middleware
 app.use(cookieParser());
+
 app.use(
   fileUpload({
     useTempFiles: true,
     tempFileDir: "/tmp/",
   })
 );
-app.use(cors({ credentials: true }));
 
 //morgan middleware
 //app.use(morgan("tiny"));
@@ -26,11 +26,14 @@ app.use(cors({ credentials: true }));
 const user = require("./api/user.api");
 const platform = require("./api/platform.api");
 
-app.get("/", (req, res) => {
-  res.json({ success: true, message: "Greetings from our api" });
-});
+// Access-Control-Allow-Origin: https://foo.example
+// Access-Control-Allow-Methods: POST, GET, OPTIONS
+// Access-Control-Allow-Headers: X-PINGOTHER, Content-Type
+// Access-Control-Max-Age: 86400
 
-// calling setInterval for deleting old ratedByUsers
+app.use((req, res, next) => {
+  next();
+});
 
 //router middleware
 app.use("/api/v1", user);

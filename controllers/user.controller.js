@@ -2,6 +2,13 @@ const User = require("../models/User.model");
 const getCookieToken = require("../utils/cookieToken");
 const cloudinary = require("cloudinary");
 const Query = require("../utils/query");
+const {
+  addCodeForcesProfile,
+  addLeetcodeProfile,
+  addGithubProfile,
+} = require("./platform.controller");
+
+const Platform = require("../models/Platform.model");
 
 // 1 min = 60,000 milliseconds
 const oneMinToMilli = 60_000;
@@ -66,6 +73,7 @@ exports.signup = async (req, res) => {
         id: result.public_id,
         url: result.secure_url,
       },
+      nextUpdateCycle: new Date().getTime(),
     });
 
     //this will create token, store in cookie and will send response to frontend
@@ -120,10 +128,46 @@ exports.logout = async (req, res) => {
   });
 };
 
-exports.getLoggedInUserDetails = (req, res) => {
-  const user = req.user;
-  //sending user details back if logged in
-  res.status(200).json({ success: true, user });
+exports.getUserDashboard = async (req, res) => {
+  const loggedUser = await User.findById(req.user._id);
+
+  let userProfile = {
+    user: loggedUser,
+    codingProfiles: {
+      leetcode: null,
+      codeforces: null,
+      github: null,
+    },
+  };
+
+  const currDate = new Date().getTime();
+  const nextUpdateCycle = loggedUser.nextUpdateCycle;
+
+  if (currDate >= nextUpdateCycle) {
+    // getting promises and updating coding profile details
+    userProfile.codingProfiles.codeforces = await addCodeForcesProfile(req);
+    userProfile.codingProfiles.leetcode = await addLeetcodeProfile(req);
+    userProfile.codingProfiles.github = await addGithubProfile(req);
+
+    //updating next update cycle
+    loggedUser.nextUpdateCycle = new Date().getTime() + updateCycle;
+
+    await loggedUser.save();
+  } else {
+    const userCodingPlatforms = await Platform.find({ user: req.user._id });
+
+    for (let platform of userCodingPlatforms) {
+      if (platform.name === "Leetcode") {
+        userProfile.codingProfiles.leetcode = platform;
+      } else if (platform.name === "Github") {
+        userProfile.codingProfiles.github = platform;
+      } else {
+        userProfile.codingProfiles.codeforces = platform;
+      }
+    }
+  }
+
+  return res.status(200).json({ success: true, userProfile });
 };
 
 exports.updateUserDetails = async (req, res) => {
@@ -168,24 +212,6 @@ exports.updateUserDetails = async (req, res) => {
     res
       .status(200)
       .json({ success: true, message: "User profile is updated", updatedUser });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Server has occured some problem, please try again" });
-  }
-};
-
-exports.addGithubId = async (req, res) => {
-  try {
-    if (!req.body.githubId) {
-      return res.status(401).json({ error: "Please provide github id" });
-    }
-    const user = User.findById(req.user._id);
-
-    user.githubId = req.body.githubId;
-
-    await user.save();
-    res.status(200).json({ success: true });
   } catch (error) {
     res
       .status(500)

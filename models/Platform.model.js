@@ -12,9 +12,21 @@ const platformSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  rating: {
-    type: Number,
+  username: {
+    type: String,
     required: true,
+  },
+  publicRepos: {
+    type: Number,
+  },
+  followers: {
+    type: Number,
+  },
+  following: {
+    type: Number,
+  },
+  userRating: {
+    type: Number,
   },
   contest: {
     attended: { type: Number },
@@ -22,13 +34,10 @@ const platformSchema = new mongoose.Schema({
   },
   noOfSubmission: {
     type: Number,
-    required: true,
   },
-
   languageUsed: [],
   noSolvedQuestions: {
     type: Number,
-    required: true,
   },
   createdAt: {
     type: Date,

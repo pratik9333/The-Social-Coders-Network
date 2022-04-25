@@ -86,6 +86,7 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  nextUpdateCycle: { type: Number, required: true },
 });
 
 //encrypt password before save - hooks

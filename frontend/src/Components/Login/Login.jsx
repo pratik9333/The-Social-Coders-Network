@@ -5,6 +5,7 @@ import axios from "axios";
 import { authenticate, isAuthenticated } from "../../API/auth";
 import backend from "../../backend"
 import Navbar from "../Navbar/Navbar";
+import { LoadingComponent } from "../Loading/Loading";
 
 
 function Login() {
@@ -27,35 +28,21 @@ function Login() {
     const submitHandler = (e) => {
         setLoading(true);
         e.preventDefault();
-        fetch(`${backend}/signin`,{
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({email,password})
-        }).then((res) => res.json())
-            .then(data => {
-                console.log(data);
-                setLoading(false);
+        axios.post(`${backend}/signin`,{email,password})
+            .then((res => {
+                console.log(res.data.user);
                 setError("")
-                // authenticate(data.user,data.token, () => {
-                //     setEmail("");
-                //     setPassword("");
-                // });
+                authenticate(res.data.user,res.data.token, () => {
+                    setEmail("");
+                    setPassword("");
+                });
+                setLoading(false);
                 navigate('/');
-                
-            })
+            }))
             .catch((error) => {
                 setLoading(false);
-                console.log(error.response.data.error);
                 setError(error.response.data.error)
             })
-    }
-    const LoadingComponent = () => {
-        return (
-            <div id="loading-wrapper">
-                <div id="loading-text">LOADING</div>
-                <div id="loading-content"></div>
-            </div>
-        )
     }
 
     useEffect(() => {
@@ -70,7 +57,7 @@ function Login() {
         <section id="login-form-section"> 
             {loading ? <LoadingComponent /> : <form>
                 <h2>Login!</h2>
-                <fieldset>
+                    <fieldset>
                     <legend>Login</legend>
                     <ul>
                         <li>

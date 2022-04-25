@@ -8,14 +8,30 @@ const oneMinToMilli = 60_000;
 const updateCycle = 30 * oneMinToMilli;
 
 exports.signup = async (req, res) => {
-  const { name, email, password } = req.body;
+  const {
+    name,
+    email,
+    password,
+    leetcodeId,
+    codeforcesId,
+    codechefId,
+    githubId,
+  } = req.body;
 
   try {
     if (!req.files) {
       return res.status(400).json({ error: "Photo is required to signup" });
     }
 
-    if (!name || !email || !password) {
+    if (
+      !name ||
+      !email ||
+      !password ||
+      !leetcodeId ||
+      !githubId ||
+      !codeforcesId ||
+      !codechefId
+    ) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
@@ -42,6 +58,10 @@ exports.signup = async (req, res) => {
       name,
       email,
       password,
+      githubProfile: githubId,
+      leetcodeProfile: leetcodeId,
+      codechefProfile: codechefId,
+      codeforcesProfile: codeforcesId,
       photo: {
         id: result.public_id,
         url: result.secure_url,

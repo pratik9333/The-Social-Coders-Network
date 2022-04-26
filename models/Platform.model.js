@@ -28,6 +28,15 @@ const platformSchema = new mongoose.Schema({
   userRating: {
     type: Number,
   },
+  division: {
+    type: Number,
+  },
+  countryRank: {
+    type: Number,
+  },
+  globalRank: {
+    type: Number,
+  },
   contest: {
     attended: { type: Number },
     rating: { type: Number },
@@ -37,6 +46,9 @@ const platformSchema = new mongoose.Schema({
   },
   languageUsed: [],
   noSolvedQuestions: {
+    type: Number,
+  },
+  partiallySolved: {
     type: Number,
   },
   createdAt: {

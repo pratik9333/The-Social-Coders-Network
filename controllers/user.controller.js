@@ -6,6 +6,7 @@ const {
   addCodeForcesProfile,
   addLeetcodeProfile,
   addGithubProfile,
+  addCodeChefProfile,
 } = require("./platform.controller");
 
 const Platform = require("../models/Platform.model");
@@ -137,6 +138,7 @@ exports.getUserDashboard = async (req, res) => {
       leetcode: null,
       codeforces: null,
       github: null,
+      codechef: null,
     },
   };
 
@@ -148,6 +150,7 @@ exports.getUserDashboard = async (req, res) => {
     userProfile.codingProfiles.codeforces = await addCodeForcesProfile(req);
     userProfile.codingProfiles.leetcode = await addLeetcodeProfile(req);
     userProfile.codingProfiles.github = await addGithubProfile(req);
+    userProfile.codingProfiles.codechef = await addCodeChefProfile(req);
 
     //updating next update cycle
     loggedUser.nextUpdateCycle = new Date().getTime() + updateCycle;
@@ -159,6 +162,8 @@ exports.getUserDashboard = async (req, res) => {
     for (let platform of userCodingPlatforms) {
       if (platform.name === "Leetcode") {
         userProfile.codingProfiles.leetcode = platform;
+      } else if (platform.name === "Codechef") {
+        userProfile.codingProfiles.codechef = platform;
       } else if (platform.name === "Github") {
         userProfile.codingProfiles.github = platform;
       } else {

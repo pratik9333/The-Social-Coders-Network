@@ -13,7 +13,7 @@ const Platform = require("../models/Platform.model");
 
 // 1 min = 60,000 milliseconds
 const oneMinToMilli = 60_000;
-const updateCycle = 30 * oneMinToMilli;
+const updateCycle = 240 * oneMinToMilli;
 
 exports.signup = async (req, res) => {
   const {
@@ -357,12 +357,21 @@ exports.rateUser = async (req, res) => {
     }
 
     let user = await User.findById(userId);
+    const currDate = new Date().getTime();
 
     for (let ratingUser of user.ratedBy) {
-      if (ratingUser._id.toString() === req.user._id.toString()) {
-        return res
-          .status(400)
-          .json({ error: `You already rated ${user.name}` });
+      if (ratingUser.user.toString() === req.user._id.toString()) {
+        if (currDate >= ratingUser.expiryTime) {
+          await User.findOneAndUpdate(
+            { _id: user._id },
+            { $pull: { ratedBy: { user: req.user._id } } },
+            { new: true }
+          );
+        } else {
+          return res
+            .status(400)
+            .json({ error: "You have already rated this user" });
+        }
       }
     }
 
@@ -374,7 +383,10 @@ exports.rateUser = async (req, res) => {
 
     user.votes += 1;
     user.rating = (user.upvotes / (user.upvotes + user.downvotes || 1)) * 100;
-    user.ratedBy.push(req.user._id);
+    user.ratedBy.push({
+      user: req.user._id,
+      expiryTime: new Date().getTime() + updateCycle,
+    });
 
     await user.save();
 

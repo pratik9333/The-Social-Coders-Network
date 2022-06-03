@@ -89,6 +89,8 @@ const userSchema = new mongoose.Schema({
   nextUpdateCycle: { type: Number, required: true },
 });
 
+//userSchema.index({ ratedBy: "1" }, { expireAfterSeconds: "150" });
+
 //encrypt password before save - hooks
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {

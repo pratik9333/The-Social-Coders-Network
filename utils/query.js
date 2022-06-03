@@ -2,6 +2,7 @@ class Query {
   constructor(base, bigQ, loggedUserId) {
     this.base = base;
     this.bigQ = bigQ;
+    this.users = null;
     this.userId = loggedUserId;
   }
 
@@ -20,6 +21,17 @@ class Query {
       _id: { $ne: this.userId },
     });
     return this;
+  }
+
+  updateRatingStatus() {
+    this.base.updateMany(
+      {},
+      {
+        $pull: {
+          ratedBy: { expiryTime: { $not: { $lt: new Date().getTime() } } },
+        },
+      }
+    );
   }
 
   sort() {

@@ -13,7 +13,7 @@ const Platform = require("../models/Platform.model");
 
 // 1 min = 60,000 milliseconds
 const oneMinToMilli = 60_000;
-const updateCycle = 240 * oneMinToMilli;
+const updateCycle = 1 * oneMinToMilli;
 
 exports.signup = async (req, res) => {
   const {
@@ -233,14 +233,22 @@ exports.getUsers = async (req, res) => {
     const userObj = new Query(User.find(), req.query, req.user._id.toString());
 
     userObj.search();
-
+    //userObj.updateRatingStatus();
     userObj.pager(resultPerPage);
 
-    let Users = await userObj.base;
+    let Users = await userObj.base2;
+
+    console.log(Users);
+
+    if (1654286674715 > new Date().getTime()) {
+      console.log(true);
+    }
 
     let filteredUsers = Users.length;
 
-    res.status(200).json({
+    //update users set status = expired where currentdate - ratedAt <= 10
+
+    await res.status(200).json({
       success: true,
       Users,
       totalUsersCount: usersCount - 1,
@@ -351,28 +359,33 @@ exports.addFriend = async (req, res) => {
 exports.rateUser = async (req, res) => {
   try {
     const { userId, action } = req.params;
+    let flag = 0;
 
     if (!userId) {
       return res.status(400).json({ error: "Please provide user id" });
     }
 
     let user = await User.findById(userId);
-    const currDate = new Date().getTime();
+    const currTime = new Date().getTime();
 
     for (let ratingUser of user.ratedBy) {
-      if (ratingUser.user.toString() === req.user._id.toString()) {
-        if (currDate >= ratingUser.expiryTime) {
-          await User.findOneAndUpdate(
-            { _id: user._id },
-            { $pull: { ratedBy: { user: req.user._id } } },
-            { new: true }
-          );
-        } else {
+      if (ratingUser.user.toString() === userId) {
+        if (currTime <= ratingUser.expiryTime) {
           return res
             .status(400)
             .json({ error: "You have already rated this user" });
         }
+        if (currTime >= ratingUser.expiryTime) {
+          flag = 1;
+          ratingUser.expiryTime = new Date().getTime() + updateCycle;
+        }
       }
+    }
+    if (flag === 0) {
+      user.ratedBy.push({
+        user: req.user._id,
+        expiryTime: new Date().getTime() + updateCycle,
+      });
     }
 
     if (action === "upvote") {
@@ -383,10 +396,6 @@ exports.rateUser = async (req, res) => {
 
     user.votes += 1;
     user.rating = (user.upvotes / (user.upvotes + user.downvotes || 1)) * 100;
-    user.ratedBy.push({
-      user: req.user._id,
-      expiryTime: new Date().getTime() + updateCycle,
-    });
 
     await user.save();
 

@@ -2,7 +2,6 @@ class Query {
   constructor(base, bigQ, loggedUserId) {
     this.base = base;
     this.bigQ = bigQ;
-    this.users = null;
     this.userId = loggedUserId;
   }
 

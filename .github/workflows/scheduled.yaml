@@ -9,6 +9,6 @@ jobs:
     steps:
       - name: Hourly cron job
         run: |
-          curl --request POST \
-          --url 'https://social-coding-experience.vercel.app/api/task' 
+          curl --request PUT \
+          --url 'https://social-coding-experience.vercel.app/api/task' \ 
           --header 'Authorization: Bearer ${{ secrets.APP_KEY }}'

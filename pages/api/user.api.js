@@ -11,9 +11,9 @@ const {
   addFriend,
   rateUser,
   getLeaderBoardData,
-} = require("../controllers/user.controller");
+} = require("../../controllers/user.controller");
 
-const isLoggedIn = require("../middlewares/authenticate.middleware");
+const isLoggedIn = require("../../middlewares/authenticate.middleware");
 
 //signup route
 router.route("/signup").post(signup);

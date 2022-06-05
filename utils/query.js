@@ -22,19 +22,6 @@ class Query {
     return this;
   }
 
-  updateRatingStatus() {
-    this.base.updateMany(
-      {},
-      {
-        $pull: {
-          ratedBy: {
-            expiryTime: { $lt: new Date().getTime() },
-          },
-        },
-      }
-    );
-  }
-
   sort() {
     this.base = this.base.find().sort({ rating: -1, votes: -1 });
     return this;

@@ -233,12 +233,10 @@ exports.getUsers = async (req, res) => {
     //creating object from our custom class and passing base = User.find(), bigQ = req.query
     const userObj = new Query(User.find(), req.query, req.user._id.toString());
 
-    userObj.updateRatingStatus();
     userObj.search();
     userObj.pager(resultPerPage);
 
     let Users = await userObj.base;
-
     let filteredUsers = Users.length;
 
     //update users set status = expired where currentdate - ratedAt <= 10
@@ -377,8 +375,6 @@ exports.rateUser = async (req, res) => {
         }
       }
     }
-
-    console.log(flag);
 
     if (flag === 0) {
       user.ratedBy.push({

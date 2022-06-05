@@ -21,12 +21,39 @@ app.use(
   })
 );
 
+// home route
 app.get("/", (req, res) => {
-  res.send("<h1> Welcome to our api! </h1>");
+  res.send("<h1> Welcome to our social coding experience api! </h1>");
 });
 
 //import all routes here
-const user = require("./api/user.api");
+const user = require("./pages/api/user.api");
+const User = require("./models/User.model");
+
+// scheduler to remove expired rated users
+app.put("/api/task", async (req, res) => {
+  try {
+    const appkey = req.header("Authorization").split(" ")[1];
+
+    if (appkey !== process.env.APP_KEY) {
+      return res.status(400).send(`Unauthenticated`);
+    }
+
+    await User.updateMany(
+      {},
+      {
+        $pull: {
+          ratedBy: {
+            expiryTime: { $lt: new Date().getTime() },
+          },
+        },
+      }
+    );
+    res.status(200).send("Success");
+  } catch (error) {
+    res.status(500).send(`${error.message}`);
+  }
+});
 
 //router middleware
 app.use("/api/v1", user);

@@ -21,6 +21,10 @@ app.use(
   })
 );
 
+app.get("/", (req, res) => {
+  res.send("<h1> Welcome to our api! </h1>");
+});
+
 //import all routes here
 const user = require("./api/user.api");
 

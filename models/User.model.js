@@ -74,7 +74,7 @@ const userSchema = new mongoose.Schema({
   // 1. no user found or array is empty - no
   // 2. not expired - no
   // 3. when expired - yes
-  ratedUsers: [
+  ratedBy: [
     {
       user: {
         type: mongoose.Schema.ObjectId,

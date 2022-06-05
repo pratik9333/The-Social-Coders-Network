@@ -14,7 +14,7 @@ const Platform = require("../models/Platform.model");
 // 1 min = 60,000 milliseconds
 const oneMinToMilli = 60_000;
 const updateCycleOfDashboard = 30 * oneMinToMilli;
-const updateExpiryTimeForRating = 1 * oneMinToMilli;
+const updateExpiryTimeForRating = 2 * oneMinToMilli;
 
 exports.signup = async (req, res) => {
   const {
@@ -237,7 +237,7 @@ exports.getUsers = async (req, res) => {
     userObj.search();
     userObj.pager(resultPerPage);
 
-    let Users = await userObj.users;
+    let Users = await userObj.base;
 
     let filteredUsers = Users.length;
 
@@ -360,32 +360,11 @@ exports.rateUser = async (req, res) => {
       return res.status(400).json({ error: "Please provide user id" });
     }
 
-    let user = User.findById(userId);
+    let user = await User.findById(userId);
     const currTime = new Date().getTime();
 
-    // find -> if user in ratedBy or user is expired, thne update the array
-    User.findOneAndUpdate({ _id: userId });
-
-    //stackoverflow.com/questions/39522455/updating-nested-array-mongoose
-
-    // $or: [  { "ratedBy.user" : { $nin:[req.user.id]}}, { user: req.user.id , expiry : { $lt:{ new Date().now() } ] , {
-    //   $set: { 'ratedBy.$': { user: req.user._id, expiry: new Date() } },
-    // },
-
-    https: this.base.updateOne(
-      { _id: this.userId },
-      {
-        $pull: {
-          ratedBy: {
-            user: {},
-            expiryTime: { $lt: new Date().getTime() },
-          },
-        },
-      }
-    );
-
     for (let ratingUser of user.ratedBy) {
-      if (ratingUser.user.toString() === req.user._id) {
+      if (ratingUser.user.toString() === req.user._id.toString()) {
         if (currTime <= ratingUser.expiryTime) {
           return res
             .status(400)
@@ -398,6 +377,8 @@ exports.rateUser = async (req, res) => {
         }
       }
     }
+
+    console.log(flag);
 
     if (flag === 0) {
       user.ratedBy.push({

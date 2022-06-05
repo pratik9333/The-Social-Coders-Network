@@ -27,7 +27,9 @@ class Query {
       {},
       {
         $pull: {
-          ratedBy: { expiryTime: { $not: { $lt: new Date().getTime() } } },
+          ratedBy: {
+            expiryTime: { $lt: new Date().getTime() },
+          },
         },
       }
     );

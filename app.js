@@ -27,7 +27,7 @@ app.get("/", (req, res) => {
 });
 
 //import all routes here
-const user = require("./pages/api/user.api");
+const user = require("./api/user.api");
 const User = require("./models/User.model");
 
 // scheduler to remove expired rated users

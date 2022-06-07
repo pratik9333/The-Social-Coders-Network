@@ -9,8 +9,9 @@ const connectWithDB = () => {
       console.log(`DB is connected successfully!`);
     })
     .catch((error) => {
-      console.log(`DB failed to connect`);
-      console.log(error);
+      console.log(`DB failed to connect reason - ${error.message}`);
+      console.log(`Closing application`);
+      process.exit(1); // closing server
     });
 };
 

@@ -4,6 +4,7 @@ const express = require("express");
 const app = express();
 const cookieParser = require("cookie-parser");
 const fileUpload = require("express-fileupload");
+const AppError = require("./utils/Errors/customError");
 
 //regular middleware
 app.use(express.json());
@@ -29,6 +30,11 @@ app.get("/", (req, res) => {
 //import all routes here
 const user = require("./api/user.api");
 const User = require("./models/User.model");
+
+// handling error if any of routes does not match
+app.all("*", (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
 
 // scheduler to remove expired rated users
 app.put("/api/task", async (req, res) => {

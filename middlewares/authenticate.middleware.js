@@ -10,9 +10,7 @@ const isLoggedIn = async (req, res, next) => {
     }
 
     if (!token) {
-      return res
-        .status(401)
-        .json({ message: "Please login to access this page" });
+      return res.status(401).json({ message: "Unauthorized user" });
     }
 
     const decoded = jsonwebtoken.verify(token, process.env.JWT_SECRET);

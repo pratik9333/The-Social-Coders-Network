@@ -8,9 +8,9 @@ const {
 const isLoggedIn = require("../middlewares/authenticate.middleware");
 
 //send friend request
-router.route("/user/request/friend/:userId").put(isLoggedIn, sendFriendRequest);
+router.route("/request/:userId").put(isLoggedIn, sendFriendRequest);
 
 //add friend
-router.route("/user/add/friend/:userId").put(isLoggedIn, addFriend);
+router.route("/add/:userId").put(isLoggedIn, addFriend);
 
 module.exports = router;

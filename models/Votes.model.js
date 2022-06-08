@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 
 const votingSchema = new mongoose.Schema(
   {
-    user: { type: Schema.Types.ObjectId, ref: "User" },
-    voter: { type: Schema.Types.ObjectId, ref: "User" },
+    user: { type: mongoose.Schema.ObjectId, ref: "User" },
+    voter: { type: mongoose.Schema.ObjectId, ref: "User" },
     status: {
       type: Number,
       enums: [

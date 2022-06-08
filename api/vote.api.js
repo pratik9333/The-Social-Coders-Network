@@ -8,9 +8,6 @@ const {
 const isLoggedIn = require("../middlewares/authenticate.middleware");
 
 //rate friend
-router.route("/user/rate/:action/:userId").put(isLoggedIn, rateUser);
-
-// get leaderboard data
-router.route("/users/leaderboard").get(isLoggedIn, getLeaderBoardData);
+router.route("/user/:action/:userId").put(isLoggedIn, rateUser);
 
 module.exports = router;

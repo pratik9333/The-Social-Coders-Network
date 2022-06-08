@@ -4,17 +4,21 @@ const {
   getUserDashboard,
   updateUserDetails,
   getUsers,
+  getLeaderBoardData,
 } = require("../controllers/user.controller");
 
 const isLoggedIn = require("../middlewares/authenticate.middleware");
 
 //get user dashboard
-router.route("/user/dashboard").get(isLoggedIn, getUserDashboard);
+router.route("/dashboard").get(isLoggedIn, getUserDashboard);
 
 //update user
-router.route("/user").put(isLoggedIn, updateUserDetails);
+router.route("/").put(isLoggedIn, updateUserDetails);
 
 //get users
-router.route("/users").get(isLoggedIn, getUsers);
+router.route("/").get(isLoggedIn, getUsers);
+
+// get leaderboard data
+router.route("/leaderboard").get(isLoggedIn, getLeaderBoardData);
 
 module.exports = router;

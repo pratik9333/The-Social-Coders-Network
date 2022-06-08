@@ -1,6 +1,9 @@
 const Query = require("../utils/query");
 const User = require("../models/User.model");
 
+// 1 min = 60,000 milliseconds
+const oneMinToMilli = 60_000;
+
 const updateExpiryTimeForRating = 2 * oneMinToMilli;
 
 exports.rateUser = async (req, res) => {
@@ -56,34 +59,5 @@ exports.rateUser = async (req, res) => {
     res
       .status(500)
       .json({ error: "Server has occured some problem, please try again" });
-  }
-};
-
-exports.getLeaderBoardData = async (req, res) => {
-  try {
-    const usersCount = await User.countDocuments();
-    const resultPerPage = 10;
-
-    const userObj = new Query(User.find(), req.query);
-
-    userObj.sort();
-
-    userObj.pager(resultPerPage);
-
-    let Users = await userObj.base;
-    let filteredUsers = Users.length;
-
-    return res.status(200).json({
-      success: true,
-      data: Users,
-      filteredUsers,
-      usersCount,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json({
-      success: false,
-      data: error.message,
-    });
   }
 };

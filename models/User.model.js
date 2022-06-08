@@ -64,13 +64,11 @@ const userSchema = new mongoose.Schema(
     },
     rating: { type: Number, default: 0 },
     votes: [{ type: mongoose.Schema.ObjectId, ref: "Vote" }],
-    friends: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
+    friends: [{ type: mongoose.Schema.ObjectId, ref: "Friend" }],
     nextUpdateCycle: { type: Number, required: true },
   },
   { timestamps: true }
 );
-
-//userSchema.index({ ratedBy: "1" }, { expireAfterSeconds: "150" });
 
 //encrypt password before save - hooks
 userSchema.pre("save", async function (next) {

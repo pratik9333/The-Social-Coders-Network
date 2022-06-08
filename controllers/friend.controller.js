@@ -115,14 +115,10 @@ exports.removeFriend = async (req, res) => {
       recipient: req.params.userId,
     });
 
-    const friend2 = await Friend.findByIdAndDelete({
+    const friend2 = await Friend.findOneAndDelete({
       recipient: req.user._id,
       requester: req.params.userId,
     });
-
-    if (!friend1 || friend2) {
-      res.status(500).json({ error: "No users found in list" });
-    }
 
     // removing friend from array
 

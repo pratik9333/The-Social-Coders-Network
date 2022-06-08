@@ -62,7 +62,7 @@ app.put("/api/task", async (req, res) => {
 //router middleware
 app.use("/api/v1/user", user);
 app.use("/api/v1/friend", friend);
-app.use("/api/v1/rate", user);
+app.use("/api/v1/rate", vote);
 app.use("/api/v1", auth);
 
 module.exports = app;

@@ -138,3 +138,16 @@ exports.removeFriend = async (req, res) => {
       .json({ error: "Server has occured some problem, please try again" });
   }
 };
+
+exports.getFriendsLogs = async (req, res) => {
+  try {
+    let user = await Friend.find({ requester: req.user._id }).populate(
+      "recipient"
+    );
+
+    return res.status(200).json(user);
+  } catch (error) {
+    console.log(error);
+    res.send("error");
+  }
+};

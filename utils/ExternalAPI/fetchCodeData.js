@@ -23,8 +23,6 @@ exports.fetchCodeChef = async (user) => {
       headless: true,
     });
 
-    console.log(user);
-
     const url = `${codeChefURL}/users/${user.social.codechefProfile.username}`;
     console.log(url);
 
@@ -71,7 +69,7 @@ exports.fetchCodeChef = async (user) => {
 
     await page.close();
 
-    data.solvedQuestions = parseInt(do_conversion(data.noSolvedQuestions));
+    data.solvedQuestions = parseInt(do_conversion(data.solvedQuestions));
     data.partiallySolved = parseInt(do_conversion(data.partiallySolved));
     data.division = parseInt(do_conversion(data.division));
 

@@ -19,6 +19,7 @@ class Query {
       ...searchword,
       _id: { $ne: this.userId },
     });
+
     return this;
   }
 

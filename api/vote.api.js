@@ -1,13 +1,10 @@
 const router = require("express").Router();
 
-const {
-  rateUser,
-  getLeaderBoardData,
-} = require("../controllers/vote.controller");
+const { rateUser } = require("../controllers/vote.controller");
 
 const isLoggedIn = require("../middlewares/authenticate.middleware");
 
 //rate friend
-router.route("/user/:action/:userId").put(isLoggedIn, rateUser);
+router.route("/user/:action/:userId").post(isLoggedIn, rateUser);
 
 module.exports = router;

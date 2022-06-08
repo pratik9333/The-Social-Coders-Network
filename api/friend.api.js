@@ -10,13 +10,13 @@ const {
 const isLoggedIn = require("../middlewares/authenticate.middleware");
 
 //send friend request
-router.route("/request/:userId").put(isLoggedIn, sendFriendRequest);
+router.route("/:userId").post(isLoggedIn, sendFriendRequest);
 
 //add friend
-router.route("/add/:userId").put(isLoggedIn, addFriend);
+router.route("/:userId").put(isLoggedIn, addFriend);
 
 //remove friend
-router.route("/remove/:userId").delete(isLoggedIn, removeFriend);
+router.route("/:userId").delete(isLoggedIn, removeFriend);
 
 //get friends log
 router.route("/").get(isLoggedIn, getFriendsLogs);

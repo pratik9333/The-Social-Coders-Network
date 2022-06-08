@@ -62,10 +62,7 @@ const userSchema = new mongoose.Schema(
         languagesUsed: [],
       },
     },
-    rating: {
-      type: Number,
-      default: 0,
-    },
+    rating: { type: Number, default: 0 },
     votes: [{ type: mongoose.Schema.ObjectId, ref: "Vote" }],
     friends: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
     nextUpdateCycle: { type: Number, required: true },

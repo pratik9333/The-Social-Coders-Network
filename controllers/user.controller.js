@@ -2,14 +2,14 @@ const User = require("../models/User.model");
 const getCookieToken = require("../utils/cookieToken");
 const cloudinary = require("cloudinary");
 const Query = require("../utils/query");
-const {
-  addCodeForcesProfile,
-  addLeetcodeProfile,
-  addGithubProfile,
-  addCodeChefProfile,
-} = require("./platform.controller");
 
 const Platform = require("../models/Platform.model");
+const {
+  fetchCodeChef,
+  fetchGithub,
+  fetchLeetcode,
+  fetchCodeForces,
+} = require("../utils/ExternalAPI/fetchCodeData");
 
 // 1 min = 60,000 milliseconds
 const oneMinToMilli = 60_000;
@@ -67,10 +67,12 @@ exports.signup = async (req, res) => {
       name,
       email,
       password,
-      githubProfile: githubId,
-      leetcodeProfile: leetcodeId,
-      codechefProfile: codechefId,
-      codeforcesProfile: codeforcesId,
+      social: {
+        githubProfile: { username: githubId },
+        leetcodeProfile: { username: leetcodeId },
+        codeforcesProfile: { username: codeforcesId },
+        codechefProfile: { username: codechefId },
+      },
       photo: {
         id: result.public_id,
         url: result.secure_url,
@@ -131,52 +133,42 @@ exports.logout = async (req, res) => {
 };
 
 exports.getUserDashboard = async (req, res) => {
-  const loggedUser = await User.findById(req.user._id);
+  try {
+    let loggedUser = await User.findById(req.user._id);
 
-  let userProfile = {
-    user: loggedUser,
-    codingProfiles: {
-      leetcode: null,
-      codeforces: null,
-      github: null,
-      codechef: null,
-    },
-  };
+    const currTime = new Date().getTime();
+    const nextUpdateCycle = loggedUser.nextUpdateCycle;
 
-  const currDate = new Date().getTime();
-  const nextUpdateCycle = loggedUser.nextUpdateCycle;
+    if (currTime >= nextUpdateCycle) {
+      //
 
-  if (currDate >= nextUpdateCycle) {
-    // getting promises and updating coding profile details
-    userProfile.codingProfiles.codeforces = await addCodeForcesProfile(
-      req,
-      res
-    );
-    userProfile.codingProfiles.leetcode = await addLeetcodeProfile(req, res);
-    userProfile.codingProfiles.github = await addGithubProfile(req, res);
-    userProfile.codingProfiles.codechef = await addCodeChefProfile(req, res);
+      // adding user profile details coding profile details
+      const codechefData = await fetchCodeChef(loggedUser);
+      const codeforcesData = await fetchCodeForces(loggedUser);
+      const githubData = await fetchGithub(loggedUser);
+      const leetcodeData = await fetchLeetcode(loggedUser);
 
-    //updating next update cycle
-    loggedUser.nextUpdateCycle = new Date().getTime() + updateCycleOfDashboard;
+      // updating coding handles
+      loggedUser.social.githubProfile = githubData;
+      loggedUser.social.codechefProfile = codechefData;
+      loggedUser.social.codeforcesProfile = codeforcesData;
+      loggedUser.social.leetcodeProfile = leetcodeData;
 
-    await loggedUser.save();
-  } else {
-    const userCodingPlatforms = await Platform.find({ user: req.user._id });
+      //updating next update cycle
+      loggedUser.nextUpdateCycle =
+        new Date().getTime() + updateCycleOfDashboard;
 
-    for (let platform of userCodingPlatforms) {
-      if (platform.name === "Leetcode") {
-        userProfile.codingProfiles.leetcode = platform;
-      } else if (platform.name === "Codechef") {
-        userProfile.codingProfiles.codechef = platform;
-      } else if (platform.name === "Github") {
-        userProfile.codingProfiles.github = platform;
-      } else {
-        userProfile.codingProfiles.codeforces = platform;
-      }
+      loggedUser = await loggedUser.save();
+
+      //
     }
-  }
 
-  return res.status(200).json({ success: true, userProfile });
+    return res.status(200).json({ success: true, loggedUser });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Error while getting user dashboard, please try again" });
+  }
 };
 
 exports.updateUserDetails = async (req, res) => {

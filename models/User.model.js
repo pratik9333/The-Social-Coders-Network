@@ -63,7 +63,9 @@ const userSchema = new mongoose.Schema(
         languagesUsed: [],
       },
     },
-    rating: { type: Number, default: 0 },
+    rating: { type: Number, default: 100 },
+    upvotes: { type: Number, default: 0 },
+    downvotes: { type: Number, default: 0 },
     votes: [{ type: mongoose.Schema.ObjectId, ref: "Vote" }],
     friends: [{ type: mongoose.Schema.ObjectId, ref: "Friend" }],
     nextUpdateCycle: { type: Number, required: true },
@@ -78,11 +80,6 @@ userSchema.pre("save", async function (next) {
   }
   this.password = await bcrypt.hash(this.password, 10);
 });
-
-//validate the password with password user sending
-userSchema.methods.validatePassword = async function (userPassword) {
-  return await bcrypt.compare(userPassword, this.password); // doubt in this
-};
 
 //create and return JWT token
 userSchema.methods.getJwtToken = function () {

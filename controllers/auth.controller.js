@@ -1,6 +1,7 @@
 const User = require("../models/User.model");
 const getCookieToken = require("../utils/cookieToken");
 const cloudinary = require("cloudinary");
+const bcrypt = require("bcryptjs");
 
 exports.signup = async (req, res) => {
   const {
@@ -84,16 +85,15 @@ exports.login = async (req, res) => {
   }
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
       return res.status(401).json({ error: "email is incorrect" });
     }
 
-    const validatePassword = await user.validatePassword(password);
+    const result = bcrypt.compare(password, user.password);
 
-    //validating email and password
-    if (!validatePassword) {
+    if (!result) {
       return res.status(401).json({ error: "password is incorrect" });
     }
 

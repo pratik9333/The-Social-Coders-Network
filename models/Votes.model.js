@@ -11,7 +11,6 @@ const votingSchema = new mongoose.Schema(
         1, //Upvote
         -1, //Downvote
       ],
-      default: 0,
     },
     expiryTime: { type: Number },
   },

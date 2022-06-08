@@ -10,9 +10,7 @@ const isLoggedIn = async (req, res, next) => {
     }
 
     if (!token) {
-      return res
-        .status(401)
-        .json({ message: "Please login to access this page" });
+      return res.status(401).json({ message: "Unauthorized access" });
     }
 
     const decoded = jsonwebtoken.verify(token, process.env.JWT_SECRET);
@@ -24,8 +22,7 @@ const isLoggedIn = async (req, res, next) => {
     req.user.createdAt = undefined;
     next();
   } catch (error) {
-    console.log(error);
-    return res.status(500).send(error);
+    return res.status(500).json({ error: "Invalid token" });
   }
 };
 

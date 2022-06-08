@@ -9,7 +9,7 @@ const {
   getLeetCodeUserDetails,
 } = require("../utils/ExternalAPI/fetchLeetcode");
 
-exports.addLeetcodeProfile = async (req) => {
+exports.addLeetcodeProfile = async (req, res) => {
   try {
     const findExistingPlatform = await Platform.find({
       user: req.user._id,
@@ -23,11 +23,14 @@ exports.addLeetcodeProfile = async (req) => {
 
     return await Platform.create(leetcodeProfile);
   } catch (error) {
-    console.log(error);
+    return res.status(500).json({
+      error:
+        "Error while fetching leetcode data, please check username and try again",
+    });
   }
 };
 
-exports.addCodeForcesProfile = async (req) => {
+exports.addCodeForcesProfile = async (req, res) => {
   try {
     const fetchedProfile = await Platform.find({
       user: req.user._id,
@@ -42,11 +45,14 @@ exports.addCodeForcesProfile = async (req) => {
 
     return await Platform.create(codeforcesProfile);
   } catch (error) {
-    console.log(error);
+    return res.status(500).json({
+      error:
+        "Error while fetching Codeforces data, please check username and try again",
+    });
   }
 };
 
-exports.addGithubProfile = async (req) => {
+exports.addGithubProfile = async (req, res) => {
   try {
     const fetchedProfile = await Platform.find({
       user: req.user._id,
@@ -61,11 +67,14 @@ exports.addGithubProfile = async (req) => {
 
     return await Platform.create(GithubProfile);
   } catch (error) {
-    console.log(error);
+    return res.status(500).json({
+      error:
+        "Error while fetching github data, please check username and try again",
+    });
   }
 };
 
-exports.addCodeChefProfile = async (req) => {
+exports.addCodeChefProfile = async (req, res) => {
   try {
     const fetchedProfile = await Platform.find({
       user: req.user._id,
@@ -80,6 +89,9 @@ exports.addCodeChefProfile = async (req) => {
 
     return await Platform.create(codechefProfile);
   } catch (error) {
-    console.log(error);
+    return res.status(500).json({
+      error:
+        "Error while fetching codechef data, please check username and try again",
+    });
   }
 };

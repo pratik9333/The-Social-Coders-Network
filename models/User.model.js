@@ -3,94 +3,75 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    maxlength: [40, "User name is too long"],
-    required: [true, "Name is required"],
-  },
-  email: {
-    type: String,
-    unique: true,
-    required: [true, "Email is required"],
-  },
-  password: {
-    type: String,
-    required: [true, "Password is required"],
-    minlength: [6, "Password should be atleast 6 char"],
-  },
-  photo: {
-    id: {
+const userSchema = new mongoose.Schema(
+  {
+    name: {
       type: String,
+      maxlength: [40, "User name is too long"],
+      required: [true, "Name is required"],
     },
-    url: {
+    email: {
       type: String,
+      unique: true,
+      required: [true, "Email is required"],
     },
-  },
-  githubProfile: {
-    type: String,
-    required: true,
-  },
-  leetcodeProfile: {
-    type: String,
-    required: true,
-  },
-  codechefProfile: {
-    type: String,
-    required: true,
-  },
-  codeforcesProfile: {
-    type: String,
-    required: true,
-  },
-  rating: {
-    type: Number,
-    default: 0,
-  },
-  upvotes: {
-    type: Number,
-    default: 0,
-  },
-  downvotes: {
-    type: Number,
-    default: 0,
-  },
-  votes: {
-    type: Number,
-    default: 0,
-  },
-  friends: [
-    {
-      type: mongoose.Schema.ObjectId,
-      ref: "User",
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+      minlength: [6, "Password should be atleast 6 char"],
     },
-  ],
-  friendRequests: [
-    {
-      type: mongoose.Schema.ObjectId,
-      ref: "User",
-    },
-  ],
-  // 1. no user found or array is empty - no
-  // 2. not expired - no
-  // 3. when expired - yes
-  ratedBy: [
-    {
-      user: {
-        type: mongoose.Schema.ObjectId,
-        ref: "User",
+    photo: {
+      id: {
+        type: String,
       },
-      expiryTime: {
-        type: Number,
+      url: {
+        type: String,
       },
     },
-  ],
-  createdAt: {
-    type: Date,
-    default: Date.now,
+    social: {
+      githubProfile: {
+        username: { type: String },
+        publicRepos: { type: String },
+        followers: { type: String },
+        following: { type: String },
+      },
+      leetcodeProfile: {
+        username: { type: String },
+        rating: { type: Number },
+        contest: { attended: { type: Number }, rating: { type: Number } },
+        solvedQuestions: { type: Number },
+        submissions: { type: Number },
+        languagesUsed: [],
+      },
+      codechefProfile: {
+        username: { type: String },
+        rating: { type: Number },
+        division: { type: Number },
+        globalRank: { type: Number },
+        submissions: { type: Number },
+        countryRank: { type: Number },
+        solvedQuestions: { type: Number },
+        partiallySolved: { type: Number },
+      },
+      codeforcesProfile: {
+        username: { type: String },
+        rating: { type: Number },
+        contest: { attended: { type: Number }, rating: { type: Number } },
+        solvedQuestions: { type: Number },
+        submissions: { type: Number },
+        languagesUsed: [],
+      },
+    },
+    rating: {
+      type: Number,
+      default: 0,
+    },
+    votes: [{ type: mongoose.Schema.ObjectId, ref: "Vote" }],
+    friends: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
+    nextUpdateCycle: { type: Number, required: true },
   },
-  nextUpdateCycle: { type: Number, required: true },
-});
+  { timestamps: true }
+);
 
 //userSchema.index({ ratedBy: "1" }, { expireAfterSeconds: "150" });
 

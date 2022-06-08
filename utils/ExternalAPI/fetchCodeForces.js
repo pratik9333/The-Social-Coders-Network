@@ -1,10 +1,11 @@
+const { json } = require("express");
 const fetch = require("node-fetch");
 const codechefURL = "https://codeforces.com/api";
 
 exports.getCodeForcesProfileDetails = async (req) => {
   let result = {
     name: "Codeforces",
-    username: req.user.codechefProfile,
+    username: req.user.codeforcesProfile,
     rating: "",
     contest: {
       attended: 0,
@@ -17,15 +18,15 @@ exports.getCodeForcesProfileDetails = async (req) => {
   };
 
   let userProfile = await fetch(
-    `${codechefURL}/user.info?handles=${req.user.codechefProfile}`
+    `${codechefURL}/user.info?handles=${req.user.codeforcesProfile}`
   );
 
   let attendedContest = await fetch(
-    `${codechefURL}/user.rating?handle=${req.user.codechefProfile}`
+    `${codechefURL}/user.rating?handle=${req.user.codeforcesProfile}`
   );
 
   let noOfSubmission = await fetch(
-    `${codechefURL}/user.status?handle=${req.user.codechefProfile}`
+    `${codechefURL}/user.status?handle=${req.user.codeforcesProfile}`
   );
 
   attendedContest = await attendedContest.json();

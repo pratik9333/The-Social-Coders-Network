@@ -148,10 +148,13 @@ exports.getUserDashboard = async (req, res) => {
 
   if (currDate >= nextUpdateCycle) {
     // getting promises and updating coding profile details
-    userProfile.codingProfiles.codeforces = await addCodeForcesProfile(req);
-    userProfile.codingProfiles.leetcode = await addLeetcodeProfile(req);
-    userProfile.codingProfiles.github = await addGithubProfile(req);
-    userProfile.codingProfiles.codechef = await addCodeChefProfile(req);
+    userProfile.codingProfiles.codeforces = await addCodeForcesProfile(
+      req,
+      res
+    );
+    userProfile.codingProfiles.leetcode = await addLeetcodeProfile(req, res);
+    userProfile.codingProfiles.github = await addGithubProfile(req, res);
+    userProfile.codingProfiles.codechef = await addCodeChefProfile(req, res);
 
     //updating next update cycle
     loggedUser.nextUpdateCycle = new Date().getTime() + updateCycleOfDashboard;

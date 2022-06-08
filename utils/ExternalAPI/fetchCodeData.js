@@ -5,6 +5,7 @@ const fetch = require("node-fetch");
 const leetcodeURL = "https://leetcode.com/graphql";
 const codeForcesURL = "https://codeforces.com/api";
 const codeChefURL = "https://www.codechef.com";
+const githubAPI = "https://api.github.com/users";
 
 const do_conversion = (s) => {
   let ans = "";
@@ -22,12 +23,16 @@ exports.fetchCodeChef = async (user) => {
       headless: true,
     });
 
+    console.log(user);
+
     const url = `${codeChefURL}/users/${user.social.codechefProfile.username}`;
+    console.log(url);
+
     const page = await browser.newPage();
 
     await page.goto(url);
 
-    //   wait for submission
+    // wait for submission
     await page.waitForSelector("body > main");
 
     let data = await page.evaluate(() => {
@@ -53,24 +58,26 @@ exports.fetchCodeChef = async (user) => {
         "body > main > div > div > div > div > div > section.rating-data-section.problems-solved > div > h5:nth-child(3)"
       ).innerHTML;
       return {
-        userRating: parseInt(total_rating),
+        username: user.social.codechefProfile.username,
+        rating: parseInt(total_rating),
         division: div,
         globalRank: global_rank === "Inactive" ? 0 : global_rank,
-        noOfSubmission: parseInt(submissions.split("<")[0]),
+        submissions: parseInt(submissions.split("<")[0]),
         countryRank: country_rank === "Inactive" ? 0 : country_rank,
-        noSolvedQuestions: fully_solved,
+        solvedQuestions: fully_solved,
         partiallySolved: partially_solved,
       };
     });
 
     await page.close();
 
-    data.noSolvedQuestions = parseInt(do_conversion(data.noSolvedQuestions));
+    data.solvedQuestions = parseInt(do_conversion(data.noSolvedQuestions));
     data.partiallySolved = parseInt(do_conversion(data.partiallySolved));
     data.division = parseInt(do_conversion(data.division));
 
     return data;
   } catch (err) {
+    console.log(err);
     return null;
   }
 };
@@ -78,14 +85,15 @@ exports.fetchCodeChef = async (user) => {
 exports.fetchCodeForces = async (user) => {
   try {
     let result = {
+      username: user.social.codeforcesProfile.username,
       rating: "",
       contest: {
         attended: 0,
         rating: 0,
       },
-      noOfSubmission: 0,
-      languageUsed: [],
-      noSolvedQuestions: 0,
+      submissions: 0,
+      languagesUsed: [],
+      solvedQuestions: 0,
     };
 
     let userProfile = await fetch(
@@ -109,16 +117,16 @@ exports.fetchCodeForces = async (user) => {
     result.contest.rating = result.rating;
 
     result.contest.attended = attendedContest.result.length;
-    result.noOfSubmission = noOfSubmission.result.length;
+    result.submissions = noOfSubmission.result.length;
 
     for (let submission of noOfSubmission.result) {
       if (submission.verdict === "OK") {
-        result.noSolvedQuestions += 1;
+        result.solvedQuestions += 1;
       }
-      result.languageUsed.push(submission.programmingLanguage);
+      result.languagesUsed.push(submission.programmingLanguage);
     }
 
-    result.languageUsed = [...new Set(result.languageUsed)];
+    result.languagesUsed = [...new Set(result.languagesUsed)];
 
     return result;
   } catch (error) {
@@ -129,13 +137,15 @@ exports.fetchCodeForces = async (user) => {
 exports.fetchGithub = async (user) => {
   try {
     const response = await fetch(
-      `${githubApi}/${user.social.githubProfile.username}`
+      `${githubAPI}/${user.social.githubProfile.username}`
     );
+
     const data = await response.json();
 
     const { public_repos, followers, following } = data;
 
     return {
+      username: user.social.githubProfile.username,
       publicRepos: public_repos,
       followers: followers,
       following: following,
@@ -194,6 +204,7 @@ exports.fetchLeetcode = async (user) => {
     const responseData = await response.json();
 
     return {
+      username: user.social.leetcodeProfile.username,
       rating: responseData.data.matchedUser.profile.ranking,
       contest: {
         attended: responseData.data.userContests?.attendedContestsCount || 0,

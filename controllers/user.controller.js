@@ -3,7 +3,6 @@ const getCookieToken = require("../utils/cookieToken");
 const cloudinary = require("cloudinary");
 const Query = require("../utils/query");
 
-const Platform = require("../models/Platform.model");
 const {
   fetchCodeChef,
   fetchGithub,
@@ -149,10 +148,10 @@ exports.getUserDashboard = async (req, res) => {
       const leetcodeData = await fetchLeetcode(loggedUser);
 
       // updating coding handles
-      loggedUser.social.githubProfile = githubData;
-      loggedUser.social.codechefProfile = codechefData;
-      loggedUser.social.codeforcesProfile = codeforcesData;
-      loggedUser.social.leetcodeProfile = leetcodeData;
+      if (githubData) loggedUser.social.githubProfile = githubData;
+      if (codechefData) loggedUser.social.codechefProfile = codechefData;
+      if (codeforcesData) loggedUser.social.codeforcesProfile = codeforcesData;
+      if (leetcodeData) loggedUser.social.leetcodeProfile = leetcodeData;
 
       //updating next update cycle
       loggedUser.nextUpdateCycle =

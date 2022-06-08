@@ -1,4 +1,5 @@
 const User = require("../models/User.model");
+const Friend = require("../models/Friends.model");
 
 exports.sendFriendRequest = async (req, res) => {
   try {
@@ -6,40 +7,51 @@ exports.sendFriendRequest = async (req, res) => {
       return res.status(400).json({ error: "Please provide friend's user id" });
     }
 
-    const user = await User.findById(req.params.userId);
-
-    if (user._id.toString() === req.user._id.toString()) {
+    if (req.params.userId.toString() === req.user._id.toString()) {
       return res.status(400).json({ error: "Invalid user id" });
     }
 
-    //first test case
-    for (let friend of req.user.friendRequests) {
-      if (friend.toString() === req.params.userId) {
+    const check = await Friend.find({
+      requester: req.user._id,
+      recipient: req.params.userId,
+    });
+
+    if (check.length !== 0) {
+      if (check[0].status === 1)
+        return res
+          .status(400)
+          .json({ error: "You already sent friend request!" });
+
+      if (check[0].status === 2)
         return res
           .status(400)
           .json({ error: "User had already sent you friend request" });
-      }
+
+      if (check[0].status === 3)
+        return res.status(400).json({ error: "Already friends!" });
     }
 
-    //second test case
-    for (let friend of user.friendRequests) {
-      if (friend.toString() === req.user._id.toString()) {
-        return res
-          .status(400)
-          .json({ error: "Friend request was already sent" });
-      }
-    }
+    const statusFriendA = await Friend.create({
+      requester: req.user._id,
+      recipient: req.params.userId,
+      status: 1,
+    });
 
-    // third test case
-    for (let friend of user.friends) {
-      if (friend.toString() === req.user._id.toString()) {
-        return res.status(400).json({ error: "User is already friend" });
-      }
-    }
+    const statusFriendB = await Friend.create({
+      requester: req.params.userId,
+      recipient: req.user._id,
+      status: 2,
+    });
 
-    user.friendRequests.push(req.user._id);
+    //update user A
+    await User.findByIdAndUpdate(req.user._id, {
+      $addToSet: { friends: statusFriendA._id },
+    });
 
-    await user.save();
+    //update user A
+    await User.findByIdAndUpdate(req.params.userId, {
+      $addToSet: { friends: statusFriendB._id },
+    });
 
     res.status(200).json({ success: true, message: "Friend request is sent" });
   } catch (error) {
@@ -56,36 +68,73 @@ exports.addFriend = async (req, res) => {
       return res.status(400).json({ error: "Please provide friend user id" });
     }
 
-    const currrentUser = await User.findById(req.user._id);
-    const usersFriend = await User.findById(req.params.userId);
+    const check = await Friend.find({
+      requester: req.user._id,
+      recipient: req.params.userId,
+    });
 
-    let lengthFriendRequests = currrentUser.friendRequests.length;
+    if (check.length === 0) {
+      return res.status(403).json({ error: "User not found in list" });
+    }
 
-    let filteredFriendRequest = currrentUser.friendRequests.filter(
-      (friend) => friend._id.toString() !== usersFriend._id.toString()
+    if (check[0].status === 3)
+      return res.status(400).json({ error: "Already friends!" });
+
+    if (check[0].status === 1)
+      return res.status(400).json({ error: "Already send friend request!" });
+
+    // updating status of friend 1
+    await Friend.findOneAndUpdate(
+      { requester: req.user._id, recipient: req.params.userId },
+      { $set: { status: 3 } }
     );
 
-    //test case 1
-    for (let friend of usersFriend.friends) {
-      if (friend._id.toString() === req.user._id.toString()) {
-        return res.status(400).json({ error: "User is already friend" });
-      }
+    // updating status of friend 2
+    await Friend.findOneAndUpdate(
+      { requester: req.params.userId, recipient: req.user._id },
+      { $set: { status: 3 } }
+    );
+
+    res.status(200).json({ success: true, message: "Friend added to list!" });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ error: "Server has occured some problem, please try again" });
+  }
+};
+
+exports.removeFriend = async (req, res) => {
+  try {
+    if (!req.params.userId) {
+      return res.status(400).json({ error: "Please provide friend user id" });
     }
 
-    //test case 2
-    if (lengthFriendRequests === filteredFriendRequest.length) {
-      return res.status(400).json({ error: "Invalid Id" });
+    const friend1 = await Friend.findOneAndDelete({
+      requester: req.user._id,
+      recipient: req.params.userId,
+    });
+
+    const friend2 = await Friend.findByIdAndDelete({
+      recipient: req.user._id,
+      requester: req.params.userId,
+    });
+
+    if (!friend1 || friend2) {
+      res.status(500).json({ error: "No users found in list" });
     }
 
-    currrentUser.friendRequests = filteredFriendRequest.slice(0);
+    // removing friend from array
 
-    currrentUser.friends.push(usersFriend._id);
-    usersFriend.friends.push(currrentUser._id);
+    await User.findByIdAndUpdate(req.user._id, {
+      $pull: { friends: friend1._id },
+    });
 
-    await currrentUser.save();
-    await usersFriend.save();
+    await User.findByIdAndUpdate(req.params.userId, {
+      $pull: { friends: friend2._id },
+    });
 
-    res.status(200).json({ success: true, message: "Friend added" });
+    res.status(200).json({ success: true, message: "Friend added to list!" });
   } catch (error) {
     console.log(error);
     res

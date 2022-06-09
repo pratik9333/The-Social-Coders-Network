@@ -32,7 +32,7 @@ const friend = require("./api/friend.api");
 const vote = require("./api/vote.api");
 const auth = require("./api/auth.api");
 
-const User = require("./models/User.model");
+const Votes = require("./models/Votes.model");
 
 // scheduler to remove expired rated users
 app.put("/api/task", async (req, res) => {
@@ -43,16 +43,8 @@ app.put("/api/task", async (req, res) => {
       return res.status(400).send(`Unauthenticated`);
     }
 
-    await User.updateMany(
-      {},
-      {
-        $pull: {
-          ratedBy: {
-            expiryTime: { $lt: new Date().getTime() },
-          },
-        },
-      }
-    );
+    // expiryTime: { $lt: new Date().getTime() },
+    await Votes.deleteMany({}, { expiryTime: { $lt: new Date().getTime() } });
     res.status(200).send("Success");
   } catch (error) {
     res.status(500).send(`${error.message}`);

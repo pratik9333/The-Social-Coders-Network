@@ -8,8 +8,10 @@ const getCookieToken = (user, res) => {
   };
 
   //restricting data to pass on frontend
+
   user.password = undefined;
   user.__v = undefined;
+  user.social = null;
   user.createdAt = undefined;
 
   res.cookie("token", token, options);

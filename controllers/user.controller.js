@@ -15,7 +15,9 @@ const updateCycleOfDashboard = 30 * oneMinToMilli;
 
 exports.getUserDashboard = async (req, res) => {
   try {
-    let loggedUser = await User.findById(req.user._id);
+    let loggedUser = await User.findById(req.user._id).select(
+      "+nextUpdateCycle +friends"
+    );
 
     const currTime = new Date().getTime();
     const nextUpdateCycle = loggedUser.nextUpdateCycle;

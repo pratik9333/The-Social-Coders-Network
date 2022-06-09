@@ -9,7 +9,7 @@ const votingSchema = new mongoose.Schema(
       type: Number,
       enums: [
         1, //Upvote
-        -1, //Downvote
+        2, //Downvote
       ],
     },
     expiryTime: { type: Number },

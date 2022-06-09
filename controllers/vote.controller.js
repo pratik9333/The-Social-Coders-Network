@@ -1,4 +1,3 @@
-const Query = require("../utils/query");
 const User = require("../models/User.model");
 const Votes = require("../models/Votes.model");
 
@@ -12,6 +11,10 @@ exports.rateUser = async (req, res) => {
 
     action = parseInt(action);
 
+    if (userId === req.user._id.toString()) {
+      return res.status(400).json({ error: "Cannot vote yourself!" });
+    }
+
     if (!userId || !action) {
       return res
         .status(400)
@@ -19,7 +22,7 @@ exports.rateUser = async (req, res) => {
     }
 
     const Vote = await Votes.findOne({ user: userId, voter: req.user._id });
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).select("+upvotes +downvotes");
     const currTime = new Date().getTime();
 
     if (Vote && currTime <= Vote.expiryTime) {
@@ -28,10 +31,14 @@ exports.rateUser = async (req, res) => {
       });
     }
 
-    if (action) user.upvotes += 1;
-    else user.downvotes -= 1;
+    if (action === 2) {
+      user.downvotes += 1;
+    } else {
+      user.upvotes += 1;
+    }
+    console.log(user);
+
     user.rating = (user.upvotes / (user.upvotes + user.downvotes || 1)) * 100;
-    user.votes.push(req.user._id);
 
     if (!Vote) {
       await Votes.create({
@@ -43,7 +50,6 @@ exports.rateUser = async (req, res) => {
     } else {
       Vote.expiryTime = currTime + updateExpiryTimeForRating;
       Vote.status = action;
-
       await Vote.save();
     }
 
@@ -62,8 +68,6 @@ exports.rateUser = async (req, res) => {
 
 exports.getRatedLogs = async (req, res) => {
   try {
-    const currTime = new Date().getTime();
-
     const ratingUsers = await Votes.find({
       user: req.user._id,
     }).populate("voter", "name rating");

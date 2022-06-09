@@ -21,14 +21,7 @@ const userSchema = new mongoose.Schema(
       select: false,
       minlength: [6, "Password should be atleast 6 char"],
     },
-    photo: {
-      id: {
-        type: String,
-      },
-      url: {
-        type: String,
-      },
-    },
+    photo: { id: { type: String }, url: { type: String } },
     social: {
       githubProfile: {
         username: { type: String },
@@ -63,12 +56,11 @@ const userSchema = new mongoose.Schema(
         languagesUsed: [],
       },
     },
-    rating: { type: Number, default: 100 },
-    upvotes: { type: Number, default: 0 },
-    downvotes: { type: Number, default: 0 },
-    votes: [{ type: mongoose.Schema.ObjectId, ref: "Vote" }],
-    friends: [{ type: mongoose.Schema.ObjectId, ref: "Friend" }],
-    nextUpdateCycle: { type: Number, required: true },
+    upvotes: { type: Number, default: 0, select: false },
+    downvotes: { type: Number, default: 0, select: false },
+    rating: { type: Number, default: 0 },
+    friends: [{ type: mongoose.Schema.ObjectId, ref: "Friend", select: false }],
+    nextUpdateCycle: { type: Number, required: true, select: false },
   },
   { timestamps: true }
 );

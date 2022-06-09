@@ -44,7 +44,7 @@ app.put("/api/task", async (req, res) => {
     }
 
     // expiryTime: { $lt: new Date().getTime() },
-    await Votes.deleteMany({}, { expiryTime: { $lt: new Date().getTime() } });
+    await Votes.deleteMany({ expiryTime: { $lt: new Date().getTime() } });
     res.status(200).send("Success");
   } catch (error) {
     res.status(500).send(`${error.message}`);

@@ -14,7 +14,6 @@ Some basic Git commands are:
 ```
 $ git clone git@github.com:pratik9333/Social-Coding-Experience.git
 $ cd Social-Coding-Experience
-$ npm install
 ```
 
 

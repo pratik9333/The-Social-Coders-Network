@@ -12,7 +12,7 @@ The social coding app aims to create a social platform that will get coding prof
 Some basic Git commands are:
 
 ```
-$ git clone https://github.com/mohamedsamara/mern-ecommerce.git
+$ git clone git@github.com:pratik9333/Social-Coding-Experience.git
 $ cd project
 $ npm install
 ```

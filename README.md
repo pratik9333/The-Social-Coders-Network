@@ -21,6 +21,7 @@ $ npm install
 ## Setup
 
 - Setup Node.js and editor on your PC
+
    - [Download node.js](https://nodejs.org/en/download)
    - [Setup Editor](https://docs.flutter.dev/get-started/editor?tab=vscode)
 

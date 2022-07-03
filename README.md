@@ -3,7 +3,7 @@
 The social coding app aims to create a social platform that will get coding profile details from coding platforms and in turn showcase the coding background of the candidate.
 
 - Users can log in and add their add upto four coding profiles such as leetcode, codechef, codeforces and github. 
-- The scrapper will scrap coding websites and will show the coding background and experience profile of the user. 
+- The scrapper will scrap coding websites and will show the coding background and experience of the user. 
 - It has peer review feed feature, where other can rate/vote the candidate profile based on their coding experience. 
 - On the basis of upvote/downvote on the candidate's profile, a rating algorithm is created to score the candidate. 
 - You can add new friends/refer to see your profile and can start conversation for collaboration, sharing experience etc.  

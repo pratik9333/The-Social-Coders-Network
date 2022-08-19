@@ -1,6 +1,6 @@
 # Social Coding Network
 
-The social coding network aims to create a social media platform for programmers to explore their background and experience from all around the world.
+The social coding network aims to connect and share their coding background and experience with programmers from all around the world. 
 
 - Users can log in and add their add upto four coding profiles such as leetcode, codechef, codeforces and github. 
 - The scrapper will scrap coding websites and will show the coding background and experience of the user. 

@@ -1,6 +1,6 @@
-# Social Coding Experience
+# Social Coding Network
 
-The social coding app aims to create a social platform that will get coding profile details from coding platforms and in turn showcase the coding background of the candidate.
+The social coding network aims to create a social media platform for programmers to explore their background and experience from all around the world.
 
 - Users can log in and add their add upto four coding profiles such as leetcode, codechef, codeforces and github. 
 - The scrapper will scrap coding websites and will show the coding background and experience of the user. 

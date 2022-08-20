@@ -91,8 +91,3 @@ $ npm start
     }
 
 ```
-
-
-## Like to contribute ?
-
-We are currently creating screens with hardcoded data. We intend to keep the repository 'always open'. So you can showcase your contribution to potential future employers. The app is developed in Mern Stack. If you like to pick mern stack or knows decent bit of it & would like to contribute, feel free to get in touch or simply raise a PR. 

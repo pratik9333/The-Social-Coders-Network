@@ -1,6 +1,6 @@
-# Social Coding Network
+# Social Coders Network
 
-The social coding network helps to connect and share coding background and experience with programmers from all around the world. 
+The social coders network helps to connect and share coding background and experience with programmers from all around the world. 
 
 - Users can log in and add their add upto four coding profiles such as leetcode, codechef, codeforces and github. 
 - The scrapper will scrap coding websites and will show the coding background and experience of the user. 

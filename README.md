@@ -36,16 +36,18 @@ Create .env file that include:
   * DB_URL => mongodb atlas configuration
 ```
 
+
+## Install dependencies
+
+```
+$ npm install
+```
+
+
 ## Start development
 
 ```
 $ npm run dev
-```
-
-## Simple build for production
-
-```
-$ npm run build
 ```
 
 ## Run build for production

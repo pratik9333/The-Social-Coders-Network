@@ -5,9 +5,9 @@ The social coders network helps to connect and share coding background and exper
 - Users can log in and add their add upto four coding profiles such as leetcode, codechef, codeforces and github. 
 - The scrapper will scrap coding websites and will show the coding background and experience of the user. 
 - It has peer review feed feature, where other can rate/vote the candidate profile based on their coding experience. 
-- On the basis of upvote/downvote on the candidate's profile, a rating algorithm is created to score the candidate. 
+- The rating algorithm rates user based on the coding experience of user (such as no of problems solved, github commits, pull req, etc) and peer votes. 
 - You can add new friends/refer to see your profile and can start conversation for collaboration, sharing experience etc.  
-- A leaderboard where everyone can see the global users as well as their friends with their overall rating(based on peer review)
+- A leaderboard where everyone can see the global users as well as their friends with their overall rating(based on peer review and coding exp). 
 
 
 ## Install

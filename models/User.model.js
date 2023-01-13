@@ -60,7 +60,7 @@ const userSchema = new mongoose.Schema(
     downvotes: { type: Number, default: 0, select: false },
     rating: { type: Number, default: 0 },
     friends: [{ type: mongoose.Schema.ObjectId, ref: "Friend", select: false }],
-    nextUpdateCycle: { type: Number, required: true, select: false },
+    nextUpdateCycle: { type: Number, select: false },
   },
   { timestamps: true }
 );

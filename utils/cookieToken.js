@@ -1,12 +1,6 @@
 const getCookieToken = (user, res) => {
   const token = user.getJwtToken();
 
-  const options = {
-    expires: new Date(
-      Date.now() + process.env.COOKIE_EXPIRES * 24 * 60 * 60 * 1000
-    ),
-  };
-
   //restricting data to pass on frontend
 
   user.password = undefined;
@@ -14,7 +8,7 @@ const getCookieToken = (user, res) => {
   user.social = null;
   user.createdAt = undefined;
 
-  res.cookie("token", token, options);
+  res.cookie("token", token, { maxAge: 900000, httpOnly: true });
 
   res.setHeader("Access-Control-Allow-Credentials", true);
   res.setHeader("Access-Control-Allow-Origin", "*");

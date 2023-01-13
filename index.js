@@ -13,6 +13,8 @@ cloudinary.config({
   api_secret: process.env.API_SECRET,
 });
 
-app.listen(process.env.PORT, () => {
+const server = app.listen(process.env.PORT, () => {
   console.log(`App is running at port ${process.env.PORT}`);
 });
+
+module.exports = server;

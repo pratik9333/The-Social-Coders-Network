@@ -4,8 +4,9 @@
   "description": "App for providing social coding experience",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "start": "NODE_ENV=production node index.js",
+    "dev": "NODE_ENV=development nodemon index.js",
+    "test": "NODE_ENV=development mocha --timeout 10000"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,9 @@
     "cloudinary": "^1.29.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "chai": "^3.5.0",
+    "chai-http": "^2.0.1",
+    "mocha": "^2.4.5",
     "dotenv": "^14.2.0",
     "ejs": "^3.1.6",
     "express": "^4.17.2",

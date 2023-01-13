@@ -4,30 +4,10 @@ const cloudinary = require("cloudinary");
 const bcrypt = require("bcryptjs");
 
 exports.signup = async (req, res) => {
-  const {
-    name,
-    email,
-    password,
-    leetcodeId,
-    codeforcesId,
-    codechefId,
-    githubId,
-  } = req.body;
+  const { name, email, password } = req.body;
 
   try {
-    if (!req.files) {
-      return res.status(400).json({ error: "Photo is required to signup" });
-    }
-
-    if (
-      !name ||
-      !email ||
-      !password ||
-      !leetcodeId ||
-      !githubId ||
-      !codeforcesId ||
-      !codechefId
-    ) {
+    if (!name || !email || !password) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
@@ -40,35 +20,21 @@ exports.signup = async (req, res) => {
       });
     }
 
-    const file = req.files.photo;
-
-    //uploading file to cloudinary
-    const result = await cloudinary.v2.uploader.upload(file.tempFilePath, {
-      folder: "users",
-      width: 150,
-      crop: "scale",
-    });
-
     //creating user
     const user = await User.create({
       name,
       email,
       password,
-      social: {
-        githubProfile: { username: githubId },
-        leetcodeProfile: { username: leetcodeId },
-        codeforcesProfile: { username: codeforcesId },
-        codechefProfile: { username: codechefId },
-      },
-      photo: {
-        id: result.public_id,
-        url: result.secure_url,
-      },
-      nextUpdateCycle: new Date().getTime(),
     });
 
-    //this will create token, store in cookie and will send response to frontend
-    getCookieToken(user, res);
+    const token = user.getJwtToken();
+    res.cookie("token", token, { maxAge: 900000, httpOnly: true });
+
+    res.status(200).json({
+      success: true,
+      token: token,
+      user,
+    });
   } catch (error) {
     console.log(error);
     res
@@ -97,7 +63,14 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: "password is incorrect" });
     }
 
-    getCookieToken(user, res, req);
+    const token = user.getJwtToken();
+    res.cookie("token", token, { maxAge: 900000, httpOnly: true });
+
+    res.status(200).json({
+      success: true,
+      token: token,
+      user,
+    });
   } catch (error) {
     console.log(error);
     res

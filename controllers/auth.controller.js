@@ -1,6 +1,4 @@
 const User = require("../models/User.model");
-const getCookieToken = require("../utils/cookieToken");
-const cloudinary = require("cloudinary");
 const bcrypt = require("bcryptjs");
 
 exports.signup = async (req, res) => {
@@ -57,7 +55,7 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: "email is incorrect" });
     }
 
-    const result = bcrypt.compare(password, user.password);
+    const result = await bcrypt.compare(password, user.password);
 
     if (!result) {
       return res.status(401).json({ error: "password is incorrect" });
@@ -72,7 +70,6 @@ exports.login = async (req, res) => {
       user,
     });
   } catch (error) {
-    console.log(error);
     res
       .status(500)
       .json({ error: "Server has occured some problem, please try again" });

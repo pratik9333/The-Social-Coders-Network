@@ -122,7 +122,7 @@ exports.getUsers = async (req, res) => {
     await res.status(200).json({
       success: true,
       Users,
-      totalUsersCount: usersCount - 1,
+      totalUsersCount: usersCount,
       filteredUsers: filteredUsers,
     });
   } catch (error) {

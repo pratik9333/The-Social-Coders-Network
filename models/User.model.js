@@ -37,16 +37,16 @@ const userSchema = new mongoose.Schema(
         submissions: { type: Number },
         languagesUsed: [],
       },
-      codechefProfile: {
-        username: { type: String },
-        rating: { type: Number },
-        division: { type: Number },
-        globalRank: { type: Number },
-        submissions: { type: Number },
-        countryRank: { type: Number },
-        solvedQuestions: { type: Number },
-        partiallySolved: { type: Number },
-      },
+      // codechefProfile: {
+      //   username: { type: String },
+      //   rating: { type: Number },
+      //   division: { type: Number },
+      //   globalRank: { type: Number },
+      //   submissions: { type: Number },
+      //   countryRank: { type: Number },
+      //   solvedQuestions: { type: Number },
+      //   partiallySolved: { type: Number },
+      // },
       codeforcesProfile: {
         username: { type: String },
         rating: { type: Number },
@@ -58,9 +58,9 @@ const userSchema = new mongoose.Schema(
     },
     upvotes: { type: Number, default: 0, select: false },
     downvotes: { type: Number, default: 0, select: false },
+    nextUpdateCycle: { type: Number, select: false },
     rating: { type: Number, default: 0 },
     friends: [{ type: mongoose.Schema.ObjectId, ref: "Friend", select: false }],
-    nextUpdateCycle: { type: Number, select: false },
   },
   { timestamps: true }
 );

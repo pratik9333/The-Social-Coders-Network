@@ -23,6 +23,7 @@ exports.signup = async (req, res) => {
       name,
       email,
       password,
+      nextUpdateCycle: new Date().getTime(),
     });
 
     const token = user.getJwtToken();

@@ -3,7 +3,6 @@ const cloudinary = require("cloudinary");
 const Query = require("../utils/query");
 
 const {
-  fetchCodeChef,
   fetchGithub,
   fetchLeetcode,
   fetchCodeForces,
@@ -25,17 +24,31 @@ exports.getUserDashboard = async (req, res) => {
     if (currTime >= nextUpdateCycle) {
       //
 
+      let codeforcesData, githubData, leetcodeData;
+
       // adding user profile details coding profile details
-      const codechefData = await fetchCodeChef(loggedUser);
-      const codeforcesData = await fetchCodeForces(loggedUser);
-      const githubData = await fetchGithub(loggedUser);
-      const leetcodeData = await fetchLeetcode(loggedUser);
+      if (loggedUser.social.codeforcesProfile.username) {
+        codeforcesData = await fetchCodeForces(
+          loggedUser.social.codechefProfile.username
+        );
+      }
+
+      if (loggedUser.social.githubProfile.username) {
+        githubData = await fetchGithub(
+          loggedUser.social.githubProfile.username
+        );
+      }
+
+      if (loggedUser.social.leetcodeProfile.username) {
+        leetcodeData = await fetchLeetcode(
+          loggedUser.social.leetcodeProfile.username
+        );
+      }
 
       // updating coding handles
-      if (githubData) loggedUser.social.githubProfile = githubData;
-      if (codechefData) loggedUser.social.codechefProfile = codechefData;
-      if (codeforcesData) loggedUser.social.codeforcesProfile = codeforcesData;
-      if (leetcodeData) loggedUser.social.leetcodeProfile = leetcodeData;
+      loggedUser.social.githubProfile = githubData;
+      loggedUser.social.codeforcesProfile = codeforcesData;
+      loggedUser.social.leetcodeProfile = leetcodeData;
 
       //updating next update cycle
       loggedUser.nextUpdateCycle =
@@ -59,13 +72,29 @@ exports.updateUserDetails = async (req, res) => {
     let updateUser = {
       name: req.body.name ? req.body.name : req.user.name,
       email: req.body.email ? req.body.email : req.user.email,
+      social: {
+        githubProfile: {
+          username: null,
+        },
+        leetcodeProfile: {
+          username: null,
+        },
+        codeforcesProfile: {
+          username: null,
+        },
+        codechefProfile: {
+          username: null,
+        },
+      },
     };
 
     if (req.files) {
-      const imageId = req.user.photo.id;
+      if (req.user.photo.id) {
+        const imageId = req.user.photo.id;
 
-      //delete photo on cloudinary
-      await cloudinary.v2.uploader.destroy(imageId);
+        //delete photo on cloudinary
+        await cloudinary.v2.uploader.destroy(imageId);
+      }
 
       //uploading file to cloudinary
       const result = await cloudinary.v2.uploader.upload(
@@ -83,6 +112,20 @@ exports.updateUserDetails = async (req, res) => {
           url: result.secure_url,
         },
       };
+    }
+
+    if (req.body.githubId) {
+      const githubData = await fetchGithub(req.body.githubId);
+      updateUser.social.githubProfile = githubData;
+    }
+    if (req.body.leetcodeId) {
+      const leetcodeData = await fetchLeetcode(req.body.leetcodeId);
+      updateUser.social.leetcodeProfile = leetcodeData;
+    }
+
+    if (req.body.codeforcesId) {
+      const codeforcesData = await fetchCodeForces(req.body.codeforcesId);
+      updateUser.social.codeforcesProfile = codeforcesData;
     }
 
     const updatedUser = await User.findByIdAndUpdate(req.user.id, updateUser, {
@@ -122,7 +165,7 @@ exports.getUsers = async (req, res) => {
     await res.status(200).json({
       success: true,
       Users,
-      totalUsersCount: usersCount - 1,
+      totalUsersCount: usersCount,
       filteredUsers: filteredUsers,
     });
   } catch (error) {
@@ -136,9 +179,9 @@ exports.getUsers = async (req, res) => {
 exports.getLeaderBoardData = async (req, res) => {
   try {
     const usersCount = await User.countDocuments();
-    const resultPerPage = 10;
+    const resultPerPage = 6;
 
-    const userObj = new Query(User.find(), req.query);
+    const userObj = new Query(User.find(), req.query, req.user._id.toString());
 
     userObj.sort();
 

@@ -4,6 +4,7 @@ const { after, describe, it } = require("mocha");
 let User = require("../models/User.model");
 let server = require("../index.js");
 const { expect } = require("chai");
+const { populateUsers, users } = require("./seed/seed");
 let should = chai.should();
 
 chai.use(chaiHttp);
@@ -18,7 +19,6 @@ const user = {
 
 describe("POST /auth", () => {
   before((done) => {
-    //Before each test we empty the database
     User.deleteMany({}, (err) => {
       done();
     });
@@ -32,7 +32,8 @@ describe("POST /auth", () => {
       .end((err, res) => {
         if (err) return done(err);
         res.should.have.status(200);
-        expect(res.headers["authorization"]).to.not.be.null;
+        expect(res.headers["Authorization"]).to.not.be.null;
+        expect(res.body.token).to.not.be.null;
         expect(res.body.user).to.have.property("email", user.email);
         User.findOne({ email: user.email }).then((user) => {
           expect(user).to.not.be.null;
@@ -66,7 +67,9 @@ describe("POST /auth", () => {
       })
       .end((err, res) => {
         if (err) return done(err);
-        expect(res.headers["authorization"]).to.not.be.null;
+        expect(res.headers["Authorization"]).to.not.be.null;
+        expect(res.body.token).to.not.be.null;
+        token = res.body.token;
         User.findById(res.body.user._id)
           .then((user) => {
             expect(user).to.not.be.null;
@@ -105,57 +108,195 @@ describe("POST /auth", () => {
         done();
       });
   });
+});
 
-  // it("should not be able to login if users have not registered", (done) => {
-  //   chai
-  //     .request(server)
-  //     .post("/api/v1/auth/signin")
-  //     .send({
-  //       email: user.email,
-  //       password: user.password,
-  //     })
-  //     .end(function (err, res) {
-  //       res.should.have.status(401);
-  //       expect(res.body).to.have.property("error", "email is incorrect");
-  //       done();
-  //     });
-  // });
+describe("GET /user", () => {
+  before((done) => {
+    populateUsers();
+    done();
+  });
 
-  // it("it should able to login to existing user", (done) => {
-  //   chai
-  //     .request(server)
-  //     .post("/api/v1/auth/signin")
-  //     .send({
-  //       name: "pratik",
-  //       email: "pratik@gmail.com",
-  //       password: "1234567",
-  //     })
-  //     .end((err, res) => {
-  //       res.should.have.status(200);
-  //       res.body.should.have.property("token");
-  //       token = res.body.token;
-  //       res.body.should.have.property("user");
-  //       done();
-  //     });
-  // });
+  it("Should return seven users", (done) => {
+    chai
+      .request(server)
+      .get("/api/v1/user")
+      .query({ page: 1, limit: 7 })
+      .set("Authorization", "Bearer " + token)
+      .end((err, res) => {
+        if (err) return done(err);
+        res.should.have.status(200);
 
-  // it("should be able to logout", (done) => {
-  //   chai
-  //     .request(server)
-  //     .get("/api/v1/auth/signout")
-  //     .set("Authorization", "Bearer " + token)
-  //     .end((err, res) => {
-  //       res.should.have.status(200);
-  //       expect(res.body).to.have.property("success", true);
-  //       expect(res.body).to.have.property("message", "Logout Success");
-  //       done();
-  //     });
-  // });
+        expect(res.body.Users).to.be.a("array");
+        expect(res.body.Users).to.have.length(7);
+        expect(res.body).to.have.property("totalUsersCount", 8);
+        expect(res.body).to.have.property("filteredUsers", 7);
 
-  after(function (done) {
-    server.close(done);
+        const updatedUsers = users.map((user) => {
+          return {
+            _id: user._id.toString(),
+            name: user.name,
+            email: user.email,
+          };
+        });
+
+        expect(...res.body.Users).to.include(...updatedUsers);
+
+        done();
+      });
+  });
+
+  it("Should return six users", (done) => {
+    chai
+      .request(server)
+      .get("/api/v1/user")
+      .query({ page: 1 })
+      .set("Authorization", "Bearer " + token)
+      .end((err, res) => {
+        if (err) return done(err);
+        res.should.have.status(200);
+
+        expect(res.body.Users).to.be.a("array");
+        expect(res.body.Users).to.have.length(6);
+        expect(res.body).to.have.property("totalUsersCount", 8);
+        expect(res.body).to.have.property("filteredUsers", 6);
+        done();
+      });
+  });
+
+  it("Should return one user", (done) => {
+    chai
+      .request(server)
+      .get("/api/v1/user")
+      .query({ page: 2 })
+      .set("Authorization", "Bearer " + token)
+      .end((err, res) => {
+        if (err) return done(err);
+        res.should.have.status(200);
+
+        expect(res.body.Users).to.be.a("array");
+        expect(res.body.Users).to.have.length(1);
+        expect(res.body).to.have.property("totalUsersCount", 8);
+        expect(res.body).to.have.property("filteredUsers", 1);
+        done();
+      });
+  });
+
+  it("Should return users that has firstname starts with user", (done) => {
+    chai
+      .request(server)
+      .get("/api/v1/user")
+      .query({ search: "user" })
+      .set("Authorization", "Bearer " + token)
+      .end((err, res) => {
+        if (err) return done(err);
+        res.should.have.status(200);
+
+        expect(res.body.Users).to.be.a("array");
+        expect(res.body.Users).to.have.length(6);
+        expect(res.body).to.have.property("totalUsersCount", 8);
+        expect(res.body).to.have.property("filteredUsers", 6);
+        done();
+      });
+  });
+
+  it("Should return users that has endname starts with four", (done) => {
+    chai
+      .request(server)
+      .get("/api/v1/user")
+      .query({ search: "four" })
+      .set("Authorization", "Bearer " + token)
+      .end((err, res) => {
+        if (err) return done(err);
+        res.should.have.status(200);
+
+        expect(res.body.Users).to.be.a("array");
+        expect(res.body.Users).to.have.length(1);
+        expect(res.body).to.have.property("totalUsersCount", 8);
+        expect(res.body).to.have.property("filteredUsers", 1);
+        done();
+      });
+  });
+
+  it("Should return seven users from leaderboard api", (done) => {
+    chai
+      .request(server)
+      .get("/api/v1/user/leaderboard")
+      .query({ page: 1, limit: 7 })
+      .set("Authorization", "Bearer " + token)
+      .end((err, res) => {
+        if (err) return done(err);
+        res.should.have.status(200);
+
+        expect(res.body.data).to.be.a("array");
+        expect(res.body.data).to.have.length(7);
+
+        expect(res.body).to.have.property("usersCount", 8);
+        expect(res.body).to.have.property("filteredUsers", 7);
+        done();
+      });
+  });
+
+  it("Should return six users from leaderboard api", (done) => {
+    chai
+      .request(server)
+      .get("/api/v1/user/leaderboard")
+      .query({ page: 1 })
+      .set("Authorization", "Bearer " + token)
+      .end((err, res) => {
+        if (err) return done(err);
+        res.should.have.status(200);
+
+        expect(res.body.data).to.be.a("array");
+        expect(res.body.data).to.have.length(6);
+
+        expect(res.body).to.have.property("usersCount", 8);
+        expect(res.body).to.have.property("filteredUsers", 6);
+        done();
+      });
+  });
+
+  it("Should return two user from leaderboard api", (done) => {
+    chai
+      .request(server)
+      .get("/api/v1/user/leaderboard")
+      .query({ page: 2 })
+      .set("Authorization", "Bearer " + token)
+      .end((err, res) => {
+        if (err) return done(err);
+        res.should.have.status(200);
+
+        expect(res.body.data).to.be.a("array");
+        expect(res.body.data).to.have.length(2);
+
+        expect(res.body).to.have.property("usersCount", 8);
+        expect(res.body).to.have.property("filteredUsers", 2);
+        done();
+      });
+  });
+
+  it("Should return a user profile data", (done) => {
+    chai
+      .request(server)
+      .get("/api/v1/user/dashboard")
+      .set("Authorization", "Bearer " + token)
+      .end((err, res) => {
+        if (err) return done(err);
+        res.should.have.status(200);
+        expect(res.body).to.have.property("success", true);
+
+        expect(res.body.loggedUser).to.be.an("object").and.not.to.be.empty;
+        expect(res.body.loggedUser.social).to.be.an("object").and.not.to.be
+          .empty;
+
+        expect(res.body.loggedUser).to.have.property("name", user.name);
+        expect(res.body.loggedUser).to.have.property("email", user.email);
+        expect(res.body.loggedUser).to.have.property("rating", 0);
+        done();
+      });
   });
 });
+
+module.exports = token;
 
 // **** Some imp definations ****
 

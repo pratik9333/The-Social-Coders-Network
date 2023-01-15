@@ -17,73 +17,73 @@ const do_conversion = (s) => {
   return ans.trim();
 };
 
-exports.fetchCodeChef = async (user) => {
-  try {
-    const browser = await puppeteer.launch({
-      headless: true,
-    });
+// exports.fetchCodeChef = async (codechefId) => {
+//   try {
+//     const browser = await puppeteer.launch({
+//       headless: true,
+//     });
 
-    const url = `${codeChefURL}/users/${user.social.codechefProfile.username}`;
-    console.log(url);
+//     const url = `${codeChefURL}/users/${codechefId}`;
+//     console.log(url);
 
-    const page = await browser.newPage();
+//     const page = await browser.newPage();
 
-    await page.goto(url);
+//     await page.goto(url);
 
-    // wait for submission
-    await page.waitForSelector("body > main");
+//     // wait for submission
+//     await page.waitForSelector("body > main");
 
-    let data = await page.evaluate(() => {
-      const total_rating = document.querySelector(
-        "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-header.text-center > div.rating-number"
-      ).innerHTML;
-      let div = document.querySelector(
-        "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-header.text-center > div:nth-child(2)"
-      ).innerHTML;
-      const global_rank = document.querySelector(
-        "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-ranks > ul > li:nth-child(1) > a > strong"
-      ).innerHTML;
-      const country_rank = document.querySelector(
-        "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-ranks > ul > li:nth-child(2) > a > strong"
-      ).innerHTML;
-      const submissions = document.querySelector(
-        "body > main > div > div > div > div > div > section.rating-data-section.submissions > div > div > div > svg > g > g.highcharts-data-label-color-5 > text > tspan"
-      ).innerHTML;
-      const fully_solved = document.querySelector(
-        "body > main > div > div > div > div > div > section.rating-data-section.problems-solved > div > h5:nth-child(1)"
-      ).innerText;
-      const partially_solved = document.querySelector(
-        "body > main > div > div > div > div > div > section.rating-data-section.problems-solved > div > h5:nth-child(3)"
-      ).innerHTML;
-      return {
-        username: user.social.codechefProfile.username,
-        rating: parseInt(total_rating),
-        division: div,
-        globalRank: global_rank === "Inactive" ? 0 : global_rank,
-        submissions: parseInt(submissions.split("<")[0]),
-        countryRank: country_rank === "Inactive" ? 0 : country_rank,
-        solvedQuestions: fully_solved,
-        partiallySolved: partially_solved,
-      };
-    });
+//     let data = await page.evaluate(() => {
+//       const total_rating = document.querySelector(
+//         "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-header.text-center > div.rating-number"
+//       ).innerHTML;
+//       let div = document.querySelector(
+//         "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-header.text-center > div:nth-child(2)"
+//       ).innerHTML;
+//       const global_rank = document.querySelector(
+//         "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-ranks > ul > li:nth-child(1) > a > strong"
+//       ).innerHTML;
+//       const country_rank = document.querySelector(
+//         "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-ranks > ul > li:nth-child(2) > a > strong"
+//       ).innerHTML;
+//       const submissions = document.querySelector(
+//         "body > main > div > div > div > div > div > section.rating-data-section.submissions > div > div > div > svg > g > g.highcharts-data-label-color-5 > text > tspan"
+//       ).innerHTML;
+//       const fully_solved = document.querySelector(
+//         "body > main > div > div > div > div > div > section.rating-data-section.problems-solved > div > h5:nth-child(1)"
+//       ).innerText;
+//       const partially_solved = document.querySelector(
+//         "body > main > div > div > div > div > div > section.rating-data-section.problems-solved > div > h5:nth-child(3)"
+//       ).innerHTML;
+//       return {
+//         username: user.social.codechefProfile.username,
+//         rating: parseInt(total_rating),
+//         division: div,
+//         globalRank: global_rank === "Inactive" ? 0 : global_rank,
+//         submissions: parseInt(submissions.split("<")[0]),
+//         countryRank: country_rank === "Inactive" ? 0 : country_rank,
+//         solvedQuestions: fully_solved,
+//         partiallySolved: partially_solved,
+//       };
+//     });
 
-    await page.close();
+//     await page.close();
 
-    data.solvedQuestions = parseInt(do_conversion(data.solvedQuestions));
-    data.partiallySolved = parseInt(do_conversion(data.partiallySolved));
-    data.division = parseInt(do_conversion(data.division));
+//     data.solvedQuestions = parseInt(do_conversion(data.solvedQuestions));
+//     data.partiallySolved = parseInt(do_conversion(data.partiallySolved));
+//     data.division = parseInt(do_conversion(data.division));
 
-    return data;
-  } catch (err) {
-    console.log(err);
-    return null;
-  }
-};
+//     return data;
+//   } catch (err) {
+//     console.log(err);
+//     return null;
+//   }
+// };
 
-exports.fetchCodeForces = async (user) => {
+exports.fetchCodeForces = async (codeforcesId) => {
   try {
     let result = {
-      username: user.social.codeforcesProfile.username,
+      username: codeforcesId,
       rating: "",
       contest: {
         attended: 0,
@@ -95,15 +95,15 @@ exports.fetchCodeForces = async (user) => {
     };
 
     let userProfile = await fetch(
-      `${codeForcesURL}/user.info?handles=${user.social.codeforcesProfile.username}`
+      `${codeForcesURL}/user.info?handles=${codeforcesId}`
     );
 
     let attendedContest = await fetch(
-      `${codeForcesURL}/user.rating?handle=${user.social.codeforcesProfile.username}`
+      `${codeForcesURL}/user.rating?handle=${codeforcesId}`
     );
 
     let noOfSubmission = await fetch(
-      `${codeForcesURL}/user.status?handle=${user.social.codeforcesProfile.username}`
+      `${codeForcesURL}/user.status?handle=${codeforcesId}`
     );
 
     attendedContest = await attendedContest.json();
@@ -128,32 +128,30 @@ exports.fetchCodeForces = async (user) => {
 
     return result;
   } catch (error) {
-    return null;
+    return { username: codeforcesId };
   }
 };
 
-exports.fetchGithub = async (user) => {
+exports.fetchGithub = async (githubId) => {
   try {
-    const response = await fetch(
-      `${githubAPI}/${user.social.githubProfile.username}`
-    );
+    const response = await fetch(`${githubAPI}/${githubId}`);
 
     const data = await response.json();
 
     const { public_repos, followers, following } = data;
 
     return {
-      username: user.social.githubProfile.username,
+      username: githubId,
       publicRepos: public_repos,
       followers: followers,
       following: following,
     };
   } catch (err) {
-    return null;
+    return { username: githubId };
   }
 };
 
-exports.fetchLeetcode = async (user) => {
+exports.fetchLeetcode = async (leetcodeId) => {
   try {
     const query = `query userProfile($username: String!, $limit: Int!) {
     matchedUser(username: $username) {
@@ -186,7 +184,7 @@ exports.fetchLeetcode = async (user) => {
     const data = JSON.stringify({
       query: query,
       variables: {
-        username: user.social.leetcodeProfile.username,
+        username: leetcodeId,
         limit: 5,
       },
     });
@@ -202,7 +200,7 @@ exports.fetchLeetcode = async (user) => {
     const responseData = await response.json();
 
     return {
-      username: user.social.leetcodeProfile.username,
+      username: leetcodeId,
       rating: responseData.data.matchedUser.profile.ranking,
       contest: {
         attended: responseData.data.userContests?.attendedContestsCount || 0,
@@ -218,6 +216,6 @@ exports.fetchLeetcode = async (user) => {
       ),
     };
   } catch (error) {
-    return null;
+    return { username: leetcodeId };
   }
 };

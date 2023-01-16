@@ -1,5 +1,5 @@
 let chai = require("chai");
-let chaiHttp = require("chai-http");
+const request = require("supertest");
 const { after, describe, it } = require("mocha");
 let User = require("../models/User.model");
 let server = require("../index.js");
@@ -7,7 +7,11 @@ const { expect } = require("chai");
 const { populateUsers, users } = require("./seed/seed");
 let should = chai.should();
 
-chai.use(chaiHttp);
+const fs = require("fs");
+const path = require("path");
+
+const nock = require("nock");
+const query = require("../utils/ExternalAPI/fetchCodeData");
 
 var token;
 
@@ -25,13 +29,12 @@ describe("POST /auth", () => {
   });
 
   it("should able to create user and return auth token", (done) => {
-    chai
-      .request(server)
+    request(server)
       .post("/api/v1/auth/signup")
       .send(user)
+      .expect(200)
       .end((err, res) => {
         if (err) return done(err);
-        res.should.have.status(200);
         expect(res.headers["Authorization"]).to.not.be.null;
         expect(res.body.token).to.not.be.null;
         expect(res.body.user).to.have.property("email", user.email);
@@ -43,12 +46,11 @@ describe("POST /auth", () => {
   });
 
   it("should not create user if email in use", (done) => {
-    chai
-      .request(server)
+    request(server)
       .post("/api/v1/auth/signup")
       .send(user)
+      .expect(400)
       .end((err, res) => {
-        res.should.have.status(400);
         expect(res.body).to.have.property(
           "error",
           "Email is already registered, please try again with another email"
@@ -58,13 +60,13 @@ describe("POST /auth", () => {
   });
 
   it("Should login user and return auth token", (done) => {
-    chai
-      .request(server)
+    request(server)
       .post("/api/v1/auth/signin")
       .send({
         email: user.email,
         password: user.password,
       })
+      .expect(200)
       .end((err, res) => {
         if (err) return done(err);
         expect(res.headers["Authorization"]).to.not.be.null;
@@ -80,30 +82,28 @@ describe("POST /auth", () => {
   });
 
   it("Should reject login with invalid email", (done) => {
-    chai
-      .request(server)
+    request(server)
       .post("/api/v1/auth/signin")
       .send({
         email: "abc@gmail.com",
         password: user.password,
       })
+      .expect(401)
       .end((err, res) => {
-        res.should.have.status(401);
         expect(res.body).to.have.property("error", "email is incorrect");
         done();
       });
   });
 
   it("Should reject login with invalid password", (done) => {
-    chai
-      .request(server)
+    request(server)
       .post("/api/v1/auth/signin")
       .send({
         email: user.email,
         password: `djdjdjdj`,
       })
+      .expect(401)
       .end((err, res) => {
-        res.should.have.status(401);
         expect(res.body).to.have.property("error", "password is incorrect");
         done();
       });
@@ -117,14 +117,13 @@ describe("GET /user", () => {
   });
 
   it("Should return seven users", (done) => {
-    chai
-      .request(server)
+    request(server)
       .get("/api/v1/user")
       .query({ page: 1, limit: 7 })
       .set("Authorization", "Bearer " + token)
+      .expect(200)
       .end((err, res) => {
         if (err) return done(err);
-        res.should.have.status(200);
 
         expect(res.body.Users).to.be.a("array");
         expect(res.body.Users).to.have.length(7);
@@ -146,14 +145,13 @@ describe("GET /user", () => {
   });
 
   it("Should return six users", (done) => {
-    chai
-      .request(server)
+    request(server)
       .get("/api/v1/user")
       .query({ page: 1 })
       .set("Authorization", "Bearer " + token)
+      .expect(200)
       .end((err, res) => {
         if (err) return done(err);
-        res.should.have.status(200);
 
         expect(res.body.Users).to.be.a("array");
         expect(res.body.Users).to.have.length(6);
@@ -164,14 +162,13 @@ describe("GET /user", () => {
   });
 
   it("Should return one user", (done) => {
-    chai
-      .request(server)
+    request(server)
       .get("/api/v1/user")
       .query({ page: 2 })
       .set("Authorization", "Bearer " + token)
+      .expect(200)
       .end((err, res) => {
         if (err) return done(err);
-        res.should.have.status(200);
 
         expect(res.body.Users).to.be.a("array");
         expect(res.body.Users).to.have.length(1);
@@ -182,14 +179,13 @@ describe("GET /user", () => {
   });
 
   it("Should return users that has firstname starts with user", (done) => {
-    chai
-      .request(server)
+    request(server)
       .get("/api/v1/user")
       .query({ search: "user" })
       .set("Authorization", "Bearer " + token)
+      .expect(200)
       .end((err, res) => {
         if (err) return done(err);
-        res.should.have.status(200);
 
         expect(res.body.Users).to.be.a("array");
         expect(res.body.Users).to.have.length(6);
@@ -200,14 +196,13 @@ describe("GET /user", () => {
   });
 
   it("Should return users that has endname starts with four", (done) => {
-    chai
-      .request(server)
+    request(server)
       .get("/api/v1/user")
       .query({ search: "four" })
       .set("Authorization", "Bearer " + token)
+      .expect(200)
       .end((err, res) => {
         if (err) return done(err);
-        res.should.have.status(200);
 
         expect(res.body.Users).to.be.a("array");
         expect(res.body.Users).to.have.length(1);
@@ -218,14 +213,13 @@ describe("GET /user", () => {
   });
 
   it("Should return seven users from leaderboard api", (done) => {
-    chai
-      .request(server)
+    request(server)
       .get("/api/v1/user/leaderboard")
       .query({ page: 1, limit: 7 })
       .set("Authorization", "Bearer " + token)
+      .expect(200)
       .end((err, res) => {
         if (err) return done(err);
-        res.should.have.status(200);
 
         expect(res.body.data).to.be.a("array");
         expect(res.body.data).to.have.length(7);
@@ -237,14 +231,13 @@ describe("GET /user", () => {
   });
 
   it("Should return six users from leaderboard api", (done) => {
-    chai
-      .request(server)
+    request(server)
       .get("/api/v1/user/leaderboard")
       .query({ page: 1 })
       .set("Authorization", "Bearer " + token)
+      .expect(200)
       .end((err, res) => {
         if (err) return done(err);
-        res.should.have.status(200);
 
         expect(res.body.data).to.be.a("array");
         expect(res.body.data).to.have.length(6);
@@ -256,14 +249,13 @@ describe("GET /user", () => {
   });
 
   it("Should return two user from leaderboard api", (done) => {
-    chai
-      .request(server)
+    request(server)
       .get("/api/v1/user/leaderboard")
       .query({ page: 2 })
       .set("Authorization", "Bearer " + token)
+      .expect(200)
       .end((err, res) => {
         if (err) return done(err);
-        res.should.have.status(200);
 
         expect(res.body.data).to.be.a("array");
         expect(res.body.data).to.have.length(2);
@@ -275,13 +267,12 @@ describe("GET /user", () => {
   });
 
   it("Should return a user profile data", (done) => {
-    chai
-      .request(server)
+    request(server)
       .get("/api/v1/user/dashboard")
       .set("Authorization", "Bearer " + token)
+      .expect(200)
       .end((err, res) => {
         if (err) return done(err);
-        res.should.have.status(200);
         expect(res.body).to.have.property("success", true);
 
         expect(res.body.loggedUser).to.be.an("object").and.not.to.be.empty;
@@ -293,6 +284,105 @@ describe("GET /user", () => {
         expect(res.body.loggedUser).to.have.property("rating", 0);
         done();
       });
+  });
+});
+
+describe("PUT /user", () => {
+  before((done) => {
+    //const mock = nock("https://leetcode.com/graphql");
+
+    nock("https://api.cloudinary.com")
+      .post("/v1_1/pratikaswani/image/upload")
+      .reply(200, {
+        public_id: "93332001",
+        url: "http://res.cloudinary.com/pratikaswani/image/upload/v1524241067/93332001.jpg",
+        secure_url:
+          "https://res.cloudinary.com/pratikaswani/image/upload/v1524241067/93332001.jpg",
+        format: "jpg",
+      });
+
+    // mocking github api that returns github profile data
+    nock("https://api.github.com/users/pratik9333").get().reply(200, {
+      username: "pratik9333",
+      publicRepos: "68",
+      followers: "10",
+      following: "5",
+    });
+
+    // mock
+    //   .post("https://leetcode.com/graphql", {
+    //     query: query,
+    //     variables: {
+    //       username: "pratik9333",
+    //       limit: 5,
+    //     },
+    //   })
+    //   .reply(200, { data: {} });
+
+    done();
+  });
+  it("should update the user email and name", (done) => {
+    request(server)
+      .put("/api/v1/user")
+      .send({
+        name: "Sahil Jha",
+        email: "sahiljha@gmail.com",
+      })
+      .set("Authorization", "Bearer " + token)
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        expect(res.body).to.have.property("success", true);
+        expect(res.body).to.have.property("message", "User profile is updated");
+
+        expect(res.body.updatedUser).to.be.an("object").and.not.to.be.empty;
+        expect(res.body.updatedUser.social).to.be.an("object").and.not.to.be
+          .empty;
+
+        expect(res.body.updatedUser).to.have.property("name", "Sahil Jha");
+        expect(res.body.updatedUser).to.have.property(
+          "email",
+          "sahiljha@gmail.com"
+        );
+
+        done();
+      });
+  });
+
+  it("should update the user profile image and return public ID and and URL of uploaded image", (done) => {
+    request(server)
+      .put("/api/v1/user")
+      .set("Content-Type", "multipart/form-data")
+      .set("Authorization", "Bearer " + token)
+      .expect(200)
+      .attach(
+        "photo",
+        fs.readFileSync(path.resolve(__dirname, "./testImages/demo.jpeg"))
+      )
+      .end((err, res) => {
+        if (err) return done(err);
+        expect(res.body).to.have.property("success", true);
+        expect(res.body).to.have.property("message", "User profile is updated");
+
+        expect(res.body.updatedUser).to.be.an("object").and.not.to.be.empty;
+        expect(res.body.updatedUser.social).to.be.an("object").and.not.to.be
+          .empty;
+
+        expect(res.body.updatedUser.photo).to.be.an("object").and.not.to.be
+          .empty;
+
+        expect(res.body.updatedUser.photo).to.have.property("id", "93332001");
+        expect(res.body.updatedUser.photo).to.have.property(
+          "url",
+          "https://res.cloudinary.com/pratikaswani/image/upload/v1524241067/93332001.jpg"
+        );
+
+        done();
+      });
+  });
+
+  after(() => {
+    nock.cleanAll();
   });
 });
 

@@ -31,24 +31,22 @@ exports.getUserDashboard = async (req, res) => {
         codeforcesData = await fetchCodeForces(
           loggedUser.social.codechefProfile.username
         );
+        loggedUser.social.codeforcesProfile = codeforcesData;
       }
 
       if (loggedUser.social.githubProfile.username) {
         githubData = await fetchGithub(
           loggedUser.social.githubProfile.username
         );
+        loggedUser.social.githubProfile = githubData;
       }
 
       if (loggedUser.social.leetcodeProfile.username) {
         leetcodeData = await fetchLeetcode(
           loggedUser.social.leetcodeProfile.username
         );
+        loggedUser.social.leetcodeProfile = leetcodeData;
       }
-
-      // updating coding handles
-      loggedUser.social.githubProfile = githubData;
-      loggedUser.social.codeforcesProfile = codeforcesData;
-      loggedUser.social.leetcodeProfile = leetcodeData;
 
       //updating next update cycle
       loggedUser.nextUpdateCycle =
@@ -140,6 +138,7 @@ exports.updateUserDetails = async (req, res) => {
       .status(200)
       .json({ success: true, message: "User profile is updated", updatedUser });
   } catch (error) {
+    console.log(error);
     res
       .status(500)
       .json({ error: "Server has occured some problem, please try again" });

@@ -4,8 +4,36 @@ const fetch = require("node-fetch");
 // urls
 const leetcodeURL = "https://leetcode.com/graphql";
 const codeForcesURL = "https://codeforces.com/api";
-const codeChefURL = "https://www.codechef.com";
+//const codeChefURL = "https://www.codechef.com";
 const githubAPI = "https://api.github.com/users";
+
+const query = `query userProfile($username: String!, $limit: Int!) {
+    matchedUser(username: $username) {
+        username
+         profile {
+          ranking
+        }
+        languageProblemCount {
+           languageName
+          problemsSolved
+        }
+        submitStats: submitStatsGlobal {
+          acSubmissionNum {
+              difficulty
+              count
+              submissions
+          }
+        }
+    }
+    recentAcSubmissionList(username: $username, limit: $limit) {
+      title
+    }
+    userContestRanking(username: $username) {
+      attendedContestsCount
+      globalRanking
+      rating
+    }
+}`;
 
 const do_conversion = (s) => {
   let ans = "";
@@ -133,6 +161,7 @@ exports.fetchCodeForces = async (codeforcesId) => {
 };
 
 exports.fetchGithub = async (githubId) => {
+  console.log(githubId);
   try {
     const response = await fetch(`${githubAPI}/${githubId}`);
 
@@ -153,34 +182,6 @@ exports.fetchGithub = async (githubId) => {
 
 exports.fetchLeetcode = async (leetcodeId) => {
   try {
-    const query = `query userProfile($username: String!, $limit: Int!) {
-    matchedUser(username: $username) {
-        username
-         profile {
-          ranking
-        }
-        languageProblemCount {
-           languageName
-          problemsSolved
-        }
-        submitStats: submitStatsGlobal {
-          acSubmissionNum {
-              difficulty
-              count
-              submissions
-          }
-        }
-    }
-    recentAcSubmissionList(username: $username, limit: $limit) {
-      title
-    }
-    userContestRanking(username: $username) {
-      attendedContestsCount
-      globalRanking
-      rating
-    }
-}`;
-
     const data = JSON.stringify({
       query: query,
       variables: {
@@ -198,6 +199,8 @@ exports.fetchLeetcode = async (leetcodeId) => {
     });
 
     const responseData = await response.json();
+
+    console.log(responseData);
 
     return {
       username: leetcodeId,
@@ -219,3 +222,5 @@ exports.fetchLeetcode = async (leetcodeId) => {
     return { username: leetcodeId };
   }
 };
+
+module.exports = query;

@@ -36,12 +36,14 @@
     "mongoose": "^6.1.7",
     "morgan": "^1.10.0",
     "nanoid": "^3.2.0",
+    "nock": "^13.3.0",
     "node-fetch": "2.6.1",
     "nodemailer": "^6.7.2",
     "nodemon": "^2.0.15",
     "pupeteer": "^0.0.1",
     "puppeteer": "^13.6.0",
     "redis": "^3.0.0",
+    "supertest": "^6.3.3",
     "toad-scheduler": "^1.6.0",
     "validator": "^13.7.0"
   }

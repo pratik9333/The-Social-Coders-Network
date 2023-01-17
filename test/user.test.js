@@ -4,14 +4,52 @@ const { after, describe, it } = require("mocha");
 let User = require("../models/User.model");
 let server = require("../index.js");
 const { expect } = require("chai");
-const { populateUsers, token, users } = require("./seed/seed");
+const {
+  populateUsers,
+  token,
+  users,
+  githubData,
+  codeforcesContestsData,
+  codeforcesUserData,
+  codeforcesSubmissionsData,
+  leetcodeData,
+  leetcodeResponseData,
+} = require("./seed/seed");
+
 chai.should();
 
 const fs = require("fs");
 const path = require("path");
 
 const nock = require("nock");
-const query = require("../utils/ExternalAPI/fetchCodeData");
+
+const query = `query userProfile($username: String!, $limit: Int!) {
+    matchedUser(username: $username) {
+        username
+         profile {
+          ranking
+        }
+        languageProblemCount {
+           languageName
+          problemsSolved
+        }
+        submitStats: submitStatsGlobal {
+          acSubmissionNum {
+              difficulty
+              count
+              submissions
+          }
+        }
+    }
+    recentAcSubmissionList(username: $username, limit: $limit) {
+      title
+    }
+    userContestRanking(username: $username) {
+      attendedContestsCount
+      globalRanking
+      rating
+    }
+}`;
 
 describe("POST /auth", () => {
   before((done) => {
@@ -288,8 +326,9 @@ describe("GET /user", () => {
 
 describe("PUT /user", () => {
   before((done) => {
-    //const mock = nock("https://leetcode.com/graphql");
+    const mock = nock("https://leetcode.com");
 
+    // mocking cloudinary api that returns public id and url of user
     nock("https://api.cloudinary.com")
       .post("/v1_1/pratikaswani/image/upload")
       .reply(200, {
@@ -300,23 +339,48 @@ describe("PUT /user", () => {
         format: "jpg",
       });
 
-    // mocking github api that returns github profile data
-    nock("https://api.github.com/users/pratik9333").get().reply(200, {
-      username: "pratik9333",
-      publicRepos: "68",
-      followers: "10",
-      following: "5",
-    });
+    // mocking github api that returns github profile data of user
+    nock("https://api.github.com")
+      .get("/users/pratik9333")
+      .reply(200, githubData);
 
-    // mock
-    //   .post("https://leetcode.com/graphql", {
-    //     query: query,
-    //     variables: {
-    //       username: "pratik9333",
-    //       limit: 5,
-    //     },
-    //   })
-    //   .reply(200, { data: {} });
+    //mocking codeforces api that returns codeforces profile data of user
+    nock("https://codeforces.com/api")
+      .get("/user.info")
+      .query({ handles: "tourist" })
+      .reply(200, codeforcesUserData);
+
+    nock("https://codeforces.com/api")
+      .get("/user.rating")
+      .query({ handle: "tourist" })
+      .reply(200, codeforcesContestsData);
+
+    nock("https://codeforces.com/api")
+      .get("/user.status")
+      .query({ handle: "tourist" })
+      .reply(200, codeforcesSubmissionsData);
+
+    // mocking leetcode graphql api that returns leetcode profile data of user
+    mock
+      .post(
+        "/graphql",
+        {
+          query: query,
+          variables: {
+            username: "rajpatel1508",
+            limit: 5,
+          },
+        },
+        {
+          reqheaders: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+
+      .reply(200, {
+        data: leetcodeData,
+      });
 
     done();
   });
@@ -402,6 +466,34 @@ describe("PUT /user", () => {
         expect(res.body.updatedUser).to.have.property(
           "email",
           "sahiljha@gmail.com"
+        );
+
+        done();
+      });
+  });
+
+  it("should add github,leetcode and codeforces coding profile", (done) => {
+    request(server)
+      .put("/api/v1/user")
+      .send({
+        githubId: "pratik9333",
+        leetcodeId: "rajpatel1508",
+        codeforcesId: "tourist",
+      })
+      .set("Authorization", "Bearer " + token)
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+
+        expect(res.body).to.have.property("success", true);
+        expect(res.body).to.have.property("message", "User profile is updated");
+
+        delete Object.assign(githubData, {
+          ["publicRepos"]: githubData["public_repos"],
+        })["public_repos"];
+
+        expect(res.body.updatedUser.social.githubProfile).to.include(
+          githubData
         );
 
         done();

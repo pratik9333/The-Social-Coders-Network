@@ -10,6 +10,110 @@ const userFiveID = new ObjectId();
 const userSixID = new ObjectId();
 const userSevenID = new ObjectId();
 
+const leetcodeData = {
+  matchedUser: {
+    username: "rajpatel1508",
+    profile: { ranking: 3898388 },
+    languageProblemCount: [
+      { languageName: "C++", problemsSolved: 1 },
+      { languageName: "Python3", problemsSolved: 1 },
+    ],
+    submitStats: {
+      acSubmissionNum: [
+        { difficulty: "All", count: 1, submissions: 2 },
+        { difficulty: "Easy", count: 1, submissions: 1 },
+        { difficulty: "Medium", count: 0, submissions: 0 },
+        { difficulty: "Hard", count: 0, submissions: 0 },
+      ],
+    },
+  },
+  recentAcSubmissionList: [{ title: "Two Sum" }],
+  userContestRanking: {
+    attendedContestsCount: 39,
+    globalRanking: 14837,
+    rating: 1901.0414965592431,
+  },
+};
+
+const leetcodeResponseData = {
+  contest: { attended: 39, rating: 1901 },
+  username: "rajpatel1508",
+  rating: 3898388,
+  solvedQuestions: 1,
+  submissions: 2,
+  languagesUsed: ["C++", "Python3"],
+};
+
+const githubData = {
+  username: "pratik9333",
+  public_repos: "68",
+  followers: "10",
+  following: "5",
+};
+
+const codeforcesUserData = {
+  status: "ok",
+  result: [{ rating: 3768 }],
+};
+
+const codeforcesContestsData = {
+  status: "ok",
+  result: [
+    {
+      contestId: 2,
+      contestName: "Codeforces Beta Round #2",
+      handle: "tourist",
+      rank: 14,
+      ratingUpdateTimeSeconds: 1267124400,
+      oldRating: 0,
+      newRating: 1602,
+    },
+  ],
+};
+
+const codeforcesSubmissionsData = {
+  status: "ok",
+  result: [
+    {
+      id: 179569288,
+      contestId: 1750,
+      creationTimeSeconds: 1667746093,
+      relativeTimeSeconds: 793,
+      problem: [Object],
+      author: [Object],
+      programmingLanguage: "GNU C++20 (64)",
+      verdict: "NOT OK",
+      testset: "TESTS",
+      passedTestCount: 36,
+      timeConsumedMillis: 46,
+      memoryConsumedBytes: 819200,
+    },
+    {
+      id: 179563887,
+      contestId: 1750,
+      creationTimeSeconds: 1667745738,
+      relativeTimeSeconds: 438,
+      problem: [Object],
+      author: [Object],
+      programmingLanguage: "GNU C++20 (64)",
+      verdict: "OK",
+      testset: "TESTS",
+      passedTestCount: 8,
+      timeConsumedMillis: 62,
+      memoryConsumedBytes: 2867200,
+    },
+  ],
+};
+
+const codeforcesResponeData = {
+  contest: { attended: 39, rating: 1901 },
+  username: "rajpatel1508",
+  rating: 3898388,
+  solvedQuestions: 1,
+  submissions: 2,
+  languagesUsed: ["C++", "Python3"],
+};
+
 let users = [
   {
     _id: userOneID,
@@ -83,4 +187,10 @@ module.exports = {
   token,
   users,
   populateUsers,
+  leetcodeData,
+  githubData,
+  codeforcesContestsData,
+  codeforcesSubmissionsData,
+  codeforcesUserData,
+  leetcodeResponseData,
 };

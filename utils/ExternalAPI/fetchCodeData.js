@@ -1,4 +1,3 @@
-const puppeteer = require("puppeteer");
 const fetch = require("node-fetch");
 
 // urls
@@ -156,12 +155,12 @@ exports.fetchCodeForces = async (codeforcesId) => {
 
     return result;
   } catch (error) {
+    console.log(error);
     return { username: codeforcesId };
   }
 };
 
 exports.fetchGithub = async (githubId) => {
-  console.log(githubId);
   try {
     const response = await fetch(`${githubAPI}/${githubId}`);
 
@@ -169,12 +168,14 @@ exports.fetchGithub = async (githubId) => {
 
     const { public_repos, followers, following } = data;
 
-    return {
+    const returnData = {
       username: githubId,
       publicRepos: public_repos,
       followers: followers,
       following: following,
     };
+
+    return returnData;
   } catch (err) {
     return { username: githubId };
   }
@@ -200,14 +201,13 @@ exports.fetchLeetcode = async (leetcodeId) => {
 
     const responseData = await response.json();
 
-    console.log(responseData);
-
     return {
       username: leetcodeId,
       rating: responseData.data.matchedUser.profile.ranking,
       contest: {
-        attended: responseData.data.userContests?.attendedContestsCount || 0,
-        rating: Math.floor(responseData.data.userContests?.rating || 0),
+        attended:
+          responseData.data.userContestRanking?.attendedContestsCount || 0,
+        rating: Math.floor(responseData.data.userContestRanking?.rating || 0),
       },
       solvedQuestions:
         responseData.data.matchedUser.submitStats.acSubmissionNum[0].count,
@@ -219,8 +219,7 @@ exports.fetchLeetcode = async (leetcodeId) => {
       ),
     };
   } catch (error) {
+    console.log(error);
     return { username: leetcodeId };
   }
 };
-
-module.exports = query;

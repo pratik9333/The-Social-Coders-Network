@@ -24,25 +24,21 @@ exports.getUserDashboard = async (req, res) => {
     if (currTime >= nextUpdateCycle) {
       //
 
-      let codeforcesData, githubData, leetcodeData;
-
       // adding user profile details coding profile details
       if (loggedUser.social.codeforcesProfile.username) {
-        codeforcesData = await fetchCodeForces(
-          loggedUser.social.codechefProfile.username
-        );
+        const codeforcesData = await fetchCodeForces("tourist");
         loggedUser.social.codeforcesProfile = codeforcesData;
       }
 
       if (loggedUser.social.githubProfile.username) {
-        githubData = await fetchGithub(
+        const githubData = await fetchGithub(
           loggedUser.social.githubProfile.username
         );
         loggedUser.social.githubProfile = githubData;
       }
 
       if (loggedUser.social.leetcodeProfile.username) {
-        leetcodeData = await fetchLeetcode(
+        const leetcodeData = await fetchLeetcode(
           loggedUser.social.leetcodeProfile.username
         );
         loggedUser.social.leetcodeProfile = leetcodeData;
@@ -120,7 +116,6 @@ exports.updateUserDetails = async (req, res) => {
       const leetcodeData = await fetchLeetcode(req.body.leetcodeId);
       updateUser.social.leetcodeProfile = leetcodeData;
     }
-
     if (req.body.codeforcesId) {
       const codeforcesData = await fetchCodeForces(req.body.codeforcesId);
       updateUser.social.codeforcesProfile = codeforcesData;

@@ -1,5 +1,6 @@
 const { ObjectId } = require("mongodb");
 const User = require("../../models/User.model");
+const jsonwebtoken = require("jsonwebtoken");
 
 const userOneID = new ObjectId();
 const userTwoID = new ObjectId();
@@ -54,6 +55,10 @@ let users = [
   },
 ];
 
+const token = jsonwebtoken.sign({ id: users[0]._id }, process.env.JWT_SECRET, {
+  expiresIn: process.env.JWT_EXPIRES,
+});
+
 const populateUsers = () => {
   const userOne = new User(users[0]).save();
   const userTwo = new User(users[1]).save();
@@ -75,6 +80,7 @@ const populateUsers = () => {
 };
 
 module.exports = {
+  token,
   users,
   populateUsers,
 };

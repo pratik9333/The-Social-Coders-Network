@@ -151,7 +151,7 @@ exports.getUsers = async (req, res) => {
     const resultPerPage = 6;
 
     //creating object from our custom class and passing base = User.find(), bigQ = req.query
-    const userObj = new Query(User.find(), req.query, req.user._id.toString());
+    const userObj = new Query(User.find(), req.query);
 
     userObj.search();
     userObj.pager(resultPerPage);
@@ -180,7 +180,7 @@ exports.getLeaderBoardData = async (req, res) => {
     const usersCount = await User.countDocuments();
     const resultPerPage = 6;
 
-    const userObj = new Query(User.find(), req.query, req.user._id.toString());
+    const userObj = new Query(User.find(), req.query);
 
     userObj.sort();
 

@@ -4,8 +4,8 @@ const { after, describe, it } = require("mocha");
 let User = require("../models/User.model");
 let server = require("../index.js");
 const { expect } = require("chai");
-const { populateUsers, users } = require("./seed/seed");
-let should = chai.should();
+const { populateUsers, token, users } = require("./seed/seed");
+chai.should();
 
 const fs = require("fs");
 const path = require("path");
@@ -13,20 +13,18 @@ const path = require("path");
 const nock = require("nock");
 const query = require("../utils/ExternalAPI/fetchCodeData");
 
-var token;
-
-const user = {
-  name: "pratik aswani",
-  email: "pratik@gmail.com",
-  password: "123456",
-};
-
 describe("POST /auth", () => {
   before((done) => {
     User.deleteMany({}, (err) => {
       done();
     });
   });
+
+  const user = {
+    name: "pratik aswani",
+    email: "pratik@gmail.com",
+    password: "123456",
+  };
 
   it("should able to create user and return auth token", (done) => {
     request(server)
@@ -71,7 +69,6 @@ describe("POST /auth", () => {
         if (err) return done(err);
         expect(res.headers["Authorization"]).to.not.be.null;
         expect(res.body.token).to.not.be.null;
-        token = res.body.token;
         User.findById(res.body.user._id)
           .then((user) => {
             expect(user).to.not.be.null;
@@ -112,23 +109,25 @@ describe("POST /auth", () => {
 
 describe("GET /user", () => {
   before((done) => {
-    populateUsers();
-    done();
+    User.deleteMany({}, (err) => {
+      populateUsers();
+      done();
+    });
   });
 
-  it("Should return seven users", (done) => {
+  it("Should return seven users that were added", (done) => {
     request(server)
       .get("/api/v1/user")
-      .query({ page: 1, limit: 7 })
+      .query({ page: 1 })
       .set("Authorization", "Bearer " + token)
       .expect(200)
       .end((err, res) => {
         if (err) return done(err);
 
         expect(res.body.Users).to.be.a("array");
-        expect(res.body.Users).to.have.length(7);
-        expect(res.body).to.have.property("totalUsersCount", 8);
-        expect(res.body).to.have.property("filteredUsers", 7);
+        expect(res.body.Users).to.have.length(6);
+        expect(res.body).to.have.property("totalUsersCount", 7);
+        expect(res.body).to.have.property("filteredUsers", 6);
 
         const updatedUsers = users.map((user) => {
           return {
@@ -155,7 +154,7 @@ describe("GET /user", () => {
 
         expect(res.body.Users).to.be.a("array");
         expect(res.body.Users).to.have.length(6);
-        expect(res.body).to.have.property("totalUsersCount", 8);
+        expect(res.body).to.have.property("totalUsersCount", 7);
         expect(res.body).to.have.property("filteredUsers", 6);
         done();
       });
@@ -172,7 +171,7 @@ describe("GET /user", () => {
 
         expect(res.body.Users).to.be.a("array");
         expect(res.body.Users).to.have.length(1);
-        expect(res.body).to.have.property("totalUsersCount", 8);
+        expect(res.body).to.have.property("totalUsersCount", 7);
         expect(res.body).to.have.property("filteredUsers", 1);
         done();
       });
@@ -189,7 +188,7 @@ describe("GET /user", () => {
 
         expect(res.body.Users).to.be.a("array");
         expect(res.body.Users).to.have.length(6);
-        expect(res.body).to.have.property("totalUsersCount", 8);
+        expect(res.body).to.have.property("totalUsersCount", 7);
         expect(res.body).to.have.property("filteredUsers", 6);
         done();
       });
@@ -206,26 +205,26 @@ describe("GET /user", () => {
 
         expect(res.body.Users).to.be.a("array");
         expect(res.body.Users).to.have.length(1);
-        expect(res.body).to.have.property("totalUsersCount", 8);
+        expect(res.body).to.have.property("totalUsersCount", 7);
         expect(res.body).to.have.property("filteredUsers", 1);
         done();
       });
   });
 
-  it("Should return seven users from leaderboard api", (done) => {
+  it("Should return four users from leaderboard api", (done) => {
     request(server)
       .get("/api/v1/user/leaderboard")
-      .query({ page: 1, limit: 7 })
+      .query({ page: 1, limit: 4 })
       .set("Authorization", "Bearer " + token)
       .expect(200)
       .end((err, res) => {
         if (err) return done(err);
 
         expect(res.body.data).to.be.a("array");
-        expect(res.body.data).to.have.length(7);
+        expect(res.body.data).to.have.length(4);
 
-        expect(res.body).to.have.property("usersCount", 8);
-        expect(res.body).to.have.property("filteredUsers", 7);
+        expect(res.body).to.have.property("usersCount", 7);
+        expect(res.body).to.have.property("filteredUsers", 4);
         done();
       });
   });
@@ -242,7 +241,7 @@ describe("GET /user", () => {
         expect(res.body.data).to.be.a("array");
         expect(res.body.data).to.have.length(6);
 
-        expect(res.body).to.have.property("usersCount", 8);
+        expect(res.body).to.have.property("usersCount", 7);
         expect(res.body).to.have.property("filteredUsers", 6);
         done();
       });
@@ -258,10 +257,10 @@ describe("GET /user", () => {
         if (err) return done(err);
 
         expect(res.body.data).to.be.a("array");
-        expect(res.body.data).to.have.length(2);
+        expect(res.body.data).to.have.length(1);
 
-        expect(res.body).to.have.property("usersCount", 8);
-        expect(res.body).to.have.property("filteredUsers", 2);
+        expect(res.body).to.have.property("usersCount", 7);
+        expect(res.body).to.have.property("filteredUsers", 1);
         done();
       });
   });
@@ -279,8 +278,8 @@ describe("GET /user", () => {
         expect(res.body.loggedUser.social).to.be.an("object").and.not.to.be
           .empty;
 
-        expect(res.body.loggedUser).to.have.property("name", user.name);
-        expect(res.body.loggedUser).to.have.property("email", user.email);
+        expect(res.body.loggedUser).to.have.property("name", users[0].name);
+        expect(res.body.loggedUser).to.have.property("email", users[0].email);
         expect(res.body.loggedUser).to.have.property("rating", 0);
         done();
       });
@@ -381,12 +380,38 @@ describe("PUT /user", () => {
       });
   });
 
+  it("should update the user email and name", (done) => {
+    request(server)
+      .put("/api/v1/user")
+      .send({
+        name: "Sahil Jha",
+        email: "sahiljha@gmail.com",
+      })
+      .set("Authorization", "Bearer " + token)
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        expect(res.body).to.have.property("success", true);
+        expect(res.body).to.have.property("message", "User profile is updated");
+
+        expect(res.body.updatedUser).to.be.an("object").and.not.to.be.empty;
+        expect(res.body.updatedUser.social).to.be.an("object").and.not.to.be
+          .empty;
+
+        expect(res.body.updatedUser).to.have.property("name", "Sahil Jha");
+        expect(res.body.updatedUser).to.have.property(
+          "email",
+          "sahiljha@gmail.com"
+        );
+
+        done();
+      });
+  });
+
   after(() => {
     nock.cleanAll();
   });
 });
-
-module.exports = token;
 
 // **** Some imp definations ****
 

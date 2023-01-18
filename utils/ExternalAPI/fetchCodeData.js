@@ -34,15 +34,15 @@ const query = `query userProfile($username: String!, $limit: Int!) {
     }
 }`;
 
-const do_conversion = (s) => {
-  let ans = "";
-  for (let i = 0; i < s.length; i++) {
-    if (s[i] >= 0 && s[i] <= 9) {
-      ans += s[i];
-    }
-  }
-  return ans.trim();
-};
+// const do_conversion = (s) => {
+//   let ans = "";
+//   for (let i = 0; i < s.length; i++) {
+//     if (s[i] >= 0 && s[i] <= 9) {
+//       ans += s[i];
+//     }
+//   }
+//   return ans.trim();
+// };
 
 // exports.fetchCodeChef = async (codechefId) => {
 //   try {
@@ -107,7 +107,7 @@ const do_conversion = (s) => {
 //   }
 // };
 
-exports.fetchCodeForces = async (codeforcesId) => {
+const fetchCodeForces = async (codeforcesId) => {
   try {
     let result = {
       username: codeforcesId,
@@ -160,7 +160,7 @@ exports.fetchCodeForces = async (codeforcesId) => {
   }
 };
 
-exports.fetchGithub = async (githubId) => {
+const fetchGithub = async (githubId) => {
   try {
     const response = await fetch(`${githubAPI}/${githubId}`);
 
@@ -181,7 +181,7 @@ exports.fetchGithub = async (githubId) => {
   }
 };
 
-exports.fetchLeetcode = async (leetcodeId) => {
+const fetchLeetcode = async (leetcodeId) => {
   try {
     const data = JSON.stringify({
       query: query,
@@ -223,3 +223,5 @@ exports.fetchLeetcode = async (leetcodeId) => {
     return { username: leetcodeId };
   }
 };
+
+module.exports = { fetchLeetcode, fetchCodeForces, fetchGithub, query };

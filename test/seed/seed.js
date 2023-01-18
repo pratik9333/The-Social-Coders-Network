@@ -10,6 +10,7 @@ const userFiveID = new ObjectId();
 const userSixID = new ObjectId();
 const userSevenID = new ObjectId();
 
+// **** leetcode seed data ****
 const leetcodeData = {
   matchedUser: {
     username: "rajpatel1508",
@@ -44,6 +45,7 @@ const leetcodeResponseData = {
   languagesUsed: ["C++", "Python3"],
 };
 
+// **** github seed data ****
 const githubData = {
   username: "pratik9333",
   public_repos: "68",
@@ -51,6 +53,7 @@ const githubData = {
   following: "5",
 };
 
+// **** github seed data ****
 const codeforcesUserData = {
   status: "ok",
   result: [{ rating: 3768 }],
@@ -105,13 +108,13 @@ const codeforcesSubmissionsData = {
   ],
 };
 
-const codeforcesResponeData = {
-  contest: { attended: 39, rating: 1901 },
-  username: "rajpatel1508",
-  rating: 3898388,
-  solvedQuestions: 1,
+const codeforcesResponseData = {
+  contest: { attended: 1, rating: 3768 },
+  username: "tourist",
+  rating: 3768,
   submissions: 2,
-  languagesUsed: ["C++", "Python3"],
+  languagesUsed: ["GNU C++20 (64)"],
+  solvedQuestions: 1,
 };
 
 let users = [
@@ -193,4 +196,5 @@ module.exports = {
   codeforcesSubmissionsData,
   codeforcesUserData,
   leetcodeResponseData,
+  codeforcesResponseData,
 };

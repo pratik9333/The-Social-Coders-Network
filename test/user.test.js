@@ -1,5 +1,9 @@
 let chai = require("chai");
+chai.should();
 const request = require("supertest");
+const fs = require("fs");
+const path = require("path");
+const nock = require("nock");
 const { after, describe, it } = require("mocha");
 let User = require("../models/User.model");
 let server = require("../index.js");
@@ -14,42 +18,9 @@ const {
   codeforcesSubmissionsData,
   leetcodeData,
   leetcodeResponseData,
+  codeforcesResponseData,
 } = require("./seed/seed");
-
-chai.should();
-
-const fs = require("fs");
-const path = require("path");
-
-const nock = require("nock");
-
-const query = `query userProfile($username: String!, $limit: Int!) {
-    matchedUser(username: $username) {
-        username
-         profile {
-          ranking
-        }
-        languageProblemCount {
-           languageName
-          problemsSolved
-        }
-        submitStats: submitStatsGlobal {
-          acSubmissionNum {
-              difficulty
-              count
-              submissions
-          }
-        }
-    }
-    recentAcSubmissionList(username: $username, limit: $limit) {
-      title
-    }
-    userContestRanking(username: $username) {
-      attendedContestsCount
-      globalRanking
-      rating
-    }
-}`;
+const { query } = require("../utils/ExternalAPI/fetchCodeData");
 
 describe("POST /auth", () => {
   before((done) => {
@@ -492,8 +463,16 @@ describe("PUT /user", () => {
           ["publicRepos"]: githubData["public_repos"],
         })["public_repos"];
 
-        expect(res.body.updatedUser.social.githubProfile).to.include(
+        expect(res.body.updatedUser.social.githubProfile).to.deep.equal(
           githubData
+        );
+
+        expect(res.body.updatedUser.social.leetcodeProfile).to.deep.equal(
+          leetcodeResponseData
+        );
+
+        expect(res.body.updatedUser.social.codeforcesProfile).to.deep.equal(
+          codeforcesResponseData
         );
 
         done();

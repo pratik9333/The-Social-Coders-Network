@@ -48,7 +48,7 @@ exports.sendFriendRequest = async (req, res) => {
       $addToSet: { friends: statusFriendA._id },
     });
 
-    //update user A
+    //update user B
     await User.findByIdAndUpdate(req.params.userId, {
       $addToSet: { friends: statusFriendB._id },
     });

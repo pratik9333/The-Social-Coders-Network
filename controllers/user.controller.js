@@ -26,7 +26,9 @@ exports.getUserDashboard = async (req, res) => {
 
       // adding user profile details coding profile details
       if (loggedUser.social.codeforcesProfile.username) {
-        const codeforcesData = await fetchCodeForces("tourist");
+        const codeforcesData = await fetchCodeForces(
+          loggedUser.social.codeforcesProfile.username
+        );
         loggedUser.social.codeforcesProfile = codeforcesData;
       }
 
@@ -53,7 +55,10 @@ exports.getUserDashboard = async (req, res) => {
       //
     }
 
-    return res.status(200).json({ success: true, loggedUser });
+    return res.status(200).json({
+      success: true,
+      loggedUser,
+    });
   } catch (error) {
     res
       .status(500)
@@ -133,7 +138,6 @@ exports.updateUserDetails = async (req, res) => {
       .status(200)
       .json({ success: true, message: "User profile is updated", updatedUser });
   } catch (error) {
-    console.log(error);
     res
       .status(500)
       .json({ error: "Server has occured some problem, please try again" });
@@ -153,8 +157,6 @@ exports.getUsers = async (req, res) => {
 
     let Users = await userObj.base;
     let filteredUsers = Users.length;
-
-    //update users set status = expired where currentdate - ratedAt <= 10
 
     await res.status(200).json({
       success: true,

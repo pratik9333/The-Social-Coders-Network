@@ -53,7 +53,7 @@ const githubData = {
   following: "5",
 };
 
-// **** github seed data ****
+// **** codeforces seed data ****
 const codeforcesUserData = {
   status: "ok",
   result: [{ rating: 3768 }],
@@ -162,10 +162,6 @@ let users = [
   },
 ];
 
-const token = jsonwebtoken.sign({ id: users[0]._id }, process.env.JWT_SECRET, {
-  expiresIn: process.env.JWT_EXPIRES,
-});
-
 const populateUsers = () => {
   const userOne = new User(users[0]).save();
   const userTwo = new User(users[1]).save();
@@ -186,9 +182,21 @@ const populateUsers = () => {
   ]);
 };
 
+const getTokenOfPopulatedUser = () => {
+  const token = jsonwebtoken.sign(
+    { id: users[0]._id },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_EXPIRES,
+    }
+  );
+
+  return token;
+};
+
 module.exports = {
-  token,
   users,
+  getTokenOfPopulatedUser,
   populateUsers,
   leetcodeData,
   githubData,

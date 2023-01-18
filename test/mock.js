@@ -11,13 +11,12 @@ const { query } = require("../utils/ExternalAPI/fetchCodeData");
 const nock = require("nock");
 
 const mockServer = () => {
-  const mockLeetcode = nock("https://leetcode.com");
-  const mockCloudinary = nock("https://api.cloudinary.com");
-  const mockCodeforces = nock("https://codeforces.com/api");
-  const mockGithubUrl = nock("https://api.github.com");
+  const leetcodeAPI = nock("https://leetcode.com");
+  const cloudinaryAPI = nock("https://api.cloudinary.com");
+  const codeforcesAPI = nock("https://codeforces.com/api");
+  const githubAPI = nock("https://api.github.com");
 
-  // mocking cloudinary api that returns public id and url of user
-  mockCloudinary.post("/v1_1/pratikaswani/image/upload").reply(200, {
+  cloudinaryAPI.post("/v1_1/pratikaswani/image/upload").reply(200, {
     public_id: "93332001",
     url: "http://res.cloudinary.com/pratikaswani/image/upload/v1524241067/93332001.jpg",
     secure_url:
@@ -25,27 +24,24 @@ const mockServer = () => {
     format: "jpg",
   });
 
-  // mocking github api that returns github profile data of user
-  mockGithubUrl.get("/users/pratik9333").reply(200, githubData);
+  githubAPI.get("/users/pratik9333").reply(200, githubData);
 
-  //mocking codeforces api that returns codeforces profile data of user
-  mockCodeforces
+  codeforcesAPI
     .get("/user.info")
     .query({ handles: "tourist" })
     .reply(200, codeforcesUserData);
 
-  mockCodeforces
+  codeforcesAPI
     .get("/user.rating")
     .query({ handle: "tourist" })
     .reply(200, codeforcesContestsData);
 
-  mockCodeforces
+  codeforcesAPI
     .get("/user.status")
     .query({ handle: "tourist" })
     .reply(200, codeforcesSubmissionsData);
 
-  // mocking leetcode graphql api that returns leetcode profile data of user
-  mockLeetcode
+  leetcodeAPI
     .post(
       "/graphql",
       {

@@ -10,13 +10,15 @@ let server = require("../index.js");
 const { expect } = require("chai");
 const {
   populateUsers,
-  token,
   users,
   githubData,
   leetcodeResponseData,
   codeforcesResponseData,
+  getTokenOfPopulatedUser,
 } = require("./seed/seed");
-const { cleanMock, mockServer } = require("./mocks.test");
+const { cleanMock, mockServer } = require("./mock");
+
+let token;
 
 describe("POST /auth", () => {
   before((done) => {
@@ -116,6 +118,7 @@ describe("GET /user", () => {
   before((done) => {
     User.deleteMany({}, (err) => {
       populateUsers();
+      token = getTokenOfPopulatedUser();
       done();
     });
   });
@@ -295,9 +298,12 @@ describe("PUT /user", () => {
   before((done) => {
     //
 
-    // to mock coding api server
-    mockServer();
-    done();
+    User.deleteMany({}, (err) => {
+      populateUsers();
+      token = getTokenOfPopulatedUser();
+      mockServer();
+      done();
+    });
 
     //
   });

@@ -3,7 +3,7 @@ chai.should();
 const request = require("supertest");
 const fs = require("fs");
 const path = require("path");
-const nock = require("nock");
+
 const { after, describe, it } = require("mocha");
 let User = require("../models/User.model");
 let server = require("../index.js");
@@ -13,14 +13,10 @@ const {
   token,
   users,
   githubData,
-  codeforcesContestsData,
-  codeforcesUserData,
-  codeforcesSubmissionsData,
-  leetcodeData,
   leetcodeResponseData,
   codeforcesResponseData,
 } = require("./seed/seed");
-const { query } = require("../utils/ExternalAPI/fetchCodeData");
+const { cleanMock, mockServer } = require("./mocks.test");
 
 describe("POST /auth", () => {
   before((done) => {
@@ -297,71 +293,22 @@ describe("GET /user", () => {
 
 describe("PUT /user", () => {
   before((done) => {
-    const mock = nock("https://leetcode.com");
+    //
 
-    // mocking cloudinary api that returns public id and url of user
-    nock("https://api.cloudinary.com")
-      .post("/v1_1/pratikaswani/image/upload")
-      .reply(200, {
-        public_id: "93332001",
-        url: "http://res.cloudinary.com/pratikaswani/image/upload/v1524241067/93332001.jpg",
-        secure_url:
-          "https://res.cloudinary.com/pratikaswani/image/upload/v1524241067/93332001.jpg",
-        format: "jpg",
-      });
-
-    // mocking github api that returns github profile data of user
-    nock("https://api.github.com")
-      .get("/users/pratik9333")
-      .reply(200, githubData);
-
-    //mocking codeforces api that returns codeforces profile data of user
-    nock("https://codeforces.com/api")
-      .get("/user.info")
-      .query({ handles: "tourist" })
-      .reply(200, codeforcesUserData);
-
-    nock("https://codeforces.com/api")
-      .get("/user.rating")
-      .query({ handle: "tourist" })
-      .reply(200, codeforcesContestsData);
-
-    nock("https://codeforces.com/api")
-      .get("/user.status")
-      .query({ handle: "tourist" })
-      .reply(200, codeforcesSubmissionsData);
-
-    // mocking leetcode graphql api that returns leetcode profile data of user
-    mock
-      .post(
-        "/graphql",
-        {
-          query: query,
-          variables: {
-            username: "rajpatel1508",
-            limit: 5,
-          },
-        },
-        {
-          reqheaders: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-
-      .reply(200, {
-        data: leetcodeData,
-      });
-
+    // to mock coding api server
+    mockServer();
     done();
+
+    //
   });
   it("should update the user email and name", (done) => {
+    const updatedUser = {
+      name: "Sahil Jha",
+      email: "sahiljha@gmail.com",
+    };
     request(server)
       .put("/api/v1/user")
-      .send({
-        name: "Sahil Jha",
-        email: "sahiljha@gmail.com",
-      })
+      .send(updatedUser)
       .set("Authorization", "Bearer " + token)
       .expect(200)
       .end((err, res) => {
@@ -415,42 +362,18 @@ describe("PUT /user", () => {
       });
   });
 
-  it("should update the user email and name", (done) => {
-    request(server)
-      .put("/api/v1/user")
-      .send({
-        name: "Sahil Jha",
-        email: "sahiljha@gmail.com",
-      })
-      .set("Authorization", "Bearer " + token)
-      .expect(200)
-      .end((err, res) => {
-        if (err) return done(err);
-        expect(res.body).to.have.property("success", true);
-        expect(res.body).to.have.property("message", "User profile is updated");
-
-        expect(res.body.updatedUser).to.be.an("object").and.not.to.be.empty;
-        expect(res.body.updatedUser.social).to.be.an("object").and.not.to.be
-          .empty;
-
-        expect(res.body.updatedUser).to.have.property("name", "Sahil Jha");
-        expect(res.body.updatedUser).to.have.property(
-          "email",
-          "sahiljha@gmail.com"
-        );
-
-        done();
-      });
-  });
-
   it("should add github,leetcode and codeforces coding profile", (done) => {
+    //
+
+    const codingProfiles = {
+      githubId: "pratik9333",
+      leetcodeId: "rajpatel1508",
+      codeforcesId: "tourist",
+    };
+
     request(server)
       .put("/api/v1/user")
-      .send({
-        githubId: "pratik9333",
-        leetcodeId: "rajpatel1508",
-        codeforcesId: "tourist",
-      })
+      .send(codingProfiles)
       .set("Authorization", "Bearer " + token)
       .expect(200)
       .end((err, res) => {
@@ -480,7 +403,8 @@ describe("PUT /user", () => {
   });
 
   after(() => {
-    nock.cleanAll();
+    // to disable mocking of coding api server
+    cleanMock();
   });
 });
 

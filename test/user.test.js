@@ -118,12 +118,12 @@ describe("GET /user", () => {
   before((done) => {
     User.deleteMany({}, (err) => {
       populateUsers();
-      token = getTokenOfPopulatedUser();
+      token = getTokenOfPopulatedUser(users[0]._id);
       done();
     });
   });
 
-  it("Should return seven users that were added", (done) => {
+  it("Should return six users that were added", (done) => {
     request(server)
       .get("/api/v1/user")
       .query({ page: 1 })
@@ -147,23 +147,6 @@ describe("GET /user", () => {
 
         expect(...res.body.Users).to.include(...updatedUsers);
 
-        done();
-      });
-  });
-
-  it("Should return six users", (done) => {
-    request(server)
-      .get("/api/v1/user")
-      .query({ page: 1 })
-      .set("Authorization", "Bearer " + token)
-      .expect(200)
-      .end((err, res) => {
-        if (err) return done(err);
-
-        expect(res.body.Users).to.be.a("array");
-        expect(res.body.Users).to.have.length(6);
-        expect(res.body).to.have.property("totalUsersCount", 7);
-        expect(res.body).to.have.property("filteredUsers", 6);
         done();
       });
   });
@@ -300,7 +283,7 @@ describe("PUT /user", () => {
 
     User.deleteMany({}, (err) => {
       populateUsers();
-      token = getTokenOfPopulatedUser();
+      token = getTokenOfPopulatedUser(users[0]._id);
       mockServer();
       done();
     });

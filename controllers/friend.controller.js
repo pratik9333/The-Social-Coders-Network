@@ -78,7 +78,6 @@ exports.sendFriendRequest = async (req, res) => {
       message: `Friend request was sent successfully`,
     });
   } catch (error) {
-    console.log(error);
     res
       .status(500)
       .json({ error: "Server has occured some problem, please try again" });
@@ -120,7 +119,6 @@ exports.addFriend = async (req, res) => {
 
     res.status(200).json({ success: true, message: "Friend added to list!" });
   } catch (error) {
-    console.log(error);
     res
       .status(500)
       .json({ error: "Server has occured some problem, please try again" });
@@ -143,8 +141,11 @@ exports.removeFriend = async (req, res) => {
       requester: req.params.userId,
     });
 
-    // removing friend from array
+    if (!friend1 || !friend2) {
+      return res.status(400).json({ error: "User not found or invalid ID" });
+    }
 
+    // removing friend from array
     await User.findByIdAndUpdate(req.user._id, {
       $pull: { friends: friend1._id },
     });
@@ -153,7 +154,9 @@ exports.removeFriend = async (req, res) => {
       $pull: { friends: friend2._id },
     });
 
-    res.status(200).json({ success: true, message: "Friend added to list!" });
+    res
+      .status(200)
+      .json({ success: true, message: "Friend removed from list!" });
   } catch (error) {
     console.log(error);
     res
@@ -168,9 +171,8 @@ exports.getFriendsLogs = async (req, res) => {
       "recipient"
     );
 
-    return res.status(200).json(user);
+    return res.status(200).json({ success: true, user });
   } catch (error) {
-    console.log(error);
-    res.send("error");
+    res.status(500).json({ error: error, message: "server error" });
   }
 };

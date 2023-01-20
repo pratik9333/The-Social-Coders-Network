@@ -16,7 +16,7 @@ const {
   codeforcesResponseData,
   getTokenOfPopulatedUser,
 } = require("./seed/seed");
-const { cleanMock, mockServer } = require("./mock");
+const { cleanMock, mockServer } = require("./mocks/mock");
 
 let token;
 
@@ -327,7 +327,7 @@ describe("PUT /user", () => {
       .expect(200)
       .attach(
         "photo",
-        fs.readFileSync(path.resolve(__dirname, "./testImages/demo.jpeg"))
+        fs.readFileSync(path.resolve(__dirname, "./dummyimages/demo.jpeg"))
       )
       .end((err, res) => {
         if (err) return done(err);

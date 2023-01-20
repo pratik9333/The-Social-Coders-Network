@@ -4,9 +4,9 @@ const {
   codeforcesSubmissionsData,
   leetcodeData,
   githubData,
-} = require("./seed/seed");
+} = require("../seed/seed");
 
-const { query } = require("../utils/ExternalAPI/fetchCodeData");
+const { query } = require("../../utils/ExternalAPI/fetchCodeData");
 
 const nock = require("nock");
 

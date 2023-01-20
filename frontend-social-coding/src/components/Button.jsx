@@ -3,7 +3,7 @@ import "./styles/components.css";
 const Button = ({className,content}) => {
   return (
     <div className={className}>
-      <a class="press-button" href="#">
+      <a className="press-button" href="#">
        {content}
       </a>
     </div>

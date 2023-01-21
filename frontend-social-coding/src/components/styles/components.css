@@ -30,3 +30,59 @@
     outline: none;
     padding-bottom: .5em;
 }
+
+
+.button-nav-auth {
+    --color: #40A4FF;
+    padding: 0.8em 1.7em;
+    background-color: transparent;
+    border-radius: .3em;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: .5s;
+    font-weight: 400;
+    font-size: 17px;
+    border: 1px solid;
+    font-family: inherit;
+    text-transform: uppercase;
+    color: var(--color);
+    z-index: 1;
+   }
+   
+   .button-nav-auth::before, .button-nav-auth::after {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 50px;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    border-radius: 50%;
+    z-index: -1;
+    background-color: var(--color);
+    transition: 1s ease;
+   }
+   
+   .button-nav-auth::before {
+    top: -1em;
+    left: -1em;
+   }
+   
+   .button-nav-auth::after {
+    left: calc(100% + 1em);
+    top: calc(100% + 1em);
+   }
+   
+   .button-nav-auth:hover::before, .button-nav-auth:hover::after {
+    height: 410px;
+    width: 410px;
+   }
+   
+   .button-nav-auth:hover {
+    color: rgb(10, 25, 30);
+   }
+   
+   .button-nav-auth:active {
+    filter: brightness(.8);
+   }
+   

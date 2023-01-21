@@ -2,7 +2,7 @@ let chai = require("chai");
 chai.should();
 const request = require("supertest");
 
-const { describe, it } = require("mocha");
+const { describe, it, beforeEach } = require("mocha");
 
 let User = require("../models/User.model");
 let server = require("../index.js");
@@ -202,3 +202,28 @@ describe("GET /rate", () => {
       });
   });
 });
+
+// TODO: adding test case to check if user can revote to same user after specified amount of time
+
+// describe("should able to revote to same user after specified amount of time ", () => {
+//   before((done) => {
+//     Vote.findOneAndReplace(
+//       { user: users[0]._id },
+//       { expiryTime: new Date().getTime() }
+//     ).then((err, res) => {
+//       console.log(err);
+//     });
+
+//     //
+//     Vote.findOneAndReplace(
+//       { user: users[0]._id },
+//       { expiryTime: new Date().getTime() }
+//     ).then((err, res) => {
+//       console.log(err);
+//     });
+//     done();
+//   });
+//   it("AAAA", (done) => {
+//     done();
+//   });
+// });

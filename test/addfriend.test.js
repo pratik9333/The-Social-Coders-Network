@@ -186,6 +186,20 @@ describe("PUT /:userId", () => {
 });
 
 describe("GET /", () => {
+  it("should get empty log of friends if no users found", (done) => {
+    const userThreeToken = getTokenOfPopulatedUser(users[2]._id);
+    request(server)
+      .get(`/api/v1/friend/`)
+      .set("Authorization", "Bearer " + userThreeToken)
+      .expect(200)
+      .end(async (err, res) => {
+        if (err) return done(err);
+        expect(res.body).to.have.property("success", true);
+        expect(res.body.user).to.be.an("array").and.to.be.empty;
+        done();
+      });
+  });
+
   it("second user can see friend lists that should also contain first user", (done) => {
     request(server)
       .get(`/api/v1/friend/`)

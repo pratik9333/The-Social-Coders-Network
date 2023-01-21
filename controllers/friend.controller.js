@@ -162,7 +162,6 @@ exports.removeFriend = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Friend removed from list!" });
   } catch (error) {
-    console.log(error);
     res
       .status(500)
       .json({ error: "Server has occured some problem, please try again" });

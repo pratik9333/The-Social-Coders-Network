@@ -9,8 +9,6 @@ exports.rateUser = async (req, res) => {
   try {
     let { userId, action } = req.params;
 
-    action = parseInt(action);
-
     if (userId === req.user._id.toString()) {
       return res.status(400).json({ error: "Cannot vote yourself!" });
     }
@@ -21,8 +19,16 @@ exports.rateUser = async (req, res) => {
         .json({ error: "Please provide userId and vote(-1 or 1) in params" });
     }
 
-    const Vote = await Votes.findOne({ user: userId, voter: req.user._id });
     const user = await User.findById(userId).select("+upvotes +downvotes");
+
+    if (!user) {
+      return res.status(400).json({
+        error: `user not found`,
+      });
+    }
+
+    action = parseInt(action);
+    const Vote = await Votes.findOne({ user: userId, voter: req.user._id });
     const currTime = new Date().getTime();
 
     if (Vote && currTime <= Vote.expiryTime) {
@@ -36,7 +42,6 @@ exports.rateUser = async (req, res) => {
     } else {
       user.upvotes += 1;
     }
-    console.log(user);
 
     user.rating = (user.upvotes / (user.upvotes + user.downvotes || 1)) * 100;
 
@@ -59,7 +64,6 @@ exports.rateUser = async (req, res) => {
       message: `${user.name} was rated successfully`,
     });
   } catch (error) {
-    console.log(error);
     res
       .status(500)
       .json({ error: "Server has occured some problem, please try again" });
@@ -77,7 +81,6 @@ exports.getRatedLogs = async (req, res) => {
       ratingUsers,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error: "Cannot able to fetch users" });
   }
 };

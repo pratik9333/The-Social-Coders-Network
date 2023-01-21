@@ -10,8 +10,12 @@ exports.sendFriendRequest = async (req, res) => {
       return res.status(400).json({ error: "Please provide friend's user id" });
     }
 
-    if (req.params.userId.toString() === req.user._id.toString()) {
-      return res.status(400).json({ error: "Invalid user id" });
+    const userB = await User.findById(req.params.userId);
+
+    if (req.params.userId.toString() === req.user._id.toString() || !userB) {
+      return res
+        .status(400)
+        .json({ error: "Invalid user id or user not found" });
     }
 
     // fetching friend req status details
@@ -158,7 +162,6 @@ exports.removeFriend = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Friend removed from list!" });
   } catch (error) {
-    console.log(error);
     res
       .status(500)
       .json({ error: "Server has occured some problem, please try again" });

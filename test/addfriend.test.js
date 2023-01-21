@@ -23,9 +23,22 @@ describe("POST /friend/:userId", () => {
       Friend.deleteMany({}, (err) => {
         populateUsers();
         userOneToken = getTokenOfPopulatedUser(users[0]._id);
+        userTwoToken = getTokenOfPopulatedUser(users[1]._id);
         done();
       });
     });
+  });
+
+  it("should throw an error if user id is invalid", (done) => {
+    request(server)
+      .post(`/api/v1/friend/${users[1]._id}`)
+      .set("Authorization", "Bearer " + userTwoToken)
+      .expect(400)
+      .end((err, res) => {
+        if (err) return done(err);
+        expect(res.body.error).to.equal(`Invalid user id or user not found`);
+        done();
+      });
   });
 
   it("first user should able to send friend request to second user", (done) => {
@@ -42,7 +55,7 @@ describe("POST /friend/:userId", () => {
           `Friend request was sent successfully`
         );
 
-        // To check status if USER A has sent friend request to USER B
+        // To check status if USER A has requested friend request to USER B
         Friend.find({
           requester: users[0]._id.toString(),
           recipient: users[1]._id.toString(),
@@ -50,7 +63,7 @@ describe("POST /friend/:userId", () => {
           if (err) return done(err);
           expect(res[0].requester.toString()).to.equal(users[0]._id.toString());
           expect(res[0].recipient.toString()).to.equal(users[1]._id.toString());
-          expect(res[0]).to.have.property("status", 1);
+          expect(res[0].status).to.equal(1); // 1-> requested
         });
 
         // To check status if USER B has received friend request from USER A
@@ -61,7 +74,7 @@ describe("POST /friend/:userId", () => {
           if (err) return done(err);
           expect(res[0].requester.toString()).to.equal(users[1]._id.toString());
           expect(res[0].recipient.toString()).to.equal(users[0]._id.toString());
-          expect(res[0]).to.have.property("status", 2);
+          expect(res[0].status).to.equal(2); // 2-> pending
           done();
         });
       });
@@ -83,7 +96,6 @@ describe("POST /friend/:userId", () => {
   });
 
   it("second user should not able to send friend request to first user", (done) => {
-    userTwoToken = getTokenOfPopulatedUser(users[1]._id);
     request(server)
       .post(`/api/v1/friend/${users[0]._id}`)
       .set("Authorization", "Bearer " + userTwoToken)
@@ -174,6 +186,20 @@ describe("PUT /:userId", () => {
 });
 
 describe("GET /", () => {
+  it("should get empty log of friends if no users found", (done) => {
+    const userThreeToken = getTokenOfPopulatedUser(users[2]._id);
+    request(server)
+      .get(`/api/v1/friend/`)
+      .set("Authorization", "Bearer " + userThreeToken)
+      .expect(200)
+      .end(async (err, res) => {
+        if (err) return done(err);
+        expect(res.body).to.have.property("success", true);
+        expect(res.body.user).to.be.an("array").and.to.be.empty;
+        done();
+      });
+  });
+
   it("second user can see friend lists that should also contain first user", (done) => {
     request(server)
       .get(`/api/v1/friend/`)
@@ -183,7 +209,7 @@ describe("GET /", () => {
         if (err) return done(err);
         expect(res.body).to.have.property("success", true);
 
-        expect(res.body.user).to.be.an("array").to.not.be.empty;
+        expect(res.body.user).to.be.an("array").and.to.not.be.empty;
 
         expect(res.body.user[0]).to.be.an("object").that.includes({
           requester: users[1]._id.toString(),
@@ -192,6 +218,8 @@ describe("GET /", () => {
         expect(res.body.user[0].recipient).to.be.an("object").that.includes({
           _id: users[0]._id.toString(),
         });
+
+        expect(res.body.user[0].status).to.equal(3);
 
         done();
       });
@@ -206,7 +234,7 @@ describe("GET /", () => {
         if (err) return done(err);
         expect(res.body).to.have.property("success", true);
 
-        expect(res.body.user).to.be.an("array").to.not.be.empty;
+        expect(res.body.user).to.be.an("array").and.to.not.be.empty;
 
         expect(res.body.user[0]).to.be.an("object").that.includes({
           requester: users[0]._id.toString(),
@@ -215,6 +243,8 @@ describe("GET /", () => {
         expect(res.body.user[0].recipient).to.be.an("object").that.includes({
           _id: users[1]._id.toString(),
         });
+
+        expect(res.body.user[0].status).to.equal(3);
 
         done();
       });
@@ -251,6 +281,23 @@ describe("DELETE /", () => {
           expect(res).to.be.an("array").to.be.empty;
           done();
         });
+      });
+  });
+
+  it("should throw an error if user not found or invalid id is passed", (done) => {
+    request(server)
+      .delete(`/api/v1/friend/${users[1]._id}`)
+      .set("Authorization", "Bearer " + userOneToken)
+      .expect(400)
+      .end(async (err, res) => {
+        if (err) return done(err);
+
+        expect(res.body).to.have.property(
+          "error",
+          "User not found or invalid ID"
+        );
+
+        done();
       });
   });
 });

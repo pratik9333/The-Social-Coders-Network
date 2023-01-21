@@ -155,7 +155,6 @@ const fetchCodeForces = async (codeforcesId) => {
 
     return result;
   } catch (error) {
-    console.log(error);
     return { username: codeforcesId };
   }
 };
@@ -219,7 +218,6 @@ const fetchLeetcode = async (leetcodeId) => {
       ),
     };
   } catch (error) {
-    console.log(error);
     return { username: leetcodeId };
   }
 };

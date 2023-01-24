@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="380" height="530" src="https://res.cloudinary.com/dqdnwfv3r/image/upload/v1674562207/Social_Coding-3-2_vxzvjs.jpg">
+  <img width="400" height="560" src="https://res.cloudinary.com/dqdnwfv3r/image/upload/v1674562207/Social_Coding-3-2_vxzvjs.jpg">
 </p>
 
 Unleash the power of global coding community with Social Coding Network - where coders connect, learn and grow together! Collaborate, Innovate, and Succeed!
@@ -23,6 +23,9 @@ app.listen(3000);
 - [Prerequisites](#Prerequisites)
 - [Getting Started](#Getting-Started)
 - [API Documentation](#API-Documentation)
+- [Contributing](#Contributing)
+- [Usefull Links](#Usefull-Links)
+- [Running Tests](#Running-Tests)
 
 ## Motivation
 

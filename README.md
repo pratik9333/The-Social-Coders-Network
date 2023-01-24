@@ -97,7 +97,7 @@ The Social Coding Network project welcomes all constructive contributions. We ar
 
 ## Usefull Links
 
-- - [Deployed api's link](https://social-coding-experience.vercel.app)
+- [Deployed api's link](https://social-coding-experience.vercel.app)
 
 ## Running Tests
 

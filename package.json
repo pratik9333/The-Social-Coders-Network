@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/pratik9333/INNOVATOR_1#readme",
   "dependencies": {
+    "@reduxjs/toolkit": "^1.9.1",
+    "axios": "^1.2.4",
     "bcryptjs": "^2.4.3",
     "chai": "^3.5.0",
     "chai-http": "^2.0.1",
@@ -42,6 +44,7 @@
     "nodemon": "^2.0.15",
     "pupeteer": "^0.0.1",
     "puppeteer": "^13.6.0",
+    "react-redux": "^8.0.5",
     "redis": "^3.0.0",
     "supertest": "^6.3.3",
     "toad-scheduler": "^1.6.0",

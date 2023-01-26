@@ -52,12 +52,13 @@ Social Coding Network is a platform built to connect coders from around the worl
 
 - [NodeJS](https://nodejs.org/en/) version 16+
 - [Docker](https://www.docker.com)
+- [MongoDB Compass](https://www.mongodb.com/products/compass)
 
 ## Getting Started
 
 ### .env file
 
-To run this project, you need to create a .env file in the root and local.env and test.env in docker dir with following env variables
+To run this project, create a local.env, test.env in docker and .env in root directory with following env variables
 
 ```javascript
 NODE_ENV=development
@@ -65,28 +66,36 @@ CLOUD_NAME=<your-cloudacc-cloudname>
 API_KEY=<your-cloudacc-apikey>
 APP_KEY=hevhbdjvbewufhewhvbew
 API_SECRET=<your-cloudacc-apisecret>
-DATABASE_LOCAL_DB=mongodb://mongo:27017/localdb
+DATABASE_LOCAL_DB=mongodb://mongo:27017<your-db-name>
+DATABASE_TEST_DB=mongodb://mongo:27017/<your-db-name>
 COOKIE_EXPIRES=3
 JWT_SECRET = socialcodingapp
 JWT_EXPIRES = 3d
 ```
 
-Just include your cloudinary credentails after creating account from https://cloudinary.com, no need to change anything except that.
+Include your cloudinary credentails after creating account from https://cloudinary.com.
 
-### Open terminal and use the following commands to start nodejs and mongodb server
+<p>Lastly, replace below .env variable values of .env file in root dir </p>
+
+```javascript
+DATABASE_LOCAL_DB=mongodb://mongo:27017<your-db-name>
+DATABASE_TEST_DB=mongodb://mongo:27017/<your-db-name>
+```
+
+<h3>Open terminal and use the following commands to start nodejs and mongodb server</h3>
 
 ```bash
 cd docker
 docker-compose up -d --build
 ```
 
-### Access Backend api's at
+<h3>Access Backend api's at</h3>
 
 ```http
 http://localhost:80/
 ```
 
-### Access Mongodb server at
+<h3>Access MongoDB server at</h3>
 
 ```http
 http://localhost:8081/
@@ -122,7 +131,7 @@ The Social Coding Network project welcomes all constructive contributions. We ar
 
 ## Running Tests
 
-To run the test suite, first install the dependencies, create .env file and copy contents from docker/test.env file then run `npm test`:
+To run the test suite, first install the dependencies, then run `npm test`:
 
 ```console
 $ npm install

@@ -1,24 +1,18 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { useSelector } from "react-redux";
+import { LandingPage,LoginPage,SignUpPage } from "./pages";
+import { NavBar } from "./components";
+import { useLocation} from "react-router-dom";
+import { appStates } from "./@types/GlobalStateTypes";
 
 function App() {
+  // let userDetails = useSelector((state : appStates)=>state.auth)
+  // let location = useLocation()
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="w-[100%] min-h-screen">
+      <NavBar />
+      <LandingPage />
+      {/* <h1>Helloo</h1> */}
     </div>
   );
 }

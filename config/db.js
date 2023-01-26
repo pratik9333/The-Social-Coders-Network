@@ -1,12 +1,23 @@
 const Mongoose = require("mongoose");
 
 const connectWithDB = () => {
-  Mongoose.connect(process.env.DB_URL, {
+  let dbUrl;
+  if (process.env.NODE_ENV === "development") {
+    dbUrl = process.env.DATABASE_LOCAL_DB;
+  }
+  if (process.env.NODE_ENV === "test") {
+    dbUrl = process.env.DATABASE_TEST_DB;
+  }
+  if (process.env.NODE_ENV === "production") {
+    dbUrl = process.env.DATABASE_PROD_DB;
+  }
+
+  Mongoose.connect(dbUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
     .then(() => {
-      console.log(`DB is connected successfully!`);
+      console.log(`Server is connected to ${process.env.NODE_ENV} DB`);
     })
     .catch((error) => {
       console.log(`DB failed to connect reason - ${error.message}`);

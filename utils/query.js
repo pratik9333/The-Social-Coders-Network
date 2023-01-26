@@ -1,8 +1,7 @@
 class Query {
-  constructor(base, bigQ, loggedUserId) {
+  constructor(base, bigQ) {
     this.base = base;
     this.bigQ = bigQ;
-    this.userId = loggedUserId;
   }
 
   search() {
@@ -17,7 +16,6 @@ class Query {
 
     this.base = this.base.find({
       ...searchword,
-      _id: { $ne: this.userId },
     });
 
     return this;

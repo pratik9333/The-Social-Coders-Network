@@ -1,0 +1,7 @@
+.Icon{
+    background-image: url("https://media.giphy.com/media/xbL1UwfSic84EDmrcK/giphy.gif");
+    background-size: contain;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+

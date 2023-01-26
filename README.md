@@ -1,95 +1,159 @@
-# Social Coders Network
+<p align="center">
+  <img width="400" height="560" src="https://res.cloudinary.com/dqdnwfv3r/image/upload/v1674562207/Social_Coding-3-2_vxzvjs.jpg">
+</p>
 
-The social coders network helps to connect and share coding background and experience with programmers from all around the world. 
+Unleash the power of global coding community with Social Coding Network - where coders connect, learn and grow together! Collaborate, Innovate, and Succeed!
 
-- Users can log in and add their add upto four coding profiles such as leetcode, codechef, codeforces and github. 
-- The scrapper will scrap coding websites and will show the coding background and experience of the user. 
-- It has peer review feed feature, where other can rate/vote the candidate profile based on their coding experience. 
-- The rating algorithm rates user based on the coding experience of user (such as no of problems solved, github commits, pull req, etc) and peer votes. 
-- You can add new friends/refer to see your profile and can start conversation for collaboration, sharing experience etc.  
-- A leaderboard where everyone can see the global users as well as their friends with their overall rating(based on peer review and coding exp). 
+```js
+const express = require("express");
+const app = express();
 
+app.get("/", function (req, res) {
+  res.send("Welcome to our social coding experience api!");
+});
 
-## Install
-
-Some basic Git commands are:
-
-```
-$ git clone git@github.com:pratik9333/Social-Coding-Experience.git
-$ cd Social-Coding-Experience
+app.listen(3000);
 ```
 
+## Content
 
-## Setup
+- [Motivation](#Motivation)
+- [Features](#Features)
+- [Built With](#Built-With)
+- [Prerequisites](#Prerequisites)
+- [Getting Started](#Getting-Started)
+- [API Documentation](#API-Documentation)
+- [Contributing](#Contributing)
+- [Usefull Links](#Usefull-Links)
+- [Running Tests](#Running-Tests)
 
-- Setup Node.js and editor on your PC
+## Motivation
 
-   - [Download node.js](https://nodejs.org/en/download)
-   - [Setup Editor](https://docs.flutter.dev/get-started/editor?tab=vscode)
+Social Coding Network is a platform built to connect coders from around the world, fostering a community where they can learn from and collaborate with one another. With the ever-evolving technology industry, staying current with the latest coding languages, techniques, and tools can be challenging. This platform aims to bridge that gap by providing a space for coders to share their knowledge and experiences, helping others to improve their coding skills and advance their careers. With Social Coding Network, coders can connect, learn, and grow together, and become part of a global community of like-minded individuals.
 
+## Features
+
+- Showcase your coding expertise with our website scraper that automatically fetches your profile data from top coding websites.
+- Get recognized by the community with our peer review feature.
+- Climb the ranks with our rating algorithm that takes into account your coding experience and community feedback.
+- Connect and collaborate with coders from around the world by adding friends and refer each other by sharing profiles.
+- See where you stand on the global leaderboard and compare yourself against top coders and your friends.
+
+## Built With
+
+- [NodeJS](https://nodejs.org/en/) - Node.js is an open-source, cross-platform, back-end JavaScript runtime environment.
+- [MongoDB NoSQL](https://www.mongodb.com) - MongoDB is an open source NoSQL database management program.
+- [Docker](https://www.docker.com) - Docker is a software platform that allows you to build, test, and deploy applications quickly.
+- [Express.js](https://expressjs.com)- Fast, unopinionated, minimalist web framework for Node.js.
+- [Mocha](https://mochajs.org) - Mocha is a feature-rich JavaScript test framework running on Node.js and in the browser.
+- [Chai](https://chaijs.com) - Chai is a BDD / TDD assertion library for node and the browser.
+
+## Prerequisites
+
+- [NodeJS](https://nodejs.org/en/) version 16+
+- [Docker](https://www.docker.com)
+- [MongoDB Compass](https://www.mongodb.com/products/compass)
+
+## Getting Started
+
+### .env file
+
+To run this project, create a local.env, test.env in docker and .env in root directory with following env variables
+
+```javascript
+NODE_ENV=development
+CLOUD_NAME=<your-cloudacc-cloudname>
+API_KEY=<your-cloudacc-apikey>
+APP_KEY=hevhbdjvbewufhewhvbew
+API_SECRET=<your-cloudacc-apisecret>
+DATABASE_LOCAL_DB=mongodb://mongo:27017<your-db-name>
+DATABASE_TEST_DB=mongodb://mongo:27017/<your-db-name>
+COOKIE_EXPIRES=3
+JWT_SECRET = socialcodingapp
+JWT_EXPIRES = 3d
 ```
-Create .env file that include:
 
-  * CLOUD_NAME, API_KEY, APP_KEY => cloudinary configuration. 
-  * COOKIE_EXPIRES, JWT_SECRET, JWT_EXPIRES, PORT => basic configuration
-  * API_SECRET => github action auth secret. 
-  * DB_URL => mongodb atlas configuration
+Include your cloudinary credentails after creating account from https://cloudinary.com.
+
+<p>Lastly, replace below .env variable values of .env file in root dir </p>
+
+```javascript
+DATABASE_LOCAL_DB=mongodb://mongo:27017<your-db-name>
+DATABASE_TEST_DB=mongodb://mongo:27017/<your-db-name>
 ```
 
+<h3>Open terminal and use the following commands to start nodejs and mongodb server</h3>
 
-## Install dependencies
-
+```bash
+cd docker
+docker-compose up -d --build
 ```
+
+<h3>Access Backend api's at</h3>
+
+```http
+http://localhost:80/
+```
+
+<h3>Access MongoDB server at</h3>
+
+```http
+http://localhost:8081/
+```
+
+## API Documentation
+
+To understand how to use the api, access to links down below. API collections has been published through postman so that you see and run by simply clicking `run in postman` button at topmost right of page.
+
+<<<<<<< HEAD
+1. Auth
+
+- Navigate this link https://documenter.getpostman.com/view/16001457/2s8ZDbWgEZ
+
+2. User
+
+- Navigate this link https://documenter.getpostman.com/view/16001457/2s8ZDbX1G4
+
+3. Friends
+
+- Navigate this link https://documenter.getpostman.com/view/16001457/2s8ZDbWgPJ#intro
+
+4. Rate
+=======
+### To Authenticate user
+
+- Navigate this link https://documenter.getpostman.com/view/16001457/2s8ZDbWgEZ
+
+### User specific
+
+- Navigate this link https://documenter.getpostman.com/view/16001457/2s8ZDbX1G4
+
+### Add Friends
+
+- Navigate this link https://documenter.getpostman.com/view/16001457/2s8ZDbWgPJ#intro
+
+### Rate Users
+>>>>>>> 574384e7ba6e9270516d84067514a029f54ef30e
+
+- Navigate this link https://documenter.getpostman.com/view/16001457/2s8ZDbX1G3
+
+## Contributing
+
+The Social Coding Network project welcomes all constructive contributions. We are currently creating screens with hardcoded data. We intend to keep the repository `always open`. Feel free to contribute in many forms from code for bug fixes and enhancements, to additions and fixes to documentation, additional tests, triaging incoming pull requests and issues, and more!
+
+## Usefull Links
+
+- [Deployed api's link](https://social-coding-experience.vercel.app)
+
+## Running Tests
+
+<<<<<<< HEAD
+To run the test suite, first install the dependencies, create .env file and copy contents from docker/test.env file then run `npm test`:
+=======
+To run the test suite, first install the dependencies, then run `npm test`:
+>>>>>>> 574384e7ba6e9270516d84067514a029f54ef30e
+
+```console
 $ npm install
-```
-
-
-## Start development
-
-```
-$ npm run dev
-```
-
-## Run build for production
-
-```
-$ npm start
-```
-
-
-## Languages & tools
-
-- [Node](https://nodejs.org/en/)
-
-- [Express](https://expressjs.com/)
-
-- [Mongoose](https://mongoosejs.com/)
-
-- [Atlas](https://www.mongodb.com/atlas/database)
-
-- [Cloudinary](https://cloudinary.com)
-
-- [React](https://reactjs.org/)
-
-- [Webpack](https://webpack.js.org/)
-
-
-### Code Formatter
-
-- Add a `.vscode` directory
-- Create a file `settings.json` inside `.vscode`
-- Install Prettier - Code formatter in VSCode
-- Add the following snippet:  
-
-```json
-
-    {
-      "editor.formatOnSave": true,
-      "prettier.singleQuote": true,
-      "prettier.arrowParens": "avoid",
-      "prettier.jsxSingleQuote": true,
-      "prettier.trailingComma": "none",
-      "javascript.preferences.quoteStyle": "single",
-    }
-
+$ npm test
 ```

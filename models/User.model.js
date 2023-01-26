@@ -42,7 +42,6 @@ const userSchema = new mongoose.Schema(
         rating: { type: Number },
         division: { type: Number },
         globalRank: { type: Number },
-        submissions: { type: Number },
         countryRank: { type: Number },
         solvedQuestions: { type: Number },
         partiallySolved: { type: Number },
@@ -58,9 +57,9 @@ const userSchema = new mongoose.Schema(
     },
     upvotes: { type: Number, default: 0, select: false },
     downvotes: { type: Number, default: 0, select: false },
+    nextUpdateCycle: { type: Number, select: false },
     rating: { type: Number, default: 0 },
     friends: [{ type: mongoose.Schema.ObjectId, ref: "Friend", select: false }],
-    nextUpdateCycle: { type: Number, required: true, select: false },
   },
   { timestamps: true }
 );

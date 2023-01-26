@@ -2,40 +2,56 @@ const User = require("../models/User.model");
 const Friend = require("../models/Friends.model");
 
 exports.sendFriendRequest = async (req, res) => {
+  // USER A - The one who is sending the friend request
+  // USER B - The one who is getting the friend request
+
   try {
     if (!req.params.userId) {
       return res.status(400).json({ error: "Please provide friend's user id" });
     }
 
-    if (req.params.userId.toString() === req.user._id.toString()) {
-      return res.status(400).json({ error: "Invalid user id" });
+    const userB = await User.findById(req.params.userId);
+
+    if (req.params.userId.toString() === req.user._id.toString() || !userB) {
+      return res
+        .status(400)
+        .json({ error: "Invalid user id or user not found" });
     }
 
-    const check = await Friend.find({
+    // fetching friend req status details
+    const checkStatus = await Friend.find({
       requester: req.user._id,
       recipient: req.params.userId,
     });
 
-    if (check.length !== 0) {
-      if (check[0].status === 1)
+    // checking status. Res array will be empty on sending request first time
+    if (checkStatus.length !== 0) {
+      if (checkStatus[0].status === 1)
         return res
           .status(400)
           .json({ error: "You already sent friend request!" });
 
-      if (check[0].status === 2)
+      if (checkStatus[0].status === 2)
         return res
           .status(400)
           .json({ error: "User had already sent you friend request" });
 
-      if (check[0].status === 3)
+      if (checkStatus[0].status === 3)
         return res.status(400).json({ error: "Already friends!" });
     }
+
+    // creating friend req status model having requester - USER A, recipient - USER B
+    // with status = 1 i.e USER A already sent friend request to USER B and cannot send again
 
     const statusFriendA = await Friend.create({
       requester: req.user._id,
       recipient: req.params.userId,
       status: 1,
     });
+
+    // creating friend req status model having requester - USER B, recipient - USER A
+    // with status = 2 i.e USER B already got friend request from USER A thus USER B...
+    // cannot send again to USER A
 
     const statusFriendB = await Friend.create({
       requester: req.params.userId,
@@ -44,18 +60,28 @@ exports.sendFriendRequest = async (req, res) => {
     });
 
     //update user A
-    await User.findByIdAndUpdate(req.user._id, {
-      $addToSet: { friends: statusFriendA._id },
-    });
+    await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        $addToSet: { friends: statusFriendA._id },
+      },
+      { new: true }
+    );
 
-    //update user A
-    await User.findByIdAndUpdate(req.params.userId, {
-      $addToSet: { friends: statusFriendB._id },
-    });
+    //update user B
+    await User.findByIdAndUpdate(
+      req.params.userId,
+      {
+        $addToSet: { friends: statusFriendB._id },
+      },
+      { new: true }
+    );
 
-    res.status(200).json({ success: true, message: "Friend request is sent" });
+    res.status(200).json({
+      success: true,
+      message: `Friend request was sent successfully`,
+    });
   } catch (error) {
-    console.log(error);
     res
       .status(500)
       .json({ error: "Server has occured some problem, please try again" });
@@ -97,7 +123,6 @@ exports.addFriend = async (req, res) => {
 
     res.status(200).json({ success: true, message: "Friend added to list!" });
   } catch (error) {
-    console.log(error);
     res
       .status(500)
       .json({ error: "Server has occured some problem, please try again" });
@@ -120,8 +145,11 @@ exports.removeFriend = async (req, res) => {
       requester: req.params.userId,
     });
 
-    // removing friend from array
+    if (!friend1 || !friend2) {
+      return res.status(400).json({ error: "User not found or invalid ID" });
+    }
 
+    // removing friend from array
     await User.findByIdAndUpdate(req.user._id, {
       $pull: { friends: friend1._id },
     });
@@ -130,9 +158,10 @@ exports.removeFriend = async (req, res) => {
       $pull: { friends: friend2._id },
     });
 
-    res.status(200).json({ success: true, message: "Friend added to list!" });
+    res
+      .status(200)
+      .json({ success: true, message: "Friend removed from list!" });
   } catch (error) {
-    console.log(error);
     res
       .status(500)
       .json({ error: "Server has occured some problem, please try again" });
@@ -145,9 +174,8 @@ exports.getFriendsLogs = async (req, res) => {
       "recipient"
     );
 
-    return res.status(200).json(user);
+    return res.status(200).json({ success: true, user });
   } catch (error) {
-    console.log(error);
-    res.send("error");
+    res.status(500).json({ error: error, message: "server error" });
   }
 };

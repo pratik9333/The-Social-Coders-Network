@@ -4,8 +4,9 @@
   "description": "App for providing social coding experience",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "start": "NODE_ENV=production node index.js",
+    "dev": "NODE_ENV=development nodemon index.js",
+    "test": "NODE_ENV=test mocha test/*test.js --recursive --exit"
   },
   "repository": {
     "type": "git",
@@ -18,7 +19,12 @@
   },
   "homepage": "https://github.com/pratik9333/INNOVATOR_1#readme",
   "dependencies": {
+    "@reduxjs/toolkit": "^1.9.1",
+    "axios": "^1.2.4",
     "bcryptjs": "^2.4.3",
+    "chai": "^3.5.0",
+    "chai-http": "^2.0.1",
+    "cheerio": "^1.0.0-rc.12",
     "cloudinary": "^1.29.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -28,15 +34,21 @@
     "express-fileupload": "^1.2.1",
     "express-rate-limit": "^6.3.0",
     "jsonwebtoken": "^8.5.1",
+    "mocha": "^2.4.5",
+    "mongodb": "^4.13.0",
     "mongoose": "^6.1.7",
     "morgan": "^1.10.0",
     "nanoid": "^3.2.0",
+    "nock": "^13.3.0",
     "node-fetch": "2.6.1",
     "nodemailer": "^6.7.2",
     "nodemon": "^2.0.15",
     "pupeteer": "^0.0.1",
     "puppeteer": "^13.6.0",
+    "react-redux": "^8.0.5",
     "redis": "^3.0.0",
+    "request-promise": "^4.2.6",
+    "supertest": "^6.3.3",
     "toad-scheduler": "^1.6.0",
     "validator": "^13.7.0"
   }

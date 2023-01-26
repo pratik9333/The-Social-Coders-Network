@@ -1,10 +1,23 @@
 const fetch = require("node-fetch");
 
+const rp = require("request-promise");
+const cheerio = require("cheerio");
+
 // urls
 const leetcodeURL = "https://leetcode.com/graphql";
 const codeForcesURL = "https://codeforces.com/api";
-//const codeChefURL = "https://www.codechef.com";
+const codeChefURL = "https://www.codechef.com";
 const githubAPI = "https://api.github.com/users";
+
+const do_conversion = (s) => {
+  let ans = "";
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] >= 0 && s[i] <= 9) {
+      ans += s[i];
+    }
+  }
+  return ans.trim();
+};
 
 const query = `query userProfile($username: String!, $limit: Int!) {
     matchedUser(username: $username) {
@@ -34,78 +47,63 @@ const query = `query userProfile($username: String!, $limit: Int!) {
     }
 }`;
 
-// const do_conversion = (s) => {
-//   let ans = "";
-//   for (let i = 0; i < s.length; i++) {
-//     if (s[i] >= 0 && s[i] <= 9) {
-//       ans += s[i];
-//     }
-//   }
-//   return ans.trim();
-// };
+const fetchCodeChef = async (codechefId) => {
+  const options = {
+    uri: `${codeChefURL}/users/${codechefId}`,
+    transform: function (body) {
+      return cheerio.load(body);
+    },
+  };
 
-// exports.fetchCodeChef = async (codechefId) => {
-//   try {
-//     const browser = await puppeteer.launch({
-//       headless: true,
-//     });
+  const $ = await rp(options);
 
-//     const url = `${codeChefURL}/users/${codechefId}`;
-//     console.log(url);
+  // fetching user's total ranking
+  let totalRating = $(
+    "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-header.text-center > div.rating-number"
+  ).text();
 
-//     const page = await browser.newPage();
+  // fetching user's division
+  let div = $(
+    "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-header.text-center > div:nth-child(2)"
+  ).text();
 
-//     await page.goto(url);
+  // fetching user's global rank
+  let globalRank = $(
+    "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-ranks > ul > li:nth-child(1) > a > strong"
+  ).text();
 
-//     // wait for submission
-//     await page.waitForSelector("body > main");
+  // fetching user's country rank
+  let countryRank = $(
+    "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-ranks > ul > li:nth-child(2) > a > strong"
+  ).text();
 
-//     let data = await page.evaluate(() => {
-//       const total_rating = document.querySelector(
-//         "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-header.text-center > div.rating-number"
-//       ).innerHTML;
-//       let div = document.querySelector(
-//         "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-header.text-center > div:nth-child(2)"
-//       ).innerHTML;
-//       const global_rank = document.querySelector(
-//         "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-ranks > ul > li:nth-child(1) > a > strong"
-//       ).innerHTML;
-//       const country_rank = document.querySelector(
-//         "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-ranks > ul > li:nth-child(2) > a > strong"
-//       ).innerHTML;
-//       const submissions = document.querySelector(
-//         "body > main > div > div > div > div > div > section.rating-data-section.submissions > div > div > div > svg > g > g.highcharts-data-label-color-5 > text > tspan"
-//       ).innerHTML;
-//       const fully_solved = document.querySelector(
-//         "body > main > div > div > div > div > div > section.rating-data-section.problems-solved > div > h5:nth-child(1)"
-//       ).innerText;
-//       const partially_solved = document.querySelector(
-//         "body > main > div > div > div > div > div > section.rating-data-section.problems-solved > div > h5:nth-child(3)"
-//       ).innerHTML;
-//       return {
-//         username: user.social.codechefProfile.username,
-//         rating: parseInt(total_rating),
-//         division: div,
-//         globalRank: global_rank === "Inactive" ? 0 : global_rank,
-//         submissions: parseInt(submissions.split("<")[0]),
-//         countryRank: country_rank === "Inactive" ? 0 : country_rank,
-//         solvedQuestions: fully_solved,
-//         partiallySolved: partially_solved,
-//       };
-//     });
+  // fetching user's fully solved questions
+  let fullySolved = $(
+    "body > main > div > div > div > div > div > section.rating-data-section.problems-solved > div > h5:nth-child(1)"
+  ).text();
 
-//     await page.close();
+  // fetching user's partially solved questions
+  let partiallySolved = $(
+    "body > main > div > div > div > div > div > section.rating-data-section.problems-solved > div > h5:nth-child(3)"
+  ).text();
 
-//     data.solvedQuestions = parseInt(do_conversion(data.solvedQuestions));
-//     data.partiallySolved = parseInt(do_conversion(data.partiallySolved));
-//     data.division = parseInt(do_conversion(data.division));
+  div = parseInt(do_conversion(div), 10);
+  totalRating = parseInt(totalRating, 10);
+  globalRank = globalRank === "Inactive" ? 0 : parseInt(globalRank, 10);
+  countryRank = countryRank === "Inactive" ? 0 : parseInt(countryRank, 10);
+  solvedQuestions = parseInt(do_conversion(fullySolved), 10);
+  partiallySolved = parseInt(do_conversion(partiallySolved), 10);
 
-//     return data;
-//   } catch (err) {
-//     console.log(err);
-//     return null;
-//   }
-// };
+  return {
+    username: codechefId,
+    division: div,
+    rating: totalRating,
+    globalRank,
+    countryRank,
+    solvedQuestions,
+    partiallySolved,
+  };
+};
 
 const fetchCodeForces = async (codeforcesId) => {
   try {
@@ -222,4 +220,10 @@ const fetchLeetcode = async (leetcodeId) => {
   }
 };
 
-module.exports = { fetchLeetcode, fetchCodeForces, fetchGithub, query };
+module.exports = {
+  fetchLeetcode,
+  fetchCodeForces,
+  fetchGithub,
+  query,
+  fetchCodeChef,
+};

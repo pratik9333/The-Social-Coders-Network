@@ -358,6 +358,7 @@ describe("PUT /user", () => {
       githubId: "pratik9333",
       leetcodeId: "rajpatel1508",
       codeforcesId: "tourist",
+      codechefId: "gennady.korotkevich",
     };
 
     request(server)

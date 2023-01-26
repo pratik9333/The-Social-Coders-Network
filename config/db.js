@@ -17,7 +17,7 @@ const connectWithDB = () => {
     useUnifiedTopology: true,
   })
     .then(() => {
-      //console.log(`Server is connected to ${process.env.NODE_ENV} DB`);
+      console.log(`Server is connected to ${process.env.NODE_ENV} DB`);
     })
     .catch((error) => {
       console.log(`DB failed to connect reason - ${error.message}`);

@@ -6,6 +6,7 @@ const {
   fetchGithub,
   fetchLeetcode,
   fetchCodeForces,
+  fetchCodeChef,
 } = require("../utils/ExternalAPI/fetchCodeData");
 
 // 1 min = 60,000 milliseconds
@@ -126,6 +127,11 @@ exports.updateUserDetails = async (req, res) => {
       updateUser.social.codeforcesProfile = codeforcesData;
     }
 
+    if (req.body.codechefId) {
+      const codechefData = await fetchCodeChef(req.body.codechefId);
+      updateUser.social.codechefProfile = codechefData;
+    }
+
     const updatedUser = await User.findByIdAndUpdate(req.user.id, updateUser, {
       new: true,
     });
@@ -138,6 +144,7 @@ exports.updateUserDetails = async (req, res) => {
       .status(200)
       .json({ success: true, message: "User profile is updated", updatedUser });
   } catch (error) {
+    console.log(error);
     res
       .status(500)
       .json({ error: "Server has occured some problem, please try again" });

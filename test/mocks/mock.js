@@ -15,7 +15,6 @@ const mockServer = () => {
   const cloudinaryAPI = nock("https://api.cloudinary.com");
   const codeforcesAPI = nock("https://codeforces.com/api");
   const githubAPI = nock("https://api.github.com");
-  const codechefAPI = nock("https://api.github.com");
 
   cloudinaryAPI.post("/v1_1/pratikaswani/image/upload").reply(200, {
     public_id: "93332001",

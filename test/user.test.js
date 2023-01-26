@@ -358,7 +358,6 @@ describe("PUT /user", () => {
       githubId: "pratik9333",
       leetcodeId: "rajpatel1508",
       codeforcesId: "tourist",
-      codechefId: "gennady.korotkevich",
     };
 
     request(server)
@@ -372,6 +371,7 @@ describe("PUT /user", () => {
         expect(res.body).to.have.property("success", true);
         expect(res.body).to.have.property("message", "User profile is updated");
 
+        // deleting and replacing property public_repos to publicRepos
         delete Object.assign(githubData, {
           ["publicRepos"]: githubData["public_repos"],
         })["public_repos"];

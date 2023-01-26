@@ -48,61 +48,65 @@ const query = `query userProfile($username: String!, $limit: Int!) {
 }`;
 
 const fetchCodeChef = async (codechefId) => {
-  const options = {
-    uri: `${codeChefURL}/users/${codechefId}`,
-    transform: function (body) {
-      return cheerio.load(body);
-    },
-  };
+  try {
+    const options = {
+      uri: `${codeChefURL}/users/${codechefId}`,
+      transform: function (body) {
+        return cheerio.load(body);
+      },
+    };
 
-  const $ = await rp(options);
+    const $ = await rp(options);
 
-  // fetching user's total ranking
-  let totalRating = $(
-    "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-header.text-center > div.rating-number"
-  ).text();
+    // fetching user's total ranking
+    let totalRating = $(
+      "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-header.text-center > div.rating-number"
+    ).text();
 
-  // fetching user's division
-  let div = $(
-    "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-header.text-center > div:nth-child(2)"
-  ).text();
+    // fetching user's division
+    let div = $(
+      "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-header.text-center > div:nth-child(2)"
+    ).text();
 
-  // fetching user's global rank
-  let globalRank = $(
-    "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-ranks > ul > li:nth-child(1) > a > strong"
-  ).text();
+    // fetching user's global rank
+    let globalRank = $(
+      "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-ranks > ul > li:nth-child(1) > a > strong"
+    ).text();
 
-  // fetching user's country rank
-  let countryRank = $(
-    "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-ranks > ul > li:nth-child(2) > a > strong"
-  ).text();
+    // fetching user's country rank
+    let countryRank = $(
+      "body > main > div > div > div > aside > div.widget.pl0.pr0.widget-rating > div > div.rating-ranks > ul > li:nth-child(2) > a > strong"
+    ).text();
 
-  // fetching user's fully solved questions
-  let fullySolved = $(
-    "body > main > div > div > div > div > div > section.rating-data-section.problems-solved > div > h5:nth-child(1)"
-  ).text();
+    // fetching user's fully solved questions
+    let fullySolved = $(
+      "body > main > div > div > div > div > div > section.rating-data-section.problems-solved > div > h5:nth-child(1)"
+    ).text();
 
-  // fetching user's partially solved questions
-  let partiallySolved = $(
-    "body > main > div > div > div > div > div > section.rating-data-section.problems-solved > div > h5:nth-child(3)"
-  ).text();
+    // fetching user's partially solved questions
+    let partiallySolved = $(
+      "body > main > div > div > div > div > div > section.rating-data-section.problems-solved > div > h5:nth-child(3)"
+    ).text();
 
-  div = parseInt(do_conversion(div), 10);
-  totalRating = parseInt(totalRating, 10);
-  globalRank = globalRank === "Inactive" ? 0 : parseInt(globalRank, 10);
-  countryRank = countryRank === "Inactive" ? 0 : parseInt(countryRank, 10);
-  solvedQuestions = parseInt(do_conversion(fullySolved), 10);
-  partiallySolved = parseInt(do_conversion(partiallySolved), 10);
+    div = parseInt(do_conversion(div), 10);
+    totalRating = parseInt(totalRating, 10);
+    globalRank = globalRank === "Inactive" ? 0 : parseInt(globalRank, 10);
+    countryRank = countryRank === "Inactive" ? 0 : parseInt(countryRank, 10);
+    solvedQuestions = parseInt(do_conversion(fullySolved), 10);
+    partiallySolved = parseInt(do_conversion(partiallySolved), 10);
 
-  return {
-    username: codechefId,
-    division: div,
-    rating: totalRating,
-    globalRank,
-    countryRank,
-    solvedQuestions,
-    partiallySolved,
-  };
+    return {
+      username: codechefId,
+      division: div,
+      rating: totalRating,
+      globalRank,
+      countryRank,
+      solvedQuestions,
+      partiallySolved,
+    };
+  } catch (error) {
+    return { username: codechefId };
+  }
 };
 
 const fetchCodeForces = async (codeforcesId) => {

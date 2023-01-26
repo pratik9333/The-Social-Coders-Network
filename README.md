@@ -52,25 +52,6 @@ Social Coding Network is a platform built to connect coders from around the worl
 
 - [NodeJS](https://nodejs.org/en/) version 16+
 - [Docker](https://www.docker.com)
-<<<<<<< HEAD
-
-## Getting Started
-
-- To run and access node and mongodb server, just run the below commands
-
-```bash
-cd docker
-docker-compose up -d --build
-```
-
-- Access Backend api's at
-
-```http
-http://localhost:80/
-```
-
-- Access Mongodb server at
-=======
 - [MongoDB Compass](https://www.mongodb.com/products/compass)
 
 ## Getting Started
@@ -115,7 +96,6 @@ http://localhost:80/
 ```
 
 <h3>Access MongoDB server at</h3>
->>>>>>> 574384e7ba6e9270516d84067514a029f54ef30e
 
 ```http
 http://localhost:8081/

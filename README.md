@@ -52,6 +52,7 @@ Social Coding Network is a platform built to connect coders from around the worl
 
 - [NodeJS](https://nodejs.org/en/) version 16+
 - [Docker](https://www.docker.com)
+<<<<<<< HEAD
 
 ## Getting Started
 
@@ -69,6 +70,52 @@ http://localhost:80/
 ```
 
 - Access Mongodb server at
+=======
+- [MongoDB Compass](https://www.mongodb.com/products/compass)
+
+## Getting Started
+
+### .env file
+
+To run this project, create a local.env, test.env in docker and .env in root directory with following env variables
+
+```javascript
+NODE_ENV=development
+CLOUD_NAME=<your-cloudacc-cloudname>
+API_KEY=<your-cloudacc-apikey>
+APP_KEY=hevhbdjvbewufhewhvbew
+API_SECRET=<your-cloudacc-apisecret>
+DATABASE_LOCAL_DB=mongodb://mongo:27017<your-db-name>
+DATABASE_TEST_DB=mongodb://mongo:27017/<your-db-name>
+COOKIE_EXPIRES=3
+JWT_SECRET = socialcodingapp
+JWT_EXPIRES = 3d
+```
+
+Include your cloudinary credentails after creating account from https://cloudinary.com.
+
+<p>Lastly, replace below .env variable values of .env file in root dir </p>
+
+```javascript
+DATABASE_LOCAL_DB=mongodb://mongo:27017<your-db-name>
+DATABASE_TEST_DB=mongodb://mongo:27017/<your-db-name>
+```
+
+<h3>Open terminal and use the following commands to start nodejs and mongodb server</h3>
+
+```bash
+cd docker
+docker-compose up -d --build
+```
+
+<h3>Access Backend api's at</h3>
+
+```http
+http://localhost:80/
+```
+
+<h3>Access MongoDB server at</h3>
+>>>>>>> 574384e7ba6e9270516d84067514a029f54ef30e
 
 ```http
 http://localhost:8081/
@@ -78,6 +125,7 @@ http://localhost:8081/
 
 To understand how to use the api, access to links down below. API collections has been published through postman so that you see and run by simply clicking `run in postman` button at topmost right of page.
 
+<<<<<<< HEAD
 1. Auth
 
 - Navigate this link https://documenter.getpostman.com/view/16001457/2s8ZDbWgEZ
@@ -91,6 +139,21 @@ To understand how to use the api, access to links down below. API collections ha
 - Navigate this link https://documenter.getpostman.com/view/16001457/2s8ZDbWgPJ#intro
 
 4. Rate
+=======
+### To Authenticate user
+
+- Navigate this link https://documenter.getpostman.com/view/16001457/2s8ZDbWgEZ
+
+### User specific
+
+- Navigate this link https://documenter.getpostman.com/view/16001457/2s8ZDbX1G4
+
+### Add Friends
+
+- Navigate this link https://documenter.getpostman.com/view/16001457/2s8ZDbWgPJ#intro
+
+### Rate Users
+>>>>>>> 574384e7ba6e9270516d84067514a029f54ef30e
 
 - Navigate this link https://documenter.getpostman.com/view/16001457/2s8ZDbX1G3
 
@@ -104,7 +167,11 @@ The Social Coding Network project welcomes all constructive contributions. We ar
 
 ## Running Tests
 
+<<<<<<< HEAD
 To run the test suite, first install the dependencies, create .env file and copy contents from docker/test.env file then run `npm test`:
+=======
+To run the test suite, first install the dependencies, then run `npm test`:
+>>>>>>> 574384e7ba6e9270516d84067514a029f54ef30e
 
 ```console
 $ npm install
